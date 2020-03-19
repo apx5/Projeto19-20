@@ -24,8 +24,8 @@ Questions that came up while playing with things:
  * Reference vs Pointer (`&` vs `*`)
  * How to specify function types? Can we specify types _a la C_?
  * What does `const` really mean to the compiler? In `void foo (const T & x)`
-   does it assume `*x` is not be changed outside of `foo` or does it just mean
-   `foo` itself will not change `*x`? Does it make a difference if `x` was a
-   pointer isntead of a reference? I.e., `const T * x` instead of `const T & x`?
+   does it assume `*x` is not changed outside of `foo`, or does it just mean
+   `foo` itself will not change `*x`? Does it make a difference if `x` is a
+   pointer instead of a reference? I.e., `const T * x` instead of `const T & x`?
  * What is `-fconcepts` and how is `template <typename T> void foo (T x) {/*...*/}`
    different from `void foo (auto x) {/*...*/}`?
