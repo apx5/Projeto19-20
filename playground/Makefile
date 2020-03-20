@@ -4,6 +4,8 @@ EXAMPLES := \
     const_argcpp      \
     pair              \
     static_size_array \
+    testes \
+
 
 FLAGS := \
     -Wall   \
