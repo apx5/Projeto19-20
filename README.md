@@ -18,4 +18,9 @@ Projeto 3º Ano LCC
 
     map -> transform
     sum -> accumulate
+    partition e stable_partition diferem na forma como ordenam os elementos
 
+    function template é um tipo de template, não é uma função.
+    template function é uma função, instanciada a partir de um template
+    
+    é feita distinção entre values e types. 
