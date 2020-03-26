@@ -1,46 +1,68 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <numeric>
-#include <string>
-#include <functional>
-#include <algorithm>
 
-using namespace std;
-vector<int> numbers(10);
-vector<int> bar(numbers.size(),0);
-vector<int> odds(numbers.size());
+#define print_vector(v)                                \
+    do {                                               \
+        std::cout << #v "(" << v.size() << ") = { ";   \
+        for (const auto e : v) {                       \
+            std::cout << e << ", ";                    \
+        }                                              \
+        std::cout << '}' << std::endl;                 \
+    } while (0)
 
-int dobro(int x){
+int dobro (int x)
+{
     return (x*2);
 }
 
-
-
-int main(int argc, char const *argv[])
+int main (void)
 {
-    
-    vector<int>::iterator it;
+    std::vector<int> numbers(10);
+    std::vector<int> bar;
+    std::vector<int> odds;
+    std::vector<int>::iterator it;
+
     int i = 0;
-    for(it = numbers.begin(); it != numbers.end();it++){
+    //for (int & number : numbers) {
+    for (it = numbers.begin(); it != numbers.end(); it++) {
         *it = i++;
-        ///cout << *it << endl;
+        ///std::cout << *it << std::endl;
     }
 
-    copy_if(numbers.begin(),numbers.end(),std::back_inserter(odds), [] (const int x) { return x % 2 == 0;}); // qq coisa aqui não está bem
-    
-    std:transform(numbers.begin(),numbers.end(),bar.begin(),dobro);
+    std::copy_if(numbers.begin(),
+            numbers.end(),
+            std::back_inserter(odds),
+            [] (int x) { return x % 2 == 0; }
+            ); // qq coisa aqui não está bem
 
+    std::transform(numbers.begin(),
+            numbers.end(),
+            std::back_inserter(bar),
+            dobro
+            );
 
-    cout << odds.size() << endl;
-    for(it = odds.begin(); it != odds.end();it++){
-        cout << *it << endl;
+    std::cout << "odds " << odds.size() << std::endl;
+    //for (int number : numbers) {
+    for (it = odds.begin(); it != odds.end(); it++) {
+        std::cout << *it << std::endl;
     }
+    std::cout << std::endl;
 
-    
-    vector<int> v(10,5);
 
-    for_each( v.begin(), v.end(), [] (int val) { 
-        std::cout << val;
-    } );
-    
+    std::vector<int> v(10,5);
+
+    std::cout << 'v' << std::endl;
+    for_each(v.begin(),
+            v.end(),
+            [] (int val) { std::cout << val << std::endl; });
+
+    std::cout << std::endl;
+
+    print_vector(numbers);
+    print_vector(bar);
+    print_vector(odds);
+    print_vector(v);
+
+    return 0;
 }   

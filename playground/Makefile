@@ -4,7 +4,8 @@ EXAMPLES := \
     const_argcpp      \
     pair              \
     static_size_array \
-    testes \
+    testes            \
+    high_order_funcs  \
 
 
 FLAGS := \
@@ -18,13 +19,10 @@ all: $(EXAMPLES)
 clean:
 	$(RM) $(wildcard *.o) $(EXAMPLES)
 
-%: %.o
+%: %.cpp
 	$(CXX) $(FLAGS) $< -o $@
 
-%.o: %.cpp
-	$(CXX) $(FLAGS) -c $< -o $@
-
-%.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@
+%: %.c
+	$(CC) $(FLAGS) $< -o $@
 
 .PHONY: all clean default
