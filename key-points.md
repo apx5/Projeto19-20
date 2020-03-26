@@ -29,3 +29,7 @@ Questions that came up while playing with things:
    pointer instead of a reference? I.e., `const T * x` instead of `const T & x`?
  * What is `-fconcepts` and how is `template <typename T> void foo (T x) {/*...*/}`
    different from `void foo (auto x) {/*...*/}`?
+
+Things to look at:
+
+ * [FunctionalPlus](https://github.com/Dobiasd/FunctionalPlus): C++ Functional Programming utilities library
