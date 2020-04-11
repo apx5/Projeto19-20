@@ -1,12 +1,12 @@
 From the book _"Functional Programming in C++"_ by Ivan Cukic:
 
  * (2.3) Optimise moving semantics for performant function composition
- * (3.1.1) What is `std::forward` for? (see [1])
+ * (3.1.1) What is [`std::forward`] for?
  * (3.1.1) Automatic return type deduction (`auto` & `decltype(auto)`); in
    general, automatic type deduction
  * (3.1.3) Call operator (`operator()`)
  * (3.2) Lambda and scoping specifiers
- * (3.4) `std::function` (see [2])
+ * (3.4) [`std::function`]
  * (4.1.2, 4.1.5) `std::bind` performance worse than lambdas
  * (4.2) Currying & partial function application: is it worth it?
  * (5.4, 5.5) Mutable vs Immutable & `const`
@@ -61,7 +61,7 @@ Things to look at:
  * [RangesV3]: compositional operations over various types of collections
 
 In [include/fplus/composition.hpp][include.fplus.composition.hpp] is defined
-`lazy :: (((a, ...) -> b), (a, ...)) -> (() -> b)`, a call operator that turns
+`lazy :: ((a -> b), a) -> (() -> b)`, a call operator that turns
 a non-nullary function into a nullary function with the given arguments. The
 created function is not memoised, so each call of this newly created function
 will in turn call the internal function. This may or may not be the wanted
@@ -87,7 +87,8 @@ Things to look at:
 [parcon_tuto]: https://github.com/simonmar/par-tutorial
 [simonpj]: https://www.microsoft.com/en-us/research/publication/tackling-awkward-squad-monadic-inputoutput-concurrency-exceptions-foreign-language-calls-haskell
 
+[`std::forward`]: https://en.cppreference.com/w/cpp/utility/forward
+[`std::function`]: https://en.cppreference.com/w/cpp/utility/functional/function
+
 [0]: https://en.cppreference.com/w/cpp/language/reference
-[1]: https://en.cppreference.com/w/cpp/utility/forward
-[2]: https://en.cppreference.com/w/cpp/utility/functional/function
 [3]: https://en.cppreference.com/w/cpp/language/lifetime
