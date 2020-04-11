@@ -67,15 +67,14 @@ lazy_funcall<F> delay_funcall (F && f)
     return lazy_funcall<F>(std::forward<F>(f));
 }
 
-/*
- * delay's suffixed with an underscore require the capture of variables
- * to be specified.
- */
 /**
- * @brief Delay evaluation of expressions and blocks of code (lambdas)
+ * @brief Delay evaluation of expressions and blocks of code
  * @param capt A lambda's captures (defaults to `[&]`)
  * @param expr An expression
  * @param block A block of code
+ *
+ * delays suffixed with an underscore require the capture of variables to be
+ *     specified.
  *
  * TODO: Is there a way to not differentiate between the two?
  */
