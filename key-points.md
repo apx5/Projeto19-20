@@ -53,18 +53,35 @@ Questions that came up while playing with things:
        different `T`; while in the case of the function with an `auto`
        parameter there's only one function, for all the different types.
 
-Things to look at (C++):
+# C++
+
+Things to look at:
 
  * [FunctionalPlus]: C++ Functional Programming utilities library
  * [RangesV3]: compositional operations over various types of collections
 
-Things to look at (Haskell):
+In [include/fplus/composition.hpp][include.fplus.composition.hpp] is defined
+`lazy :: (((a, ...) -> b), (a, ...)) -> (() -> b)`, a call operator that turns
+a non-nullary function into a nullary function with the given arguments. The
+created function is not memoised, so each call of this newly created function
+will in turn call the internal function. This may or may not be the wanted
+behaviour. There are also memoisation utilities defined in this header. Both
+could be combined to create a memoised lazy call of a given function and its
+arguments. With a macro it would be possible to create a (non-)memoised lazy
+evaluation utility for arbitrary expressions. For performance reasons and
+implementation simplicity, it would be best to define these lazy expression
+evaluation constructs on their own.
+
+# Haskell
+
+Things to look at:
 
  * [_Tackling the awkward squad_][simonpj]: Haskell solutions to real-world
    problems
  * [Parallel & Concurrent Programming Tutorial][parcon_tuto]: Source of the
    `chat-server` program in the playground
 
+[include.fplus.composition.hpp]: https://github.com/Dobiasd/FunctionalPlus/blob/master/include/fplus/composition.hpp
 [FunctionalPlus]: https://github.com/Dobiasd/FunctionalPlus
 [RangesV3]: https://github.com/ericniebler/range-v3
 [parcon_tuto]: https://github.com/simonmar/par-tutorial

@@ -3,6 +3,7 @@ array
 const_argc
 const_argcpp
 high_order_funcs
+lazy_eval
 pair
 static_size_array
 testes

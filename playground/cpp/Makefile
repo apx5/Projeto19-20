@@ -2,15 +2,18 @@ EXAMPLES := \
     adder             \
     const_argc        \
     const_argcpp      \
+    high_order_funcs  \
+    lazy_eval         \
     pair              \
     static_size_array \
     testes            \
-    high_order_funcs  \
 
-
+# -pthread for lazy_eval
 FLAGS := \
-    -Wall   \
-    -Wextra \
+    -Wall      \
+    -Wextra    \
+    -std=c++17 \
+    -pthread   \
 
 default: all
 
