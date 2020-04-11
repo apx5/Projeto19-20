@@ -10,10 +10,15 @@ EXAMPLES := \
 
 # -pthread for lazy_eval
 FLAGS := \
-    -Wall      \
-    -Wextra    \
+    -I../../include/ \
+    -Wall            \
+    -Wextra          \
+    -pthread         \
+
+CXXFLAGS := $(FLAGS) \
     -std=c++17 \
-    -pthread   \
+
+CFLAGS := $(FLAGS)
 
 default: all
 
@@ -23,9 +28,9 @@ clean:
 	$(RM) $(wildcard *.o) $(EXAMPLES)
 
 %: %.cpp
-	$(CXX) $(FLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 %: %.c
-	$(CC) $(FLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 .PHONY: all clean default

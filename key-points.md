@@ -17,7 +17,7 @@ From the book _"Functional Programming in C++"_ by Ivan Cukic:
  * (6.1) Take inspiration from Scheme's `delay` implementation and improve
    `lazy_val`
  * (6.4.1) Is it possible to do some kind of Copy-on-Write (COW)? (@see 8.2)
- * `constexpr`: what's the difference from `const` and `static const`?
+ * [`constexpr`]: what's the difference from `const` and `static const`?
 
 Questions that came up while playing with things:
 
@@ -88,6 +88,7 @@ Things to look at:
 
 [`std::forward`]: https://en.cppreference.com/w/cpp/utility/forward
 [`std::function`]: https://en.cppreference.com/w/cpp/utility/functional/function
+[`constexpr`]: https://en.cppreference.com/w/cpp/language/constexpr
 
 [0]: https://en.cppreference.com/w/cpp/language/reference
 [1]: https://en.cppreference.com/w/cpp/language/lifetime
