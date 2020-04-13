@@ -7,6 +7,8 @@ EXAMPLES := \
     pair              \
     static_size_array \
     testes            \
+    reference_array \
+    class_templates \
 
 # -pthread for lazy_eval
 FLAGS := \
