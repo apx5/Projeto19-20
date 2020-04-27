@@ -1,14 +1,15 @@
 EXAMPLES := \
     adder             \
+    class_templates   \
     const_argc        \
     const_argcpp      \
     high_order_funcs  \
     lazy_eval         \
     pair              \
+    ranges            \
+    reference_array   \
     static_size_array \
     testes            \
-    reference_array \
-    class_templates \
 
 # -pthread for lazy_eval
 FLAGS := \

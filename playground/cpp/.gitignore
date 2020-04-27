@@ -7,3 +7,6 @@ lazy_eval
 pair
 static_size_array
 testes
+ranges
+class_templates
+reference_array
