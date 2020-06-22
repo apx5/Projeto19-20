@@ -1,0 +1,57 @@
+\chapter{Imutabilidade vs mutabilidade}
+Uma das características mais importantes do paradigma funcional, nomeadamente na linguagem Haskell (existem linguagens funcionais impuras) é a noção de imutabilidade das expressões. \newline
+Isto faz com que, por exemplo, não seja possível alterar o valor de variáveis já existentes mas sim, criar novas variáveis com os novos valores.\newline Analisando o excerto de código a seguir podemos verificar que quando \textit{action} é invocado, o valor mostrado é o primeiro valor de \textit{a=123} pois é o valor avaliado para \textit{a} até então. \newline
+
+
+\begin{verbatim}
+    > a = 123
+    > action = print a
+    > a = 456
+    > action
+    123
+\end{verbatim}{}
+
+A linguagem \textit{c++} tenta também lidar com esta noção de imutabilidade. \newline
+A noção de funções puras é dada pela avaliação de \textit{referential transparency}. \newline 
+Uma função é referencialmente transparente se o programa não se comportar de maneira diferente ao substituír a expressão inteira apenas pelo seu valor de retorno, por exemplo:
+\begin{verbatim}
+    int g = 0;
+
+    int ref_trans(int x) {
+        return x + 1;
+    } // referencialmente transparente
+\end{verbatim}
+
+\newline
+
+\begin{verbatim}
+    int not_ref_trans(int x) {
+        g++;
+        return x + g;
+    } // não referencialmente transparente(cada vez que a função é invocada, tem um valor de retorno diferente)
+\end{verbatim}
+\newline
+Se uma expressão é referencialmente transparente, não tem efeitos colaterais observáveis e, portanto, todas as funções usadas nessa expressão são consideradas puras. \newline
+A ideia de imutabilidade é particularmente útil em ambientes em que se gera concorrência, pois, existem variáveis partilhadas que podem gerar comportamentos inesperados nos programas se não for devidamente protegida a sua alteração.
+Em \textit{c++} está disponível a keyword \textit{const} que permite controlar a imutabilidade de uma variável.
+Ao declarar uma variável \textit{const x} estamos a dizer ao compilador que esta variável é imutável e, qualquer tentativa de alteração à variável irá originar um erro.
+De seguida analisamos a declaração de uma variável \textit{const} e os possíveis erros que podem ser cometidos ao tentar manipular essa variável.
+
+\begin{verbatim}
+    const std::string name{"John Smith"};
+    
+    1 - std::string name_copy = name;
+    2 - std::string& name_ref = name; // erro
+    3 - const std::string& name_constref = name;
+    4 - std::string* name_ptr = &name; // erro
+    5 - const std::string* name_constptr = &name;
+\end{verbatim} \newline
+
+Em 1 não há ocorrências de erros pois apenas se está a associar o valor de name a uma nova variável. Em 2 teremos um erro de compilação pois estamos a passar \textit{name} por referência a uma variável não \textit{const}, situação que é resolvida em 3.
+Em 4 voltamos a ter um erro de compilação pois estamos a criar um pointer não \textit{const} para name.
+Este erro é resolvido em 5.
+O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de \textit{name_ref} e \textit{name_ptr} não estarem qualificados com \textit{const} e poderem ser alterados. No entanto, como apontam para uma variável \textit{const}, gera-se uma contradição.
+
+
+No entanto, por vezes existe necessidade de ter variáveis mutáveis mas que, em determinados casos, a sua alteração esteja protegida. Esse controlo pode ser feito recorrendo a mutexes que permitem o controlo de concorrência em determinadas zonas crítica de código. \newline
+Esta abordagem será aprofundada mais à frente na secção de concorrência.
