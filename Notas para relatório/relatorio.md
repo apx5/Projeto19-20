@@ -171,46 +171,45 @@ $\xrightarrow[\text{world}]{\text{hello}}$
 
 ### Ranges V3
 
-An important part of Funtional Programming is the composition of functions. By
-writing small and generic functions, and reutilising them with composition,
-it's possible to quickly write complete programs with fewer bugs than if
-everything was written from scratch. In Function Programming Languages
-composition is used everywhere. In a language like C++, composition everywhere
-is not very convenient, mainly because of syntax and the semantics of passing
-vriables by value or reference. There's a place, however, where composition
-doesn't have to be pointwise: working with collections. When there's a set of
-operations to do on a collection, be it the whole collections or a subset of
-it, expressing these operations as some sort of pipeline is very intuitive,
-human-readable, and cheap in the number of characters typed. This idea is not
-new, and has been adopted even by large mainstream languages like Java (in the
-form of Streams). In Functional Programming Languages this concept is usually
-implemented in the form of lists in lazy-by-default languages, like Haskell, or
-lazy-lists or streams in eager-by-default languages, like Scheme.
+Uma parte importante de Programacao Funcional e a composicao de funcoes. Ao
+escrever funcoes pequenas e genericas, e ao as reutilizar com composicao, e
+possivel escrever programas completos rapidamente, com menos bugs do que se
+escrevessemos o mesmo programa todo do zero. Em linguagens funcionais
+composicao e usada em todo o lado. Numa linguagem como C++ nao e muito
+conveniente usar composicao em todo o lado, principalmente por causa de sintaxe
+e da semantica de passar variaveis por valor ou referencia. Ha um sitio, no
+entanto, onde composicao nao tem de ser pointwise: trabalhar  com coleccoes.
+Quando ha um conjunto de operacoes a fazer numa coleccao, seja na coleccao
+completa ou parte dela, expressar estas operacoes coo algum tipo de pipeline e
+bastante intuitivo, legivel, e barato em numero de caracteres escritos. Esta
+ideia nao e de agora. Em linguagens funcionais este conceito e normalmente
+implementado como listas em linguagens lazy-by-default, como Haskell, ou
+lazy-lists/streams em linguagens eager-by-default, como Scheme.
 
-There are many operations over collections that can be mapped to a pipeline,
-and many of these operations are very common. Coding them each time as a loop
-is tedious and most likely harder to read than simply using the abstractions.
-Some of these common operations include summing, multiplying, filtering,
-mapping, and the swiss-army knife, with which many of the other operations can
-be coded, the fold (also commonly known as reduce, but with slightly different
-semantics).
+Existem muitas operacoes sobre coleccoes que podem ser mapeadas numa pipeline,
+e muitas destas operacoes sao muito comuns. Programa-las de cada vez a mao como
+um loop e tedioso, e muito provavelmente menos legivel do que simplesmente usar
+as abstraccoes. Algumas destas operacoes comuns incluem somar, multiplicar,
+filtrar, mapear, e o canivete suico, com o qual muitas das outras operacoes sao
+implementadas, o fold (tambem comummente conhecido como reduce, mas com
+semantica ligeiramente diferente).
 
-The C++ STL already has some of these operations implemented. For the most
-common and simplest of use cases they could be enough. Certainly beats writing
-a for-loop by hand. These could, however, be improved, and the Ranges library
-does so in two very important aspects: usage and performance.
+A STL de C++ ja tem algumas destas operacoes. Para os casos mais simples e
+comuns estas podem ser suficientes. Definitivamente e melhor do que escrever um
+loop for a mao. Estas podem, no entanto, ser melhoradas, e a biblioteca Ranges
+faz isso mesmo em dois aspectos muito importantes: usabilidade e performance.
 
-As an example, given a vector (or a list in Haskell), filtering the elements
-given some predicate, applying a mapping function to each of them, and then
-multiplying the results could be done like so in Haskell:
+Como exemplo, dado um vector (ou uma lista em Haskell), filtrar os elementos
+dado um predicado, aplicar uma funcao a cada um deles, e depois multiplicar os
+resultados pode ser feito assim em Haskell:
 
 ```hs
 product . map mapper . filter pred $ xs
 ```
 
-A handwritten for-loop in C++ could look something like this:
+Um loop for em C++ escrito a mao podia ser escrito como se segue:
 
-```c++
+```cpp
 for (auto x : xs) {
     if (pred(x)) {
         ret *= mapper(x);
@@ -218,16 +217,15 @@ for (auto x : xs) {
 }
 ```
 
-But one doesn't have to handwrite for-loops most of the time! It would be nice
-if it was possible to do the following:
+Mas nao e preciso escrever loops for a mao grande parte das vezes! Era bom se
+fosse possivel escrever o seguinte:
 
-```c++
+```cpp
 xs | filter(pred) | transform(mapper) | product
 ```
 
-And with the Ranges library it is! Learning about its inner workings a bit
-could help understand why it's performant in comparison to the counterparts in
-the STL.
+E com a biblioteca Ranges e! Perceber como funciona internamente pode dar
+alguma luz sobre o porque de ter melhor performance em comparacao com a STL.
 
 In the STL, the functions have as parameters two iterators, the beginning and
 end of the input collection, an iterator to the beginning of the output
@@ -280,7 +278,7 @@ Analisando o excerto de código a seguir podemos verificar que quando \textit{ac
     123
 \end{verbatim}
 
-A linguagem \textit{c++} tenta também lidar com esta noção de imutabilidade.
+A linguagem \textit{C++} tenta também lidar com esta noção de imutabilidade.
 A noção de funções puras é dada pela avaliação de \textit{referential transparency}.
 Uma função é referencialmente transparente se o programa não se comportar de maneira diferente ao substituír a expressão inteira apenas pelo seu valor de retorno, por exemplo:
 \begin{verbatim}
@@ -301,7 +299,7 @@ Uma função é referencialmente transparente se o programa não se comportar de
 
 Se uma expressão é referencialmente transparente, não tem efeitos colaterais observáveis e, portanto, todas as funções usadas nessa expressão são consideradas puras.
 A ideia de imutabilidade é particularmente útil em ambientes em que se gera concorrência, pois, existem variáveis partilhadas que podem gerar comportamentos inesperados nos programas se não for devidamente protegida a sua alteração.
-Em \textit{c++} está disponível a keyword \textit{const} que permite controlar a imutabilidade de uma variável.
+Em \textit{C++} está disponível a keyword \textit{const} que permite controlar a imutabilidade de uma variável.
 Ao declarar uma variável \textit{const x} estamos a dizer ao compilador que esta variável é imutável e, qualquer tentativa de alteração à variável irá originar um erro.
 De seguida analisamos a declaração de uma variável \textit{const} e os possíveis erros que podem ser cometidos ao tentar manipular essa variável.
 
