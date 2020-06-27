@@ -227,40 +227,41 @@ xs | filter(pred) | transform(mapper) | product
 E com a biblioteca Ranges e! Perceber como funciona internamente pode dar
 alguma luz sobre o porque de ter melhor performance em comparacao com a STL.
 
-In the STL, the functions have as parameters two iterators, the beginning and
-end of the input collection, an iterator to the beginning of the output
-collection, and an inserter, i.e., how to insert elements into the output
-collection. Right away it's easy to see some points for improvement:
+Na STL, as funcoes tem como parametros dois iterators, -- o inicio e fim da
+coleccao de input, ou de parte dela -- um iterator para o inicio da coleccao de
+output, e um inserter, que define como os elementos serao inseridos na coleccao
+de output. De imediato, alguns pontos a melhorar saltam a vista:
 
- * Why do we have to pass the beginning and end iterators to the input
-   collection? (I know why, but it doesn't have to be that way) It's possible
-   to pass iterators of different collections by mistake. It's tedious to pass
-   two arguments instead of one.
- * Passing an iterator and inserter to the output collection is also tedious
-   work; but worse, it means a new collection is always created as a result!
+ * Porque e que e preciso passar os iteradores de inicio e fim da coleccao de
+   input? Na verdade sabemos para que serve, mas nao precisa de ser assim. Da
+   mais trabalho passar dois argumentos em vez de um, mas mais importante, e
+   possivel passar iteradores para o inicio e fim de duas coleccoes diferentes
+   por engano.
 
-Ranges improves both of these aspects simply by abstracting collections and the
-result of operations as "ranges", which could be very simply be thought of as a
-pair iterators: the beginning and end.
+ * Passar iterador e inserter da coleccao de output tambem e tedioso; mas pior,
+   significa que e sempre criada uma coleccao de output.
 
-Now it's possible to give an operation the collection itself, which will be
-converted into a range automatically, or the result of an operation. This last
-bit is very important, because it means it's possible to compose operations
-pointfree.
+A Ranges melhora estes does aspectos ao simplesmente abstrair coleccoes como
+_ranges_, e devolver _ranges_ como resultado das operacoes. Pode-se pensar
+nesta abstraccao de _range_ como um par de iteradores: o inicio e fim.
 
-Usability is explaing. Now for performance. The pair of iterators mentioned
-above in a range structure are just pointers. For operations that don't mutate
-the original collection, there's no need to copy data around. For example, to
-implement `filter`, all is needed is to implement the `++` ("next") operator of
-the beginning iterator as searching for the next element in the input range
-(note _range_) that passes the predicate. If there's no element passing the
-predicate, the end of the resulting range has been reached.
+Agora e possivel passar a uma operacao uma coleccao, que e automaticamente
+transformada num range, ou o resultado de uma outra operacao. Esta ultima parte
+e crucial, porque significa que podemos compor operacoes pointfree.
 
-Where change is needed there are two options: copying the input range, or
-mutating the original collection in-place.
+Usabilidade esta explicada. Vamos agora a porformance. O par de iteradores que
+forma um range e so um par de apontadores. Para operacoes que nao alteram a
+coleccao original nao e preciso copiar nada. Para implesmentar, por exemplo, o
+`filter`, basta implementar o operador `++` (_next_) para o range de output,
+sobre o iterador de inicio, procurando pelo elemento seguinte no range de input
+que satisfaz o predicado. Se nenhum elemento satisfaz o predicado chegamos
+eventualmente ao fim da coleccao, ou seja, temos um range vazio.
 
-All this happens _"on-demand"_ (i.e., lazily), like in Haskell. If the result
-is not collected, nothing is done.
+Quando ha a necessidade de alterar o range de input temos duas opcoes: copiar o
+range de input, ou mutar a coleccao original _in-place_.
+
+Todas as operacoes sao lazy, ou acontecem _on-demand_, como em Haskell -- se o
+resultado nao for usado, nao se faz nada.
 
 ### Imutabilidade vs mutabilidade
 
