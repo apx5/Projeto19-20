@@ -1,16 +1,25 @@
 # Programação Funcional em C++
 
-Com o aumento em complexidade de problemas a resolver, e importante manter
-codigo facil de ler e escrever. O paradigma de programação Funcional e
-conhecido por ser conciso, normalmente a custa de conceitos dificeis de
-compreender, muitas vezes matematicos. Esta complexidade aumenta
-vertiginosamente quando os problemas requerem um programa multi-threaded.
+Com o aumento da complexidade dos problemas a resolver, é importante manter codigo simples e cuja interpretação seja relativamente simples de conseguir. 
+O paradigma de programação Funcional e conhecido por ser conciso, normalmente a custa de conceitos matematicos. 
+A complexidade dos programas aumenta vertiginosamente quando os problemas requerem um programa multi-threaded.
 
 Neste trabalho pretendemos abordar C++ do ponto de vista funcional.
 
 ## Intro
 
- * Importancia/vantagens/pontos positivos de Programação Funcional
+ * Importancia/vantagens/pontos positivos de Programação Funcional e do Haskell
+        
+        O paradigma funcional é um paradigma que descreve uma computação como uma expressão a ser avaliada. 
+        Os tipos de dados estáticos pelo que, podemos despistar muitos erros em tempo de compilação e assim reduzir os possíveis problemas que poderão aparecer durante a execução.
+        O sistema de tipos é muito poderoso e os tipos podem ser facilmente inferidos, permitindo desta forma criar programas genéricos que poderão executar com diferentes tipos de dados.
+        O paradigma funcional é também conhecido pelo facto de pouca escrita de código permitir criar operações muito poderosas. Isto permite que a leitura e interpretação de código seja facilitada, bem como o debug e correcção de erros.
+        Haskell não executa funções nem calcula dados até que sejam necessários(lazy)
+        Uma função nao tem efeitos colaterais
+        Possibilidade de definir funções dentro de funções
+        Actualmente, com processadores multi-core e multi-threaded, exige-se uma grande escabilidade dos programas. É sobretudo neste ponto que as linguagens funcionais têm ganho uma grande ênfase pois uma das suas caracteristicas principais é o facto de o paralelismo e threading serem bastante simples de implementar, muito à custa da imutabilidade dos dados, o que faz com que não sejam necessárias grandes preocupações ao nível do controlo de concorrência.
+
+
  * Como programar funcionalmente em C++?
 
 **TODO:** De que topicos vamos falar
