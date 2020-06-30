@@ -1,10 +1,13 @@
-# Programação Funcional em C++
+# Programação Funcional em `C++`
 
-Com o aumento da complexidade dos problemas a resolver, é importante manter codigo simples e cuja interpretação seja relativamente simples de conseguir. 
-O paradigma de programação Funcional e conhecido por ser conciso, normalmente a custa de conceitos matematicos. 
-A complexidade dos programas aumenta vertiginosamente quando os problemas requerem um programa multi-threaded.
+Com o aumento da complexidade dos problemas a resolver, é importante manter
+codigo simples e cuja interpretação seja relativamente simples de conseguir. O
+paradigma de programação Funcional e conhecido por ser conciso, normalmente a
+custa de conceitos matematicos dificeis de compreender. A complexidade dos
+programas aumenta vertiginosamente quando os problemas requerem um programa
+multi-threaded.
 
-Neste trabalho pretendemos abordar C++ do ponto de vista funcional.
+Neste trabalho pretendemos abordar `C++` do ponto de vista funcional.
 
 ## Intro
 
@@ -20,7 +23,7 @@ Neste trabalho pretendemos abordar C++ do ponto de vista funcional.
         Actualmente, com processadores multi-core e multi-threaded, exige-se uma grande escabilidade dos programas. É sobretudo neste ponto que as linguagens funcionais têm ganho uma grande ênfase pois uma das suas caracteristicas principais é o facto de o paralelismo e threading serem bastante simples de implementar, muito à custa da imutabilidade dos dados, o que faz com que não sejam necessárias grandes preocupações ao nível do controlo de concorrência.
 
 
- * Como programar funcionalmente em C++?
+ * Como programar funcionalmente em `C++`?
 
 **TODO:** De que topicos vamos falar
 
@@ -63,9 +66,9 @@ auto P = [A, B] {
 
 No contexto de programação paralela, onde o resultado de operações pode ser reutilizado por múltiplas threads, pretende-se partilhar esse valor para que outros fios de execução tenham acesso a esse resultado, evitando cálculos desnecessários.
 
-#### Laziness in C++
+#### Laziness in `C++`
 
-Em C++ temos de ser nós a programar dessa forma garantindo uma avaliação preguiçosa.
+Em `C++` temos de ser nós a programar dessa forma garantindo uma avaliação preguiçosa.
 Para isso criamos um \textbf{template} com uma função que é a operação de se pretende executar, uma flag que indica se a operação ja foi calculada e por fim o resultado da função. O processo associado a utilização deste template denomina-se por \textit{memorização}, visto que os resultados são memorizados.
 
  \begin{itemize}
@@ -90,9 +93,9 @@ public:
 
 É necessária a utilização de um mutex para evitar a execução paralela da função.
 As variáveis são declaradas como \textit{mutable} e não \textit{conts} pois eventualmente vamos ter de alterar esse valores.
-Como a dedução automática para tipos de tamplates só é suportada a partir do C++17, temos de ter uma abordagem diferente.
+Como a dedução automática para tipos de tamplates só é suportada a partir do `C++17`, temos de ter uma abordagem diferente.
 Na maioria das vezes, não podemos especificar explicitamente o tipo da função pois pode ser definindo por "lambdas", e não é posível determinar o seu tipo.
-É necessário criar uma função auxiliar para que a dedução dos argumentos da função em tamplates seja automática, assim podemos usar o modelo principal com compiladores que não suportam C++17.
+É necessário criar uma função auxiliar para que a dedução dos argumentos da função em tamplates seja automática, assim podemos usar o modelo principal com compiladores que não suportam `C++17`.
 
 \begin{verbatim}
 template <typename F>
@@ -120,7 +123,7 @@ O construtor precisa de armazenar a função e definir como \textit{false} a fla
 NOTA Como não sabemos o tipo de retorno da função, temos de garantir que o membro `m_cache` tenha um construtor por defeito.
 
 Para finalizar falta criar a função responsável pelo calculo e/ou retorno do valor da operação.
-A representação em C++ traduz-se na aplicação do mutex no inicio da função, para evitar acesso simultâneo a cache, seguido da verificação da condição da inicialização e da execução da operação caso a cache não tenha sido inicializada. A função retorna o valor calculado.
+A representação em `C++` traduz-se na aplicação do mutex no inicio da função, para evitar acesso simultâneo a cache, seguido da verificação da condição da inicialização e da execução da operação caso a cache não tenha sido inicializada. A função retorna o valor calculado.
 
 \begin{verbatim}
 template <typename F>
@@ -172,7 +175,9 @@ public:
 
 Assim substituímos o mutex pela função `std::call_once` que recebe como argumentos a flag e a operação que deve executar uma única vez. A flag será actualizada automaticamente pela operação de casting.
 
-\section{Laziness as an optimization technique}
+**NOTE:** isto era uma `section` dantes
+
+Laziness as an optimization technique
 
 $\xrightarrow[\text{world}]{\text{hello}}$
 
@@ -184,7 +189,7 @@ Uma parte importante de Programacao Funcional e a composicao de funcoes. Ao
 escrever funcoes pequenas e genericas, e ao as reutilizar com composicao, e
 possivel escrever programas completos rapidamente, com menos bugs do que se
 escrevessemos o mesmo programa todo do zero. Em linguagens funcionais
-composicao e usada em todo o lado. Numa linguagem como C++ nao e muito
+composicao e usada em todo o lado. Numa linguagem como `C++` nao e muito
 conveniente usar composicao em todo o lado, principalmente por causa de sintaxe
 e da semantica de passar variaveis por valor ou referencia. Ha um sitio, no
 entanto, onde composicao nao tem de ser pointwise: trabalhar  com coleccoes.
@@ -203,7 +208,7 @@ filtrar, mapear, e o canivete suico, com o qual muitas das outras operacoes sao
 implementadas, o fold (tambem comummente conhecido como reduce, mas com
 semantica ligeiramente diferente).
 
-A STL de C++ ja tem algumas destas operacoes. Para os casos mais simples e
+A STL de `C++` ja tem algumas destas operacoes. Para os casos mais simples e
 comuns estas podem ser suficientes. Definitivamente e melhor do que escrever um
 loop for a mao. Estas podem, no entanto, ser melhoradas, e a biblioteca Ranges
 faz isso mesmo em dois aspectos muito importantes: usabilidade e performance.
@@ -216,7 +221,7 @@ resultados pode ser feito assim em Haskell:
 product . map mapper . filter pred $ xs
 ```
 
-Um loop for em C++ escrito a mao podia ser escrito como se segue:
+Um loop for em `C++` escrito a mao podia ser escrito como se segue:
 
 ```cpp
 for (auto x : xs) {
@@ -288,7 +293,7 @@ Analisando o excerto de código a seguir podemos verificar que quando \textit{ac
     123
 \end{verbatim}
 
-A linguagem \textit{C++} tenta também lidar com esta noção de imutabilidade.
+A linguagem `C++` tenta também lidar com esta noção de imutabilidade.
 A noção de funções puras é dada pela avaliação de \textit{referential transparency}.
 Uma função é referencialmente transparente se o programa não se comportar de maneira diferente ao substituír a expressão inteira apenas pelo seu valor de retorno, por exemplo:
 \begin{verbatim}
@@ -309,7 +314,7 @@ Uma função é referencialmente transparente se o programa não se comportar de
 
 Se uma expressão é referencialmente transparente, não tem efeitos colaterais observáveis e, portanto, todas as funções usadas nessa expressão são consideradas puras.
 A ideia de imutabilidade é particularmente útil em ambientes em que se gera concorrência, pois, existem variáveis partilhadas que podem gerar comportamentos inesperados nos programas se não for devidamente protegida a sua alteração.
-Em \textit{C++} está disponível a keyword \textit{const} que permite controlar a imutabilidade de uma variável.
+Em `C++` está disponível a keyword \textit{const} que permite controlar a imutabilidade de uma variável.
 Ao declarar uma variável \textit{const x} estamos a dizer ao compilador que esta variável é imutável e, qualquer tentativa de alteração à variável irá originar um erro.
 De seguida analisamos a declaração de uma variável \textit{const} e os possíveis erros que podem ser cometidos ao tentar manipular essa variável.
 
@@ -334,7 +339,178 @@ Esta abordagem será aprofundada mais à frente na secção de concorrência.
 
 ### ADTs & Pattern Matching
 
-**TODO:** Aprofundar
+#### ADTs
+
+ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algebricos, em Portugues, sao
+tipos de dados criados a partir de tipos ja existentes, de duas maneiras
+diferentes. Vamos dar uma breve descricao, para completude, simplesmente porque
+nem todas as linguagens funcionais tem ADTs nativamente, tao omnipresentes, ou
+com diferentes nomes.
+
+A primeira, e mais comum, e o producto. Dados dois tipos $A$ e $B$, o produto
+deles, $A \times B$, e simplesmente o produto cartesiano entre $A$ e $B$.
+
+A segunda, presente em grande parte das linguagens, mesmo que indirectamente, e
+a soma. Dados dois tipos $A$ e $B$, a soma deles, $A + B$, e o conjunto cujos
+elementos ou sao do tipo $A$ ou do tipo $B$, mas e possivel distingui-los. Este
+conjunto e isomorfo a $Bool \times (A \cup B)$ (**TODO:** e mesmo? confirmar
+isto), ou seja, pode ser representado indirectamente como $Bool \times (A \cup
+B)$: um elemento de $A$ ou $B$, e uma flag a indicar se e de $A$ ou de $B$.
+Note-se que esta flag indica na verdade se o elemento e da esquerda ou direita;
+$A + A$ e um tipo valido.
+
+Com estas duas tecnicas de composicao e possivel representar qualquer estrutura
+de dados. Sera entao util saber como usar estas duas tecnicas numa linguagem de
+programacao. Em Haskell, com o seu sistema de tipos avancado, ambas estao
+disponiveis nativamente. Em `C++`, tal como em C, so o produto esta disponivel,
+sobre a forma de structs. Na STL tambem ha `std::pair` e `std::tuple`, que
+vamos comparar a seguir. **vale a pena falar disto?**
+
+De seguida vamos apresentar as tres formas de compor tipos em `C++`, com as
+_keywords_ `struct`, `enum`, e `union`, qual o equivalente em `Haskell`, e como
+cada uma se relaciona com ADTs.
+
+##### `struct`
+
+Por exemplo, para representar um filme, com o seu titulo (`String`), ano de
+lancamento (`Int`), e uma pontuacao (`Float`), podemos definir o tipo `Filme`
+como o produto dos seus tres atributos, ou seja $Filme \cong String \times Int
+\times Float$.
+
+Em `Haskell` existem varias maneiras de definir o tipo `Filme`.
+
+```hs
+type Filme = (String, Int, Float)
+
+data Filme = Filme String Int Float
+
+data Filme = Filme {
+    titulo :: String,
+    ano :: Int,
+    pontuacao :: Float
+}
+```
+
+A primeira reflecte mais directamente o tipo teorico; a segunda e uma definicao
+mais comum; a terceira, com _records_, da "nomes" aos varios campos (isto nao e
+verdade, mas para ja, serve), e e mais parecida com uma definicao em `C++`.
+
+Em `C++`, existem duas alternativas:
+
+```cpp
+struct Filme {
+	std::string titulo;
+	unsigned ano;
+	float pontuacao;
+};
+
+typedef std::tuple<std::string, unsigned, float> Filme;
+```
+
+A primeira, que e mais idiomatica, e a segunda, que e mais parecida com o tipo
+teorico, como a primeira definicao em `Haskell`.
+
+##### `enum`
+
+Um exemplo simples e conhecido a todos do uso de _enums_ e na definicao do tipo
+dos booleanos: `enum bool { false, true };`{.cpp} em `C++`, e `data Bool =
+False | True`{.hs} em `Haskell`.
+
+Se pensarmos nos valores de falso e verdadeiro como pertencentes a um conjunto
+singular, e denotarmos esse conjunto por `false` e `true` respectivamente,
+podemos pensar no tipo booleano como a soma de `false` e `true`, i.e., $Bool
+\cong False + True$.
+
+Poderiamos assim achar que `enum` em `C++` serve para representar tipos de
+soma, mas estariamos errados. `enum` serve apenas para representar a soma de
+varios conjuntos conjuntos singulares, ou um unico conjunto enumeravel de
+valores nao inteiros e sem ordem. Veremos mais a frente como representar tipos
+de soma.
+
+##### `union`
+
+Esta e a menos comum das tres _keywords_, por ser de uso muito limitado, e nao
+existe equivalente em `Haskell`. Esta "falha" do lado de `Haskell` na verdade
+nao e grave -- possivelmente nem sequer uma falha. Ao contrario do que o nome
+sugere, `union` nao serve para representar a uniao de tipos, e nao vamos aqui
+listar os seus usos alem do necessario para este texto.
+
+`union` pode ser usada quando se pretende guardar qualquer um de varios
+valores, mas nao varios em simultaneo. Por exemplo se se pretender um tipo para
+guardar ou inteiros ou _floats_, pode-se usar a seguinte `union`:
+
+```cpp
+union {
+	int i;
+	float f;
+}
+```
+
+##### ADTs em `C++`
+
+Vamos agora, finalmente, descrever como implementar ADTs em `C++`. A maneira
+mais idiomatica, possivel tambem em `C`, e usar uma _tagged union_.
+
+Como exemplo, vamos definir um tipo de arvores binarias de nos, com valores nos
+nos e nas folhas: $BTree\ A \cong A + (A \times BTree\ A \times BTree\ A)$.
+
+```hs
+data BTree a = Leaf a
+             | Node a (BTree a) (Btree a)
+```
+
+```cpp
+template <typename A>
+struct BTree {
+	enum {
+		BTree_Leaf,
+		BTree_Node,
+	} variant;
+
+	union {
+		A leaf;
+		struct {
+			A x;
+			BTree<A> left;
+			BTree<A> right;
+		} node;
+	} tree;
+};
+```
+
+Esta definicao em `C++` e muito maior que a definicao em `Haskell`, nao so
+devido a verbosidade (???) de `C++`, como a necessidade de usar o truque
+mencionado acima de transformar uma soma num produto, ou seja,
+
+$$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\
+\cup\ (A \times BTree\ A \times BTree\ A)) $$
+
+Ou, para aproximar melhor a implementacao,
+
+$$BTree\ A \cong \{\ Leaf,\ Node \ \} \times (A\ \cup\ (A \times BTree\ A
+\times BTree\ A)) $$
+
+Neste caso, a `union` esta realmente a simular a uniao de conjuntos.
+
+---
+
+Uma alternativa a tagged union, e usar `std::variant`, como a que se segue:
+
+```cpp
+template <typename A>
+struct Node {
+	A x;
+	BTree<A> left;
+	BTree<A> right;
+};
+
+template <typename A>
+using BTree = std::variant<A, struct Node>;
+```
+
+#### Pattern Matching
+
+Em `C++` nao vale a pena...
 
 ### Concorrencia
 
