@@ -13,14 +13,14 @@ Neste trabalho pretendemos abordar `C++` do ponto de vista funcional.
 
  * Importancia/vantagens/pontos positivos de Programação Funcional e do Haskell
         
-        O paradigma funcional é um paradigma que descreve uma computação como uma expressão a ser avaliada. 
-        Os tipos de dados estáticos pelo que, podemos despistar muitos erros em tempo de compilação e assim reduzir os possíveis problemas que poderão aparecer durante a execução.
-        O sistema de tipos é muito poderoso e os tipos podem ser facilmente inferidos, permitindo desta forma criar programas genéricos que poderão executar com diferentes tipos de dados.
-        O paradigma funcional é também conhecido pelo facto de pouca escrita de código permitir criar operações muito poderosas. Isto permite que a leitura e interpretação de código seja facilitada, bem como o debug e correcção de erros.
-        Haskell não executa funções nem calcula dados até que sejam necessários(lazy)
-        Uma função nao tem efeitos colaterais
-        Possibilidade de definir funções dentro de funções
-        Actualmente, com processadores multi-core e multi-threaded, exige-se uma grande escabilidade dos programas. É sobretudo neste ponto que as linguagens funcionais têm ganho uma grande ênfase pois uma das suas caracteristicas principais é o facto de o paralelismo e threading serem bastante simples de implementar, muito à custa da imutabilidade dos dados, o que faz com que não sejam necessárias grandes preocupações ao nível do controlo de concorrência.
+O paradigma funcional é um paradigma que descreve uma computação como uma expressão a ser avaliada. 
+Os tipos de dados estáticos pelo que, podemos despistar muitos erros em tempo de compilação e assim reduzir os possíveis problemas que poderão aparecer durante a execução.
+O sistema de tipos é muito poderoso e os tipos podem ser facilmente inferidos, permitindo desta forma criar programas genéricos que poderão executar com diferentes tipos de dados.
+O paradigma funcional é também conhecido pelo facto de pouca escrita de código permitir criar operações muito poderosas. Isto permite que a leitura e interpretação de código seja facilitada, bem como o debug e correcção de erros.
+Haskell não executa funções nem calcula dados até que sejam necessários(lazy)
+Uma função nao tem efeitos colaterais
+Possibilidade de definir funções dentro de funções
+Actualmente, com processadores multi-core e multi-threaded, exige-se uma grande escabilidade dos programas. É sobretudo neste ponto que as linguagens funcionais têm ganho uma grande ênfase pois uma das suas caracteristicas principais é o facto de o paralelismo e threading serem bastante simples de implementar, muito à custa da imutabilidade dos dados, o que faz com que não sejam necessárias grandes preocupações ao nível do controlo de concorrência.
 
 
  * Como programar funcionalmente em `C++`?
@@ -38,6 +38,10 @@ Neste trabalho pretendemos abordar `C++` do ponto de vista funcional.
 ### Imutabilidade
 
 **TODO:** Overview
+
+### Recursividade
+
+**TODO:** Análise de semelhanças e diferenças entre recursividade em Haskell e C++ templates
 
 ### ADTs & Pattern Matching
 
@@ -255,7 +259,7 @@ de output. De imediato, alguns pontos a melhorar saltam a vista:
  * Passar iterador e inserter da coleccao de output tambem e tedioso; mas pior,
    significa que e sempre criada uma coleccao de output.
 
-A Ranges melhora estes does aspectos ao simplesmente abstrair coleccoes como
+A Ranges melhora estes dois aspectos ao simplesmente abstrair coleccoes como
 _ranges_, e devolver _ranges_ como resultado das operacoes. Pode-se pensar
 nesta abstraccao de _range_ como um par de iteradores: o inicio e fim.
 
@@ -265,7 +269,7 @@ e crucial, porque significa que podemos compor operacoes pointfree.
 
 Usabilidade esta explicada. Vamos agora a porformance. O par de iteradores que
 forma um range e so um par de apontadores. Para operacoes que nao alteram a
-coleccao original nao e preciso copiar nada. Para implesmentar, por exemplo, o
+coleccao original nao e preciso copiar nada. Para implementar, por exemplo, o
 `filter`, basta implementar o operador `++` (_next_) para o range de output,
 sobre o iterador de inicio, procurando pelo elemento seguinte no range de input
 que satisfaz o predicado. Se nenhum elemento satisfaz o predicado chegamos
@@ -277,10 +281,10 @@ range de input, ou mutar a coleccao original _in-place_.
 Todas as operacoes sao lazy, ou acontecem _on-demand_, como em Haskell -- se o
 resultado nao for usado, nao se faz nada.
 
-### Imutabilidade vs mutabilidade
+### Imutabilidade
 
 Uma das características mais importantes do paradigma funcional, nomeadamente na linguagem Haskell (existem linguagens funcionais impuras) é a noção de imutabilidade das expressões.
-Isto faz com que, por exemplo, não seja possível alterar o valor de variáveis já existentes mas sim, criar novas variáveis com os novos valores.
+Isto faz com que não seja possível alterar o valor de variáveis já existentes mas sim, criar novas variáveis com os novos valores.
 
 Analisando o excerto de código a seguir podemos verificar que quando \textit{action} é invocado, o valor mostrado é o primeiro valor de \textit{a=123} pois é o valor avaliado para \textit{a} até então.
 
@@ -295,7 +299,7 @@ Analisando o excerto de código a seguir podemos verificar que quando \textit{ac
 
 A linguagem `C++` tenta também lidar com esta noção de imutabilidade.
 A noção de funções puras é dada pela avaliação de \textit{referential transparency}.
-Uma função é referencialmente transparente se o programa não se comportar de maneira diferente ao substituír a expressão inteira apenas pelo seu valor de retorno, por exemplo:
+Uma função é referencialmente transparente se para o mesmo input, a função devolve sempre o mesmo valor de retorno, por exemplo:
 \begin{verbatim}
     int g = 0;
 
@@ -309,7 +313,8 @@ Uma função é referencialmente transparente se o programa não se comportar de
     int not_ref_trans(int x) {
         g++;
         return x + g;
-    } // não referencialmente transparente(cada vez que a função é invocada, tem um valor de retorno diferente)
+    } // não referencialmente transparente(cada vez que a função é invocada, 
+         tem um valor de retorno diferente)
 \end{verbatim}
 
 Se uma expressão é referencialmente transparente, não tem efeitos colaterais observáveis e, portanto, todas as funções usadas nessa expressão são consideradas puras.
@@ -337,6 +342,50 @@ O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de \textit{
 No entanto, por vezes existe necessidade de ter variáveis mutáveis mas que, em determinados casos, a sua alteração esteja protegida. Esse controlo pode ser feito recorrendo a mutexes que permitem o controlo de concorrência em determinadas zonas crítica de código.
 Esta abordagem será aprofundada mais à frente na secção de concorrência.
 
+
+### Recursividade
+
+Uma vez que as linguagens funcionais puras preservam a caracteristica de imutabilidade dos dados, é usada recursividade em vez de loops.
+Analisemos semelhanças e diferenças sobre este recurso em Haskell e C++.
+
+Tomemos como exemplo o cálculo do factorial de um número arbitrário 'n'. 
+Em Haskell esta função torna-se bastante simples de implementar. 
+
+```hs
+fac:: Int -> Int
+fac 0 = 1
+fac n = n * fact (n-1)
+```
+
+No entanto, em C++, não é possível escrever um código tão conciso quanto em Haskell. 
+
+```cpp
+template <int N>
+struct Fac{
+  static int const value= N * Fac<N-1>::value;
+};
+
+template <>
+struct Fac<0>{
+  static int const value = 1;
+};
+```
+A declaração do template para Fac<0> deve-se ao facto de pretender-mos que uma função se comporte de determinada forma para um certo argumento. Esta técnica tem o nome de \textit{specialization} e podemos compará-la com o caso de paragem em Haskell.
+
+Existe, no entanto, uma "ligeira" diferença entre a função factorial recursiva em Haskell e C++. Na verdade, a versão em C++ não é recursiva. Cada invocação do template com argumento N instancia uma novo template com argumento (N-1).
+Vejamos com detalhe o desenvolvimento da função para N = 5.
+
+\begin{verbatim}
+    Fac<5>::value   = 5 * Fac<4>::value
+                    = 5 * 4 * Fac<3>::value
+                    = 5 * 4 * 3 * Fac<2>::value
+                    = 5 * 4 * 3 * 2 * Fac<1>::value
+                    = 5 * 4 * 3 * 2 * 1 * Fac<0>::value
+                    = 5 * 4 * 3 * 2 * 1 * 1
+                    = 120
+\end{verbatim}
+
+
 ### ADTs & Pattern Matching
 
 #### ADTs
@@ -344,7 +393,7 @@ Esta abordagem será aprofundada mais à frente na secção de concorrência.
 ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algebricos, em Portugues, sao
 tipos de dados criados a partir de tipos ja existentes, de duas maneiras
 diferentes. Vamos dar uma breve descricao, para completude, simplesmente porque
-nem todas as linguagens funcionais tem ADTs nativamente, tao omnipresentes, ou
+nem todas as linguagens funcionais tem ADTs nativamente, estao omnipresentes, ou
 com diferentes nomes.
 
 A primeira, e mais comum, e o producto. Dados dois tipos $A$ e $B$, o produto

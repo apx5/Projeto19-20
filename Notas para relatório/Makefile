@@ -1,5 +1,4 @@
 MD := \
-    ranges-v3.md \
     relatorio.md \
 
 PDF := $(MD:.md=.pdf)
