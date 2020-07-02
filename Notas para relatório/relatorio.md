@@ -7,7 +7,7 @@ custa de conceitos matematicos dificeis de compreender. A complexidade dos
 programas aumenta vertiginosamente quando os problemas requerem um programa
 multi-threaded.
 
-Neste trabalho pretendemos abordar `C++` do ponto de vista funcional.
+Neste trabalho pretendemos abordar `C++` do ponto de vista funcional, analisar o que pode ou não ser feito e efectuar algumas comparações sobre o paradigma funcional  nas linguagem Haskell e `C++`.
 
 ## Intro
 
@@ -58,7 +58,7 @@ Actualmente, com processadores multi-core e multi-threaded, exige-se uma grande 
 
 A avaliação preguiçosa é uma técnica de programação que atrasa a execução de um código, até que o seu valor seja necessário e evita chamadas repetidas. Como normalmente não partilhamos o resultado das nossas operações entre threads/funcões, estamos a sobrecarregar o sistema ao executar as mesmas operações varias vezes, resultando numa perda de performance, no pior dos casos tendo um tempo exponencial.
 
-Como por exemplo, no case de um algoritmo que recorra ao calculo do produto entre 2 matrizes A e B com alguma ou muita frequência, a avaliação preguiçosa propõe calcular uma única vez o produto das matrizes e reutilizar o resultado sempre que o produto seja utilizado. Deste modo evita-se o custo computacional associado a repetição da mesma operação, o que contribui para o aumento da performance.
+Como por exemplo, no caso de um algoritmo que recorra ao calculo do produto entre 2 matrizes A e B com alguma ou muita frequência, a avaliação preguiçosa propõe calcular uma única vez o produto das matrizes e reutilizar o resultado sempre que o produto seja utilizado. Deste modo evita-se o custo computacional associado a repetição da mesma operação, o que contribui para o aumento da performance.
 
 No entanto, pode dar-se o caso do resultado não ser necessário, o que consome desnecessariamente os recursos computacionais. Assim sendo o cálculo é atrasado até que seja objectivamente necessário, para tal, criamos uma função para calcular o produto entre duas matrizes:
 
@@ -73,7 +73,7 @@ No contexto de programação paralela, onde o resultado de operações pode ser 
 #### Laziness in `C++`
 
 Em `C++` temos de ser nós a programar dessa forma garantindo uma avaliação preguiçosa.
-Para isso criamos um \textbf{template} com uma função que é a operação de se pretende executar, uma flag que indica se a operação ja foi calculada e por fim o resultado da função. O processo associado a utilização deste template denomina-se por \textit{memorização}, visto que os resultados são memorizados.
+Para isso criamos um \textbf{template} com uma função que é a operação que se pretende executar, uma flag que indica se a operação ja foi calculada e por fim o resultado da função. O processo associado a utilização deste template denomina-se por \textit{memorização}, visto que os resultados são memorizados.
 
  \begin{itemize}
    \item Função.
@@ -97,9 +97,9 @@ public:
 
 É necessária a utilização de um mutex para evitar a execução paralela da função.
 As variáveis são declaradas como \textit{mutable} e não \textit{conts} pois eventualmente vamos ter de alterar esse valores.
-Como a dedução automática para tipos de tamplates só é suportada a partir do `C++17`, temos de ter uma abordagem diferente.
+Como a dedução automática para tipos de templates só é suportada a partir do `C++17`, temos de ter uma abordagem diferente.
 Na maioria das vezes, não podemos especificar explicitamente o tipo da função pois pode ser definindo por "lambdas", e não é posível determinar o seu tipo.
-É necessário criar uma função auxiliar para que a dedução dos argumentos da função em tamplates seja automática, assim podemos usar o modelo principal com compiladores que não suportam `C++17`.
+É necessário criar uma função auxiliar para que a dedução dos argumentos da função em templates seja automática e assim podemos usar o modelo principal com compiladores que não suportam `C++17`.
 
 \begin{verbatim}
 template <typename F>
@@ -198,7 +198,7 @@ conveniente usar composicao em todo o lado, principalmente por causa de sintaxe
 e da semantica de passar variaveis por valor ou referencia. Ha um sitio, no
 entanto, onde composicao nao tem de ser pointwise: trabalhar  com coleccoes.
 Quando ha um conjunto de operacoes a fazer numa coleccao, seja na coleccao
-completa ou parte dela, expressar estas operacoes coo algum tipo de pipeline e
+completa ou parte dela, expressar estas operacoes com algum tipo de pipeline e
 bastante intuitivo, legivel, e barato em numero de caracteres escritos. Esta
 ideia nao e de agora. Em linguagens funcionais este conceito e normalmente
 implementado como listas em linguagens lazy-by-default, como Haskell, ou
@@ -372,18 +372,18 @@ struct Fac<0>{
 ```
 A declaração do template para Fac<0> deve-se ao facto de pretender-mos que uma função se comporte de determinada forma para um certo argumento. Esta técnica tem o nome de \textit{specialization} e podemos compará-la com o caso de paragem em Haskell.
 
-Existe, no entanto, uma "ligeira" diferença entre a função factorial recursiva em Haskell e C++. Na verdade, a versão em C++ não é recursiva. Cada invocação do template com argumento N instancia uma novo template com argumento (N-1).
+Existe, no entanto, uma "ligeira" diferença entre a função factorial recursiva em Haskell e C++. Na verdade, a versão em C++ não é recursiva. Cada invocação do template com argumento N instancia um novo template com argumento (N-1).
 Vejamos com detalhe o desenvolvimento da função para N = 5.
 
-\begin{verbatim}
-    Fac<5>::value   = 5 * Fac<4>::value
-                    = 5 * 4 * Fac<3>::value
-                    = 5 * 4 * 3 * Fac<2>::value
-                    = 5 * 4 * 3 * 2 * Fac<1>::value
-                    = 5 * 4 * 3 * 2 * 1 * Fac<0>::value
-                    = 5 * 4 * 3 * 2 * 1 * 1
-                    = 120
-\end{verbatim}
+```cpp
+Fac<5>::value   = 5 * Fac<4>::value
+                = 5 * 4 * Fac<3>::value
+                = 5 * 4 * 3 * Fac<2>::value
+                = 5 * 4 * 3 * 2 * Fac<1>::value
+                = 5 * 4 * 3 * 2 * 1 * Fac<0>::value
+                = 5 * 4 * 3 * 2 * 1 * 1
+                = 120
+```
 
 
 ### ADTs & Pattern Matching
@@ -560,10 +560,13 @@ using BTree = std::variant<A, struct Node>;
 #### Pattern Matching
 
 Em `C++` nao vale a pena...
+Nota: Haskell usa "first match" e C++ usa "best match"
 
 ### Concorrencia
 
 **TODO:** Aprofundar
+
+### O que não se consegue fazer em C++ sobre o paradigma funcional
 
 ## Programa Exemplo
 
