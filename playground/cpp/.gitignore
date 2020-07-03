@@ -1,12 +1,13 @@
 adder
 array
+class_templates
 const_argc
 const_argcpp
 high_order_funcs
 lazy_eval
 pair
+ranges
+reference_array
 static_size_array
 testes
-ranges
-class_templates
-reference_array
+try_prelude

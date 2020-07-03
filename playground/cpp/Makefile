@@ -10,6 +10,7 @@ EXAMPLES := \
     reference_array   \
     static_size_array \
     testes            \
+    try_prelude       \
 
 # -pthread for lazy_eval
 FLAGS := \
