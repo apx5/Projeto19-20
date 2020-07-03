@@ -1,8 +1,8 @@
 # Proposta de Projecto
 
 Para este projecto, em que o objectivo era aplicar conceitos de programação
-funcional, e, mais especificamente, comparar C++ com Haskell, pretendemos
-organizar o nosso trabalho da seguinte forma:
+funcional a C++, e, mais especificamente, comparar C++ em estilo funcional com
+Haskell, pretendemos organizar o nosso trabalho da seguinte forma:
 
  - [ ] Introdução
      - [ ] Descrição do objectivo
