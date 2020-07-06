@@ -1,4 +1,5 @@
 MD := \
+    intro.md     \
     relatorio.md \
 
 PDF := $(MD:.md=.pdf)
