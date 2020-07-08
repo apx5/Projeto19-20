@@ -4,9 +4,9 @@ Para este projecto, em que o objectivo era aplicar conceitos de programação
 funcional a C++, e, mais especificamente, comparar C++ em estilo funcional com
 Haskell, pretendemos organizar o nosso trabalho da seguinte forma:
 
- - [ ] Introdução
-     - [ ] Descrição do objectivo
-     - [ ] Descrição do que vamos detalhar durante o relatório
+ - [X] Introdução
+     - [X] Descrição do objectivo
+     - [X] Descrição do que vamos detalhar durante o relatório
  - [ ] Abordagem do paradigma funcional em Haskell e C++
      - [ ] Explicação genérica sobre o paradigma funcional
      - [ ] Haskell como linguagem funcionalmente pura

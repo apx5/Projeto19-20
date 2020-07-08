@@ -1,6 +1,7 @@
 MD := \
-    intro.md     \
-    relatorio.md \
+    intro.md          \
+    pf_haskell_cpp.md \
+    relatorio.md      \
 
 PDF := $(MD:.md=.pdf)
 
