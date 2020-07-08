@@ -47,6 +47,8 @@ há necessidade de mostrar como se faz em `Haskell`.
 Ao longo do documento serão usados pequenos programas ou excertos de código
 `Haskell` e `C++` de forma a auxiliar a análise e a comparação das linguagens.
 
+--- A introdução é só até aqui. Daqui para baixo ainda é um esboço e fará parte de um novo capitulo
+
 ## Abordagem ao Paradigma Funcional em Haskell e C++
 
 ### Explicação genérica sobre o paradigma funcional
@@ -60,8 +62,8 @@ Esta partilha nao esta especificada de forma nenhuma, e o programador que tem o
 trabalho de mentalmente verificar que o seu uso esta dentro do expectavel.
 
 O paradigma Funcional evita este problema parcial ou completamente, ao
-desencorajar ou impedir esta practica, e ao mesmo tempo encorajar e facilitar
-"boa practica".
+desencorajar ou impedir esta practica e ao mesmo tempo encorajar e facilitar
+"boa practicas".
 
 Um exemplo extremo e pouco realista seria:
 
@@ -121,7 +123,7 @@ mundo, e devolvido o resultado da computacao, e o novo mundo.[^0]
 `C++`, devido a sua heranca, promove um estilo fragil de programacao, e o
 programador que tem de se esforcar para programar num melhor. Por exemplo:
 
- * Evitar mutacao. Numa funcao que altera uma estrutura, em vez de receber a
+ * Evitar dados mutáveis. Numa funcao que altera uma estrutura, em vez de receber a
    estrutura por referencia e a alterar, sera melhor receber a estrutura por
    valor e devolver uma nova. Por razoes de performance, tambem pode ser boa
    ideia passar a estrutura por referencia `const`{.c}, que incur(??) menos
@@ -129,7 +131,23 @@ programador que tem de se esforcar para programar num melhor. Por exemplo:
  * Para um estilo de programacao mais generico, mas ao mesmo tempo mais seguro,
    preferir `templates` a `void *`, o que permite uma abstraccao de tipos, indo
    de encontro ao que acontece em `Haskell`.
- * 
+   Vejamos o exemplo de uma função que soma dois valores passados como argumento.
+   
+   ```Cpp
+   template <typename T> T add(T a, T b) {
+      return a + b;
+   };
+
+   int main(){
+      auto i = add(2,3);
+      auto f = add(2.2,4.1);
+      ...
+   }
+   ```
+   Esta função pode ser invocada com diferentes tipos, tornando desnecessária a implementação da mesma função para tipos diferentes e ganhando de forma gratuita a inferência de tipos por parte do compilador, através da keyword _auto_.
+ * Definir o que é o resultado esperado ao invés de especificar as instruções que deverão ser aplicadas 
+ * Recorrer ao uso de _lambdas_ para criar abstrações.
+ * Definir o que é o resultado esperado ao invés de especificar as instruções que deverão ser aplicadas
 
 [Tackling the Awkward Squad]: https://www.microsoft.com/en-us/research/publication/tackling-awkward-squad-monadic-inputoutput-concurrency-exceptions-foreign-language-calls-haskell
 
