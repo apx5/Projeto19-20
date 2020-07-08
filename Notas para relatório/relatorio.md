@@ -336,7 +336,7 @@ De seguida analisamos a declaração de uma variável \textit{const} e os possí
 Em 1 não há ocorrências de erros pois apenas se está a associar o valor de name a uma nova variável. Em 2 teremos um erro de compilação pois estamos a passar \textit{name} por referência a uma variável não \textit{const}, situação que é resolvida em 3.
 Em 4 voltamos a ter um erro de compilação pois estamos a criar um pointer não \textit{const} para name.
 Este erro é resolvido em 5.
-O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de \textit{name_ref} e \textit{name_ptr} não estarem qualificados com \textit{const} e poderem ser alterados. No entanto, como apontam para uma variável \textit{const}, gera-se uma contradição.
+O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de _name_ref_ e _name_ptr_ não estarem qualificados com \textit{const} e poderem ser alterados. No entanto, como apontam para uma variável \textit{const}, gera-se uma contradição.
 
 
 No entanto, por vezes existe necessidade de ter variáveis mutáveis mas que, em determinados casos, a sua alteração esteja protegida. Esse controlo pode ser feito recorrendo a mutexes que permitem o controlo de concorrência em determinadas zonas crítica de código.
