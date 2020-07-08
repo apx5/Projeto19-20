@@ -120,8 +120,8 @@ mundo, e devolvido o resultado da computacao, e o novo mundo.[^0]
 
 ### Breve descrição sobre como pensar funcionalmente em C++
 
-`C++`, devido a sua heranca, promove um estilo fragil de programacao, e o
-programador que tem de se esforcar para programar num melhor. Por exemplo:
+Devido à sua herança, `C++` promove um estilo frágil de programação, devendo ser o programador a ter
+alguma atenção e a tomar algumas decisões quando pretende usar o paradigma funcional em `C++`. Por exemplo:
 
  * Evitar dados mutáveis. Numa funcao que altera uma estrutura, em vez de receber a
    estrutura por referencia e a alterar, sera melhor receber a estrutura por
