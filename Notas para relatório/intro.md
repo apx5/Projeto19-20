@@ -1,30 +1,33 @@
 ## Introducao
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
-programadores em detrimento de outros paradigmas pois este paradigma permite
-que em poucas linhas de código (quando comparado com outros paradigmas) se
+programadores em detrimento de outros, pois este paradigma permite
+que em poucas linhas de código (quando comparado com outros estilos) se
 consiga criar soluções robustas e eficientes.
 
-Neste documento abordaremos as vantagens do paradigma funcional, como pode ser
-feita a sua implementação em `C++` e compararemos `C++` em estilo funcional com
-uma linguagem funcional, `Haskell`.
+Neste documento será dada ênfase às vantagens do paradigma funcional e de que forma podemos aproveitar essas 
+vantagens em `C++`.
 
-Iremos detalhar alguns aspectos de Programação Funcional tais como:
+Será criada uma biblioteca de funções em `C++` recorrendo a exemplos de programas escritos em Haskell e fazendo a 
+respectiva conversão equivalente em `C++ templates` através do uso de técnicas funcionais. 
+Usando esses programas iremos estudar e analisar as técnicas e características funcionais utilizadas 
+e comparar alguns aspectos como desempenho/eficiência, sintaxe, entre outros.
+
+Iremos também detalhar alguns aspectos importantes de Programação Funcional tais como:
 
  * Imutabilidade
  * Lazy Evaluation
  * Composicao
  * ADTs
 
-Destes, composicao é, provavelmente, o mais importante e talvez o único
+Destes, composição é, provavelmente, o mais importante e talvez o único
 inerente a Programação Funcional. 
+A ideia central de Programação Funcional é que construindo peças pequenas,
+fáceis de entender e de provar como correctas, é também "simples" construir um
+sistema complexo, correctamente.
 
-A ideia central de Programação Funcional é que construindo pecas pequenas,
-faceis de entender e de provar como correctas, é também fácil construir um
-sistema, mesmo que complexo, correctamente.
-
-De seguida, imutabilidade, a ideia em que objectos não são alterados, mas
-copiados, para implementar mudanças. Esta propriedade ajuda a evitar erros
+De seguida, imutabilidade, em que objectos não são alterados mas sim copiados, para implementar mudanças. 
+Esta propriedade ajuda a evitar erros
 comuns em Programação Imperativa, causados pela partilha de memória e a não
 especificação da relação entre estados.
 
@@ -39,13 +42,11 @@ sistema de tipos que ajudem a descrever o problema com que nos deparamos, dando
 significado a valores e tentando limitar o conjunto de valores possíveis aos
 estritamente válidos.
 
-Para cada um destes, mostraremos e analisaremos exemplos de como se faz em
-`Haskell` e como se pode fazer em `C++`. A unica excepcão será Lazy Evaluation,
-visto que em `Haskell` é adoptada como estrategia de avaliação e, como tal, não
-há necessidade de mostrar como se faz em `Haskell`.
+Para cada um destes pontos, mostraremos e analisaremos exemplos de como se faz em
+`Haskell` e como se pode fazer em `C++`. 
 
-Ao longo do documento serão usados pequenos programas ou excertos de código
-`Haskell` e `C++` de forma a auxiliar a análise e a comparação das linguagens.
+Quando necessário e para uma melhor elucidação sobre as questões que estão a ser analisadas, serão usados pequenos excertos de código em ambas as linguagens. 
+
 
 --- A introdução é só até aqui. Daqui para baixo ainda é um esboço e fará parte de um novo capitulo
 
