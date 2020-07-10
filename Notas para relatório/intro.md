@@ -13,6 +13,10 @@ respectiva conversão equivalente em `C++ templates` através do uso de técnica
 Usando esses programas iremos estudar e analisar as técnicas e características funcionais utilizadas 
 e comparar alguns aspectos como desempenho/eficiência, sintaxe, entre outros.
 
+O uso de `C++ templates` permite escrever programas genéricos, isto é, polimorficos e obter vantagens
+como avaliação em tempo de compilação, traduzindo-se num ganho de eficiência e menor probabilidade de erros
+em _runtime_.
+
 Iremos também detalhar alguns aspectos importantes de Programação Funcional tais como:
 
  * Imutabilidade
