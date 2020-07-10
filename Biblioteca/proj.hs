@@ -23,3 +23,14 @@ foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
 
 foldl f b [] = b
 foldl f b (h:t) = foldl f (f b h) t         
+
+zip:: [a] -> [b] -> [(a,b)]
+zip = zipWith (,)
+
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith f [] _ = []
+zipWith f _ [] = []
+zipWith f (h:t) (x:xs) = (f h x) : zipWith f t xs
+
+iterate:: (a -> a) -> a -> [a]
+iterate f a = a: iterate f (f a)
