@@ -12,67 +12,55 @@ struct libraries {
 	int n_books;
 	int n_libraries;
 	int n_days;
-	std::vector<int> book_score;
+	std::vector<int> book_scores;
 	std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> libraries;
 };
 
-struct output {
-	int n_libs;
-	std::vector<std::tuple<int, int, std::vector<int>>> libs;
-};
+typedef std::vector<std::tuple<int, int, std::vector<int>>> output_t;
 
 std::pair<int, int> on_ts_bd (std::pair<int, std::tuple<int, int, int, std::vector<int>>> pt)
 {
-	auto tup = pt.second;
-	return std::make_pair(
-			std::get<1>(tup),
-			std::get<2>(tup));
+	int ts, bd;
+	std::tie(std::ignore, ts, bd, std::ignore) = pt.second;
+	return std::make_pair(ts, bd);
 }
 
 struct libraries read_libraries (void)
 {
-	struct libraries ret;
 	std::string input(std::istreambuf_iterator<char>{std::cin}, {});
-	std::vector<std::vector<int>> values_ = fplus::fwd::apply(input,
+	std::vector<std::vector<int>> values = fplus::fwd::apply(
+			input,
 			fplus::fwd::split_lines(false),
 			fplus::fwd::transform([](std::string line) -> std::vector<int> {
-				return fplus::fwd::apply(line,
+				return fplus::fwd::apply(
+						line,
 						fplus::fwd::split_words(false),
 						fplus::fwd::transform(fplus::read_value_unsafe<int>));
 				}));
-	std::list<std::vector<int>> values(values_.begin(), values_.end());
+
+	struct libraries ret;
 
 	{ /* Primeira linha */
-		std::vector<int> line = values.front();
-		values.pop_front();
-
-		ret.n_books = line[0];
-		ret.n_libraries = line[1];
-		ret.n_days = line[2];
+		ret.n_books = values[0][0];
+		ret.n_libraries = values[0][1];
+		ret.n_days = values[0][2];
 	}
 
 	{ /* Segunda linha */
-		ret.book_score = values.front();
-		values.pop_front();
+		ret.book_scores = values[1];
 	}
 
 	{ /* Resto */
 		ret.libraries.reserve(ret.n_libraries);
-
 		for (int i = 0; i < ret.n_libraries; i++) {
-			std::vector<int> props = values.front();
-			values.pop_front();
-
-			std::vector<int> books = values.front();
-			values.pop_front();
+			std::vector<int> props = values[2 * i + 2 + 0];
+			std::vector<int> books = values[2 * i + 2 + 1];
 
 			int n_books = props[0];
 			int sign_up = props[1];
 			int books_per_day = props[2];
 
-			auto tup = std::make_tuple(n_books, sign_up, books_per_day, books);
-
-			ret.libraries.push_back(std::make_pair(i, tup));
+			ret.libraries.push_back(std::make_pair(i, std::make_tuple(n_books, sign_up, books_per_day, books)));
 		}
 	}
 
@@ -83,16 +71,17 @@ struct libraries read_libraries (void)
 
 struct libraries distinct (struct libraries libs)
 {
-	libs.libraries = fplus::fwd::apply(libs.libraries,
+	libs.libraries = fplus::fwd::apply(
+			libs.libraries,
 			fplus::fwd::fold_left(
-				[](auto a, auto b) {
-				auto ret = fplus::fst(a);
-				std::set<int> s = fplus::snd(a);
+				[](std::pair<std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>>, std::set<int>> a, std::pair<int, std::tuple<int, int, int, std::vector<int>>> b) {
+				std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> ret = a.first;
+				std::set<int> s = a.second;
 
-				auto id = fplus::fst(b);
-				auto ts = std::get<1>(fplus::snd(b));
-				auto bd = std::get<2>(fplus::snd(b));
-				std::vector<int> bs = std::get<3>(fplus::snd(b));
+				int id = b.first;
+				int ts, bd;
+				std::vector<int> bs;
+				std::tie(std::ignore, ts, bd, bs) = b.second;
 
 				std::set<int> bss(bs.begin(), bs.end());
 				std::set<int> bs_ = fplus::set_difference(bss, s);
@@ -112,13 +101,13 @@ struct libraries distinct (struct libraries libs)
 				},
 		std::make_pair(std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>>(), std::set<int>())),
 		fplus::fwd::fst(),
-		fplus::fwd::keep_if([](auto pt) { return !std::get<3>(pt.second).empty(); }),
-		fplus::fwd::transform(fplus::fwd::transform_snd([libs](auto tup) {
-					return std::make_tuple(
-							std::get<0>(tup),
-							std::get<1>(tup),
-							std::get<2>(tup),
-							fplus::sort_on([libs](int bid) { return libs.book_score[bid]; }, std::get<3>(tup)));
+		fplus::fwd::keep_if([](std::pair<int, std::tuple<int, int, int, std::vector<int>>> pt) { return !std::get<3>(pt.second).empty(); }),
+		fplus::fwd::transform(fplus::fwd::transform_snd([libs](std::tuple<int, int, int, std::vector<int>> tup) {
+					int nb, ts, bd;
+					std::vector<int> bs;
+					std::tie(nb, ts, bd, bs) = tup;
+					bs = fplus::sort_on([libs](int bid) { return libs.book_scores[bid]; }, bs);
+					return std::make_tuple(nb, ts, bd, bs);
 					}))
 	);
 	return libs;
@@ -127,11 +116,12 @@ struct libraries distinct (struct libraries libs)
 std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> solve_ (int n_days, std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> libs)
 {
 	std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> ret;
+	int len = libs.size();
+	assert(len > 0);
 
-	for (int i = 0; i < n_days && !libs.empty(); i++) {
-		auto e = fplus::head(libs);
-		auto ts = std::get<1>(e.second);
-		libs = fplus::tail(libs);
+	for (int i = 0; i < len && n_days > 0; i++) {
+		std::pair<int, std::tuple<int, int, int, std::vector<int>>> e = libs[i];
+		int ts = std::get<1>(e.second);
 
 		if (ts <= n_days) {
 			ret.push_back(e);
@@ -142,32 +132,29 @@ std::vector<std::pair<int, std::tuple<int, int, int, std::vector<int>>>> solve_ 
 	return ret;
 }
 
-struct output solve (struct libraries libs)
+output_t solve (struct libraries libs)
 {
-	struct output ret;
 	libs = distinct(libs);
-	ret.libs = fplus::fwd::apply(solve_(libs.n_days, libs.libraries),
+	return fplus::fwd::apply(
+			solve_(libs.n_days, libs.libraries),
 			fplus::fwd::sort_on(&on_ts_bd),
-			fplus::fwd::transform([](auto pt) {
+			fplus::fwd::transform([](std::pair<int, std::tuple<int, int, int, std::vector<int>>> pt) {
 				int id = pt.first;
-				auto nb = std::get<0>(pt.second);
-				auto bs = std::get<3>(pt.second);
+				int nb;
+				std::vector<int> bs;
+				std::tie(nb, std::ignore, std::ignore, bs) = pt.second;
 				return std::make_tuple(id, nb, bs);
 				}));
-
-	ret.n_libs = ret.libs.size();
-
-	return ret;
 }
 
-void output_to_string (struct output output)
+void output_to_string (output_t output)
 {
-	std::cout << output.n_libs << std::endl;
+	std::cout << output.size() << std::endl;
 
-	for (const auto & lib : output.libs) {
-		auto x = std::get<0>(lib);
-		auto y = std::get<1>(lib);
-		auto l = std::get<2>(lib);
+	for (const std::tuple<int, int, std::vector<int>> & lib : output) {
+		int x, y;
+		std::vector<int> l;
+		std::tie(x, y, l) = lib;
 
 		std::cout << x << " " << y << std::endl;
 
@@ -182,7 +169,7 @@ void output_to_string (struct output output)
 	}
 }
 
-//void output_to_string (struct output output)
+//void output_to_string (output_t output)
 //{
 //	std::string str = fplus::fwd::apply(
 //			output.libs,

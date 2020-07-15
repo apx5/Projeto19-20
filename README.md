@@ -12,13 +12,13 @@ Haskell, pretendemos organizar o nosso trabalho da seguinte forma:
      - [ ] Haskell como linguagem funcionalmente pura
      - [ ] Breve descrição sobre como pensar funcionalmente em C++
  - [ ] Criação de uma biblioteca funcional em C++, com programas de exemplos em
-   Haskell e C++, e a sua explicação
+       Haskell e C++, e a sua explicação
  - [ ] Comparação mais detalhada de aspectos do paradigma funcional em Haskell
-   e C++
+       e C++
  - [ ] Conclusões
 
 Se houver tempo, pretendemos ainda incluir os seguintes tópicos:
 
  - [ ] Um programa mais elaborado para comparar a implementação nas duas
-   linguagens
+       linguagens
  - [ ] Características do paradigma funcional que não são implementáveis em C++
