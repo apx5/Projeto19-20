@@ -1,6 +1,5 @@
 EXECS := \
 	Solve_hs \
-	Solve-c_hs \
 	solve_cpp
 
 GHC := ghc
