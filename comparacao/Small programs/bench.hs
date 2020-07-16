@@ -17,7 +17,8 @@ doall input = seq readLines (foldl (\r x -> r + (read x)) 0 readLines)
 benches :: [ (String, [Int] -> [Int]) ]
 benches = [
         ("map (*2)", map (*2)),
-        ("filter even", filter even)
+        ("filter even", filter even),
+        ("reverse", reverse)
         ]
 
 force x = seq x x
@@ -27,7 +28,7 @@ benchAll :: [ (String, [Int] -> [Int]) ] -> [Int] -> [(String, IO (Double, [Int]
 benchAll benches l = do
         (name, bench) <- benches
         let x = bench l
-        let t = timeItT ((return :: a -> IO a) $! deepforce x)
+        let t = timeItT ((return :: a -> IO a) (deepforce x))
         return (name, t)
 
 main = do

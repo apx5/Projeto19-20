@@ -9,7 +9,7 @@
 
 using namespace std::chrono;
 
-#define benchmark_this_shit(str, func) \
+#define benchmark(str, func) \
 	do { \
 	    auto start = high_resolution_clock::now(); \
 	    (void) func; \
@@ -28,10 +28,10 @@ int main (void)
     auto dbl = [] (int x){ return x + x;};
     auto even = [](int x) { return x % 2 == 0; };
 
-    benchmark_this_shit("map (*2)", map(dbl, input_vector));
-    benchmark_this_shit("filter even", filter(even, input_vector));
-    benchmark_this_shit("reverse", reverse(input_vector));
-    benchmark_this_shit("zip", zip(input_vector, input_vector));
+    benchmark("map (*2)", map(dbl, input_vector));
+    benchmark("filter even", filter(even, input_vector));
+    benchmark("reverse", reverse(input_vector));
+    benchmark("zip", zip(input_vector, input_vector));
 
     return 0;
 }
