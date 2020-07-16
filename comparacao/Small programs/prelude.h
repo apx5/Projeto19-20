@@ -20,6 +20,7 @@ template <Function FN, Container CN, Type A,
           typename AllocB = std::allocator<B>>
 auto map(const FN& f, const CN<A, AllocA>& c) -> CN<B, AllocB> {
   auto res = CN<B, AllocB>{};
+  res.reserve(c.size());
   std::transform(std::begin(c), std::end(c), std::back_inserter(res), f);
   return res;
 }
@@ -65,6 +66,7 @@ template <Container CA, Type A, typename AllocA = std::allocator<A>,
 auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
     -> CRES<RES, AllocRES> {
   auto res = CRES<RES, AllocRES>{};
+  res.reserve((left.size() < right.size()) ? left.size() : right.size());
   auto l = std::begin(left);
   auto r = std::begin(right);
   while (l != std::end(left) && r != std::end(right)) {
