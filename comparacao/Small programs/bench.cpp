@@ -28,10 +28,10 @@ int main (void)
     auto dbl = [] (int x){ return x + x;};
     auto even = [](int x) { return x % 2 == 0; };
 
-    benchmark("map (*2)", map(dbl, input_vector));
-    benchmark("filter even", filter(even, input_vector));
-    benchmark("reverse", reverse(input_vector));
-    benchmark("zip", zip(input_vector, input_vector));
+    benchmark("filter even",               filter(even, input_vector));
+    benchmark("map (*2)",                  map(dbl, input_vector));
+    benchmark("reverse",                   reverse(input_vector));
+    benchmark("uncurry zip . split id id", zip(input_vector, input_vector));
 
     return 0;
 }
