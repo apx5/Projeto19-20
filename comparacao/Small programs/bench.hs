@@ -14,24 +14,24 @@ readInput :: String -> [Int]
 readInput input = map (read :: String -> Int) readLines
     where readLines = lines input
 
-newtype Benchmark a = Benchmark (String, (a -> ()))
+newtype Benchmark = Benchmark (String, IO ())
 
-makeBenchmark :: NFData b => String -> (a -> b) -> Benchmark a
-makeBenchmark name func = Benchmark (name, \a -> deepseq (func a) ())
+makeBenchmark :: NFData b => String -> a -> (a -> b) -> Benchmark
+makeBenchmark name a func = Benchmark (name, return . const () . deepforce . func $ a)
 
-benchmarks :: [ Benchmark [Int] ]
-benchmarks = [
-        makeBenchmark "filter even"               (filter even),
-        makeBenchmark "map (*2)"                  (map (*2)),
-        makeBenchmark "reverse"                   reverse,
-        makeBenchmark "uncurry zip . split id id" (uncurry zip . split id id)
+benchmarks :: [Int] -> [ Benchmark ]
+benchmarks l = [
+        makeBenchmark "filter even"               l (filter even),
+        makeBenchmark "map (*2)"                  l (map (*2)),
+        makeBenchmark "reverse"                   l reverse,
+        makeBenchmark "uncurry zip . split id id" l (uncurry zip . split id id)
         ]
 
-runBenchmark :: NFData a => a -> Benchmark a -> (String, IO Double)
-runBenchmark a (Benchmark (name, func)) = (name, fmap fst . timeItT . (return :: a -> IO a) . deepforce $! a)
+runBenchmark :: Benchmark -> (String, IO Double)
+runBenchmark (Benchmark (name, func)) = (name, fmap fst $ timeItT func)
 
-benchmarkAll :: NFData a => a -> [ Benchmark a ] -> [(String, IO Double)]
-benchmarkAll l = map (runBenchmark l)
+benchmarkAll :: [ Benchmark ] -> [(String, IO Double)]
+benchmarkAll = map runBenchmark
 
 printer :: (String, IO Double) -> IO ()
 printer (name, iotime) = iotime >>= printer_
@@ -41,5 +41,5 @@ main :: IO ()
 main = do
         input <- getContents
         let l = readInput input
-        let res = benchmarkAll l benchmarks
-        forM_ res printer
+        let results = benchmarkAll . benchmarks $! l
+        forM_ results printer
