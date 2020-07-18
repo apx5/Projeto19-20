@@ -1,21 +1,17 @@
-#include <iostream>
-#include "prelude.h"
-#include <vector>
-#include <cstdlib>
-#include <string>
-#include <fstream>
 #include <chrono>
-#include <tuple>
+#include <ctime>
+#include <iostream>
+#include <vector>
 
-using namespace std::chrono;
+#include "prelude.h"
 
 #define benchmark(str, func) \
 	do { \
-	    auto start = high_resolution_clock::now(); \
-	    (void) func; \
-	    auto stop = high_resolution_clock::now(); \
-	    auto duration = duration_cast<milliseconds>(stop - start); \
-	    std::cout << str << ": " << duration.count() << " milliseconds" <<  std::endl; \
+	    auto start = std::clock();                                            \
+	    (void) func;                                                          \
+	    auto stop = std::clock();                                             \
+	    auto duration = 1000000000 * (stop - start) / CLOCKS_PER_SEC;         \
+	    std::cout << str << ": " << duration << " nanoseconds" <<  std::endl; \
 	} while (0)
 
 int main (void)

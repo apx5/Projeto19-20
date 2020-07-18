@@ -1,45 +1,34 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Main where
 
 import Control.DeepSeq
-import Control.Monad
-import Data.List
-import System.TimeIt
+import Control.Monad.IO.Class (MonadIO(liftIO))
+import System.CPUTime
 import Text.Printf
 
 split f g x = (f x, g x)
-force x = seq x x
 deepforce x = deepseq x x
 
 readInput :: String -> [Int]
 readInput input = map (read :: String -> Int) readLines
     where readLines = lines input
 
-newtype Benchmark = Benchmark (String, IO ())
-
-makeBenchmark :: NFData b => String -> a -> (a -> b) -> Benchmark
-makeBenchmark name a func = Benchmark (name, return . const () . deepforce . func $ a)
-
-benchmarks :: [Int] -> [ Benchmark ]
-benchmarks l = [
-        makeBenchmark "filter even"               l (filter even),
-        makeBenchmark "map (*2)"                  l (map (*2)),
-        makeBenchmark "reverse"                   l reverse,
-        makeBenchmark "uncurry zip . split id id" l (uncurry zip . split id id)
-        ]
-
-runBenchmark :: Benchmark -> (String, IO Double)
-runBenchmark (Benchmark (name, func)) = (name, fmap fst $ timeItT func)
-
-benchmarkAll :: [ Benchmark ] -> [(String, IO Double)]
-benchmarkAll = map runBenchmark
-
-printer :: (String, IO Double) -> IO ()
-printer (name, iotime) = iotime >>= printer_
-        where printer_ time = putStrLn (name ++ ": " ++ printf "%f" (time * 1000) ++ " milliseconds")
+-- Adapted from https://github.com/stackbuilders/reverse/blob/fa120ba688aea328a587cbb1971280c22085a257/benchmarks/ClockBenchmarks.hs
+timeSomething :: NFData a => String -> a -> IO ()
+timeSomething str something = do
+  start <- liftIO getCPUTime
+  let !result = deepforce $! something
+  end <- liftIO getCPUTime
+  let diff = round $ (fromIntegral $ end - start) * 1e-3
+  putStrLn $ str ++ ": " ++ show diff ++ " nanoseconds"
 
 main :: IO ()
 main = do
-        input <- getContents
-        let l = readInput input
-        let results = benchmarkAll . benchmarks $! l
-        forM_ results printer
+    input <- getContents
+    let !l = deepforce $ readInput input
+
+    timeSomething "filter even"               $ filter even l
+    timeSomething "map (*2)"                  $ map (*2) l
+    timeSomething "reverse"                   $ reverse l
+    timeSomething "uncurry zip . split id id" $ zip l l
