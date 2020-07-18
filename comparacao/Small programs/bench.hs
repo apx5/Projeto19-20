@@ -11,8 +11,7 @@ split f g x = (f x, g x)
 deepforce x = deepseq x x
 
 readInput :: String -> [Int]
-readInput input = map (read :: String -> Int) readLines
-    where readLines = lines input
+readInput = map (read :: String -> Int) . lines
 
 -- Adapted from https://github.com/stackbuilders/reverse/blob/fa120ba688aea328a587cbb1971280c22085a257/benchmarks/ClockBenchmarks.hs
 timeSomething :: NFData a => String -> a -> IO ()
