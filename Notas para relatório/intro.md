@@ -1,3 +1,7 @@
+% Titulo
+% Autor1; Autor2; Autor3
+% Data
+
 ## Introducao
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
@@ -343,12 +347,14 @@ Em `C++` usamos `std::clock()` do _header_ `<ctime>`, com o seguite macro:
 ```cpp
 #define benchmark(str, func) \
   do { \
-    auto start = std::clock();                                    \
-    (void) func;                                                  \
-    auto stop = std::clock();                                     \
-    auto duration = 1000000000 * (stop - start) / CLOCKS_PER_SEC; \
-    std::cout << str << ": " << duration                          \
-              << " nanoseconds" <<  std::endl;                    \
+    auto start = std::clock();                 \
+    (void) func;                               \
+    auto stop = std::clock();                  \
+    auto duration = 1000000000                 \
+                  * (stop - start)             \
+                  / CLOCKS_PER_SEC;            \
+    std::cout << str << ": " << duration       \
+              << " nanoseconds" <<  std::endl; \
   } while (0)
 ```
 
