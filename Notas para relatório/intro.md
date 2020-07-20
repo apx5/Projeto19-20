@@ -146,7 +146,7 @@ Neste capítulo, faremos uma comparação mais específica sobre programas escri
 em âmbas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
 equivalentes. Durante a pesquisa que efectuamos, encontramos duas bibliotecas
 que tentam transpôr o paradigma funcional para `C++`, de encontro ao que
-estamos também a fazer. Vamos tomar como exemplo alguns programas pequenos para
+estamos também a fazer ( paradigma -> linguagem, que vai de encontro aos objectiovos do nosso projeto). Vamos tomar como exemplo alguns programas pequenos para
 facilitar a comparação, usando a biblioteca _"CPP Prelude"_[^cpp_prelude] e
 terminaremos com um programa mais robusto que foi utilizado na ronda de
 qualificação do _Google Hash Code 2020_, do qual tinhamos a versão em `Haskell`
@@ -156,10 +156,11 @@ Plus"_[^fplus].
 ---
 
 De forma a efectuar a comparação de pequenos programas geramos um ficheiro de
-input com 10000000 inteiros, que serão lidos pelo programa e depois serão
-aplicadas algumas funções. Note-se que deixamos de fora da análise de
+input com 10000000 inteiros, que serão lidos (e processadas/analisadas/camparadas) pelo programa (e depois serão
+aplicadas algumas funções). Note-se que deixamos de fora da análise de
 performance o processo de leitura do ficheiro. Focaremos a comparação na
 aplicação de funções específicas em `Haskell` e `C++`.
+(Detalhes: comparação de performance e da forma das funções ...)
 
 A biblioteca _"CPP Prelude"_ tem os seguintes `define`s para simplificar a
 leitura.
@@ -172,7 +173,7 @@ leitura.
 #define Number typename
 #define Ordinal typename
 ```
-
+(Vejamos então a aplicação que recebe uma lista e retorna uma lista aplicando uma função 'x' a cada elemento.)
 Vejamos então a aplicação de uma função que multiplica todos os elementos de
 uma lista por $2$. Em `Haskell` uma definição possível é:
 
@@ -203,10 +204,12 @@ com menos "floreado".
 
 Ao contrário do `Haskell`, em `C++` é necessário criar um _container_ (`res`) onde
 serão guardados os resultados depois de aplicar a função. Em `Haskell` isto é
-feito de forma escondida ao programador. No entanto, o programador pode tirar
+feito de forma (escondida ao programador). No entanto, o programador pode tirar
 proveito da inferência de tipos do compilador de `C++` e relaxar um pouco nos
 tipos utilizando `auto`.
 
+(Pode-se observar outra diferença na ...)
+(Uma outra diferença (é a)/(está na) ...)
 Uma outra diferença é também na definição da função passada ao `map`. Em
 `Haskell` fazendo
 
@@ -215,21 +218,107 @@ map (*2) lista
 ```
 
 obtemos imediatamente o resultado. Por outro lado, em `C++` é necessário definir
-explicitamente, podendo ser feito da seguinte forma:
+explicitamente (a função de map ...), podendo ser feito da seguinte forma:
 
 ```cpp
 auto f = [] (int x) {return x * 2;};
 ```
 
-e agora sim, poderá ser invocado `map` com a função `f`:
+e agora sim, poderá ser invocado `map` com a função `f`: (o _map_ poderá ser invocado com a função `f`)
 
 ```cpp
 auto r = map(lista, f);
 ```
 
-Relativamente à eficiencia, executando ambos os programas com a mesma lista de
-input, `Haskell` sai claramente em vantagem. Em `Haskell` obtivemos $0.002$
-milisegundos e em `C++` $48$ milisegundos.
+Relativamente à eficiencia (, executando ambos os programas com a mesma lista de
+input, `Haskell` sai claramente em vantagem). Em `C++` obtivemos $29$
+milisegundos e em `Haskell` $135$ milisegundos.
+
+A segunda função que comparamos foi o `filter`, que é uma função que recebe uma lista e aplica uma função a todos os elementos dessa lista, a função aplicada neste caso foi a função `even` obtendo uma lista com somente os números pares.
+
+Em Haskell uma definição possível é:
+```hs
+  filter' :: (a -> Bool) -> [a] -> [a]
+  filter' f [] = []
+  filter' f (h:t)  | f h = h: filter' f t
+                  | otherwise = filter' f t
+```
+
+Já do lado de C++ temos:
+```cpp
+  template <Predicate PR, Container CN, Type A,
+            typename AllocA = std::allocator<A>>
+  auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
+    auto res = CN<A, AllocA>{};
+    res.reserve(c.size());
+    std::copy_if(std::begin(c), std::end(c), std::back_inserter(res), p);
+    res.shrink_to_fit();
+    return res;
+  }
+
+```
+
+Para esta função em `C++` também é necessário um _container_ (res). Foi utilizado o método _shrink_to_fit_ dos vectores para remover a capacidade não utilizada, não ocupando memória desnecessária.
+Esta função é muito similar ao `map`, apresentando os mesmo aspectos em termos de análise visual e sintáctica.
+
+Em relação a eficiência, `C++` continua com excelentes resultados de $59$ milissegundos comparados os $145$ milissegundos em `Haskell`.
+
+A nossa terceira função escolhida foi a função `reverse` que basicamente recebe uma lista e devolve uma lista invertida.
+
+Em Haskell uma definição possível é:
+```hs
+  reverse :: [a] -> [a]
+  reverse = foldl (flip (:)) []
+```
+
+Já do lado de C++ temos:
+```cpp
+  template <Container CN, Type A, typename AllocA = std::allocator<A>>
+  auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
+    auto res = CN<A, AllocA>{c};
+    std::reverse(std::begin(res), std::end(res));
+    return res;
+  }
+```
+
+Neste caso já não é necessário criar um _container_ em `C++`??
+
+Em termos visuais a linguagem Haskell apresenta uma solução mais sucinta e de fácil leitura comparado com `C++`. (repetitivo ...)
+
+Comparando os dois programas em termos de eficiência notamos, como esperado, um melhor desempenho do `C++` com 28 milissegundo contra 744 milissegundos do `Haskell`.
+
+Para concluir o primeiro conjunto de funções escolhemos a função `zip`. A função `zip` recebe duas listas e retorna uma lista de tuplos que a cada elemento da primeira lista faz corresponder um elemento da segunda, caso as listas tenham tamanhos diferentes a menor lista dita o tamanho final.
+
+Em Haskell uma definição possível é:
+```hs
+  zip:: [a] -> [b] -> [(a,b)]
+  zip = zipWith (,)
+```
+
+Já do lado de C++ temos:
+```cpp
+  template <Container CA, Type A, typename AllocA = std::allocator<A>,
+            Container CB, Type B, typename AllocB = std::allocator<B>,
+            Container CRES = CA, typename RES = std::tuple<A, B>,
+            typename AllocRES = std::allocator<RES>>
+  auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
+      -> CRES<RES, AllocRES> {
+    auto res = CRES<RES, AllocRES>{};
+    res.reserve((left.size() < right.size()) ? left.size() : right.size());
+    auto l = std::begin(left);
+    auto r = std::begin(right);
+    while (l != std::end(left) && r != std::end(right)) {
+      res.emplace_back(*l, *r);
+      ++l;
+      ++r;
+    }
+    return res;
+}
+```
+
+Nesta função notamos uma grande diferença visual em termos de código, em `Haskell` temos um código muito menor do que em `C++` e muito menos sujeito a erros de escrita. (por numa conclusão ...)
+
+Nesta função em `C++` precisamos novamente de um _container_ (res) e em termos de desempenho a função em `C++` executou em $54$ milissegundos e $136$ milissegundos em `Haskell`.
 
 ---
 
