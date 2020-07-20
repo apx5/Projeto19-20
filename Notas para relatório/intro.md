@@ -2,7 +2,7 @@
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
 programadores em detrimento de outros, pois permite que em poucas linhas de
-código (quando comparado com outros estilos) se consiga criar soluções robustas
+código, quando comparado com outros estilos, se consiga criar soluções robustas
 e eficientes.
 
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
@@ -11,8 +11,7 @@ forma podemos aproveitar essas vantagens em `C++`.
 Iremos estudar e analisar as características funcionais em programas escritos
 em `C++`, através de algumas bibliotecas existentes para esse efeito e,
 aproveitaremos para efectuar uma análise comparativa de performance, sintaxe,
-etc, através de programas que resolvem o mesmo problema em âmbas as linguagens.
-(**TODO**: qual e a outra lingaugem?)
+etc, através de programas que resolvem o mesmo problema em `C++` e `Haskell`.
 
 O uso de `template`s em `C++` traz algumas vantagens à programação em estilo
 funcional, nomeadamente a possibilidade de fazer programação genérica, isto é,
@@ -25,7 +24,7 @@ Programação Funcional tais como:
 
  * Imutabilidade
  * Lazy Evaluation
- * Composicao
+ * Composição
  * ADTs
 
 Quando necessário, e para uma melhor elucidação sobre as questões que estão a
@@ -37,17 +36,15 @@ linguagens.
 
 ### Explicação genérica sobre o paradigma funcional
 
-O paradigma funcional é um estilo de programação que modela a computação como
-avaliação de expressões. Na programação funcional, os programas são executados
-através da avaliação de expressões em contraste, por exemplo, com o paradigma
-imperativo onde os programas são compostos por declarações/instruções que vão
-alterando o estado global à medida que executam. Isto significa que os
-procedimentos podem ter acesso a estado global e/ou partilhado entre varios
-procedimentos. Esta partilha não está especificada de forma nenhuma e,
-portanto, tem de ser o programador a cuidar e evitar que problemas aconteçam.
-O paradigma Funcional evita este problema parcial ou completamente, ao
-desencorajar ou impedir esta prática e ao mesmo tempo encorajar e facilitar
-"boa pratica".
+Na programação funcional, os programas são executados através da avaliação de
+expressões, em contraste, por exemplo, com o paradigma imperativo onde os
+programas são compostos por instruções que vão alterando o estado global à
+medida que executam. Isto significa que os procedimentos podem ter acesso a
+estado global e/ou partilhado entre varios procedimentos. Esta partilha não
+está especificada de forma nenhuma e, portanto, tem de ser o programador a
+cuidar e evitar que problemas aconteçam. O paradigma Funcional evita este
+problema parcial ou completamente, ao desencorajar ou impedir esta prática e,
+ao mesmo tempo, encorajar e facilitar "boa pratica".
 
 Um exemplo extremo e pouco realista seria:
 
@@ -67,7 +64,7 @@ Deste pequeno excerto, podemos concluir uma de duas hipoteses:
     fazem nada de útil e, portanto, `accoes` também não faz nada de útil;
 
  2. Cada um dos procedimentos faz algo de util, mas para tal acede e altera
-    alguma estrutura de dados partilhada; esta relacao input-output não é
+    alguma estrutura de dados partilhada; esta relacao _input_-_output_ não é
     explicita.
 
 Por outro lado, numa linguagem funcional escreveriamos (em notacao `Haskell`)
@@ -79,8 +76,6 @@ estrutura de dados.
 Este problema de alteração implicita de estado agrava-se ainda mais num
 contexto concorrente com threads e partilha de memoria.
 
----
-
 ### `Haskell` como linguagem funcionalmente pura
 
 `Haskell` adopta o paradigma Funcionalmente Puro, o que quer dizer que um
@@ -88,16 +83,16 @@ programa é uma funcao no sentido matematico, ou seja, dado o mesmo _input_ é
 sempre devolvido o mesmo _output_.
 
 Para se implementar efeitos secundários, em `Haskell`, em vez de se aceder ao
-mundo e se alterar implicitamente, como na maioria das linguagens, este é
+mundo e (zaz) se alterar implicitamente, como na maioria das linguagens, este é
 recebido como um argumento, e as mudanças são feitas sobre esse argumento.
 
-Para dar melhor a entender, vejamos um exemplo: `puts`{.c}. O seu prototipo em
-`C` e `int puts (const char *s)`{.c}. A string parametro `s` vai ser impressa
+Para dar melhor a entender, vejamos um exemplo: `puts`{.c}. O seu protótipo em
+`C` é `int puts (const char *s)`{.c}. A string parâmetro `s` vai ser impressa
 no `stdout`, mas nada no tipo da função nos diz que assim é.
 
 Em `Haskell`, a função equivalente é `putStrLn`, com tipo `String -> IO
-()`{.hs}, e o efeito secundário de imprimir a string de input no `stdout` está
-descrito no próprio tipo da função: `IO ()`.
+()`{.hs}, e o efeito secundário de imprimir a string de _input_ no `stdout`
+está descrito no próprio tipo da função: `IO ()`.
 
 Pode-se pensar neste `IO a` como sendo `World -> (a, World)`, ou seja, dado um
 mundo, é devolvido o resultado da computação, e o novo mundo.[^awkward_squad]
@@ -134,7 +129,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    ```
 
    Esta função pode ser invocada com diferentes tipos, tornando desnecessária a
-   implementação da mesma função para tipos diferentes e ganhando de forma
+   implementação da mesma função para tipos diferentes, e ganhando de forma
    gratuita a inferência de tipos por parte do compilador, através da keyword
    `auto`.
 
@@ -145,42 +140,41 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
 Neste capítulo, faremos uma comparação mais específica sobre programas escritos
 em âmbas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
 equivalentes. Durante a pesquisa que efectuamos, encontramos duas bibliotecas
-que tentam transpôr o paradigma funcional para `C++`, de encontro ao que
-estamos também a fazer ( paradigma -> linguagem, que vai de encontro aos objectiovos do nosso projeto). Vamos tomar como exemplo alguns programas pequenos para
-facilitar a comparação, usando a biblioteca _"CPP Prelude"_[^cpp_prelude] e
-terminaremos com um programa mais robusto que foi utilizado na ronda de
-qualificação do _Google Hash Code 2020_, do qual tinhamos a versão em `Haskell`
-e fizemos a conversão para `C++` utilizando a biblioteca _"Functional
-Plus"_[^fplus].
+que tentam transpôr o paradigma funcional para `C++`, que vão de encontro aos
+objectivos do nosso projeto. Vamos começar por algumas funções sobre listas do
+_prelude_ do `Haskell`, usando a biblioteca _"CPP Prelude"_[^cpp_prelude], para
+uma comparação mais directa, e terminaremos com um programa mais robusto que
+foi utilizado na ronda de qualificação do _Google Hash Code 2020_, do qual
+tinhamos a versão em `Haskell` e fizemos a conversão para `C++` utilizando a
+biblioteca _"Functional Plus"_[^fplus], para uma comparação mais realista.
 
----
+#### _Prelude_
 
-De forma a efectuar a comparação de pequenos programas geramos um ficheiro de
-input com 10000000 inteiros, que serão lidos (e processadas/analisadas/camparadas) pelo programa (e depois serão
-aplicadas algumas funções). Note-se que deixamos de fora da análise de
-performance o processo de leitura do ficheiro. Focaremos a comparação na
-aplicação de funções específicas em `Haskell` e `C++`.
-(Detalhes: comparação de performance e da forma das funções ...)
+(**TODO**: que tipo de comparacao?) De forma a efectuar a comparação de
+pequenos programas geramos um ficheiro de _input_ com uma lista de 10000000 de
+inteiros. Note-se que deixamos de fora da análise o processo de leitura do
+ficheiro. Focaremos a comparação na aplicação de funções específicas em
+`Haskell` e `C++`. Vamos apresentar primeiramente uma definição possível para
+cada função nas duas linguagens, e no fim apresentamos os tempos de execução.
 
-A biblioteca _"CPP Prelude"_ tem os seguintes `define`s para simplificar a
-leitura.
+##### `map`
 
-```cpp
-#define Container template <typename, typename> class
-#define Function typename
-#define Predicate typename
-#define Type typename
-#define Number typename
-#define Ordinal typename
-```
-(Vejamos então a aplicação que recebe uma lista e retorna uma lista aplicando uma função 'x' a cada elemento.)
-Vejamos então a aplicação de uma função que multiplica todos os elementos de
-uma lista por $2$. Em `Haskell` uma definição possível é:
+Comecemos pelo `map`{.hs}. Esta função _mapeia_ todos os elementos de uma dada
+lista com uma dada função. Por exemplo, em `Haskell`, se tivermos uma lista de
+inteiros `l :: [Int]`{.hs} e quisermos duplicar todos os elements da lista,
+basta chamar `map (*2) l`{.hs}.
+
+**TODO**: Uma definição possível do `map`{.hs} em `Haskell` é:
 
 ```hs
 map :: (a -> b) -> [a] -> [b]
+
+-- Recursividade explícita
 map f [] = []
 map f (h:t) = f h : map f t
+
+-- Funções de ordem superior
+map f = foldr (\a b -> f a : b) []
 ```
 
 Já do lado de `C++` temos:
@@ -198,51 +192,42 @@ auto map(const FN& f, const CN<A, AllocA>& c) -> CN<B, AllocB> {
 }
 ```
 
-Existem alguns aspectos notórios apenas pela análise visual e sintática. A
-sintaxe de `Haskell` é bastante mais simples, tornando o código mais conciso e
-com menos "floreado".
+**TODO**: ~~Existem alguns aspectos notórios apenas pela análise visual e
+sintática. A sintaxe de `Haskell` é bastante mais simples, tornando o código
+mais conciso e com menos "floreado".~~
 
-Ao contrário do `Haskell`, em `C++` é necessário criar um _container_ (`res`) onde
-serão guardados os resultados depois de aplicar a função. Em `Haskell` isto é
-feito de forma (escondida ao programador). No entanto, o programador pode tirar
-proveito da inferência de tipos do compilador de `C++` e relaxar um pouco nos
-tipos utilizando `auto`.
+Em `C++` já existe uma função parecida: `std::transform`{.cpp}. Esta função
+recebe os iteradores de início e fim da colecção de _input_, a forma como se
+deve inserir na colecção de resultado, e como transformar cada elemento da
+colecção de _input_; e devolve o iterador para o início da colecção de
+resultado.
 
-(Pode-se observar outra diferença na ...)
-(Uma outra diferença (é a)/(está na) ...)
-Uma outra diferença é também na definição da função passada ao `map`. Em
-`Haskell` fazendo
+Como tal, podemos aproveitar o `std::transform`{.cpp} para definir o `map`{.hs}
+em `C++`.  Como o `map`{.hs} devolve uma colecção, temos de criar uma a
+colecção de resultado (`res`{.cpp}) -- em `Haskell` isto é feito de forma
+automática.
 
-```hs
-map (*2) lista
-```
+##### `filter`
 
-obtemos imediatamente o resultado. Por outro lado, em `C++` é necessário definir
-explicitamente (a função de map ...), podendo ser feito da seguinte forma:
+A segunda função que comparamos foi o `filter`{.hs}, que recebe uma lista e um
+predicado, e calcula a lista que tem todos os elementos que satisfazem esse
+predicado. Por exemplo, se tivermos uma lista de inteiros `l :: [Int]`{.hs}, e
+quisermos obter a lista dos inteiros pares, podemos usar o `filter`{.hs} com o
+predicado `even`{.hs}: `filter even l`{.hs}.
 
-```cpp
-auto f = [] (int x) {return x * 2;};
-```
-
-e agora sim, poderá ser invocado `map` com a função `f`: (o _map_ poderá ser invocado com a função `f`)
-
-```cpp
-auto r = map(lista, f);
-```
-
-Relativamente à eficiencia (, executando ambos os programas com a mesma lista de
-input, `Haskell` sai claramente em vantagem). Em `C++` obtivemos $29$
-milisegundos e em `Haskell` $135$ milisegundos.
-
-A segunda função que comparamos foi o `filter`, que é uma função que recebe uma lista e aplica uma função a todos os elementos dessa lista, a função aplicada neste caso foi a função `even` obtendo uma lista com somente os números pares.
-
-Em Haskell uma definição possível é:
+**TODO**: Em `Haskell` uma definição possível do `filter`{.hs} é:
 
 ```hs
-filter' :: (a -> Bool) -> [a] -> [a]
-filter' f [] = []
-filter' f (h:t)  | f h = h: filter' f t
-                 | otherwise = filter' f t
+filter :: (a -> Bool) -> [a] -> [a]
+
+-- Recursividade explícita
+filter p [] = []
+filter p (h:t)
+    | p h       = h : filter p t
+    | otherwise =     filter p t
+
+-- Funções de ordem superior
+filter p = foldr (\a b -> if p a then a:b else b) []
 ```
 
 Já do lado de C++ temos:
@@ -257,20 +242,33 @@ auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
   res.shrink_to_fit();
   return res;
 }
-
 ```
 
-Para esta função em `C++` também é necessário um _container_ (res). Foi utilizado o método _shrink_to_fit_ dos vectores para remover a capacidade não utilizada, não ocupando memória desnecessária.
-Esta função é muito similar ao `map`, apresentando os mesmo aspectos em termos de análise visual e sintáctica.
+Tal como no caso do `map`{.hs}, já existe uma função parecida:
+`std::copy_if`{.cpp}.  Apesar de não sabermos à partida quantos elementos terá
+a colecção de resultado, por razões de performance, podemos na mesma reservar
+espaço. No fim, a colecção pode conter menos elementos que os reservados, e
+para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
 
-Em relação a eficiência, `C++` continua com excelentes resultados de $59$ milissegundos comparados os $145$ milissegundos em `Haskell`.
+##### `reverse`
 
-A nossa terceira função escolhida foi a função `reverse` que basicamente recebe uma lista e devolve uma lista invertida.
+A nossa terceira função escolhida foi o `reverse`{.hs} que, dada uma lista,
+inverte a ordem dos seus elementos. Por exemplo, se tivermos a lista `l = [1,
+2, 3, 4, 5]`{.hs}, e lhe aplicarmos o `reverse`{.hs} obtemos `[5, 4, 3, 2,
+1]`{.hs}.
 
-Em Haskell uma definição possível é:
+**TODO**: Em `Haskell` uma definição possível é:
 
 ```hs
 reverse :: [a] -> [a]
+
+-- Recursividade explícita
+reverse = reverse' []
+    where
+        reverse' ret []    = ret
+        reverse' ret (h:t) = reverse' (h:ret) t
+
+-- Funções de ordem superior
 reverse = foldl (flip (:)) []
 ```
 
@@ -285,22 +283,31 @@ auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
 }
 ```
 
-Neste caso já não é necessário criar um _container_ em `C++`??
+Mais uma vez, já existe uma função parecida: `std::reverse`. No entanto, o
+`std::reverse` altera a colecção, em vez de devolver uma nova.
 
-Em termos visuais a linguagem Haskell apresenta uma solução mais sucinta e de fácil leitura comparado com `C++`. (repetitivo ...)
+##### `zip`
 
-Comparando os dois programas em termos de eficiência notamos, como esperado, um melhor desempenho do `C++` com 28 milissegundo contra 744 milissegundos do `Haskell`.
+Para concluir o primeiro conjunto de funções escolhemos a função `zip`. Esta
+recebe duas listas, e emparelha os seus elementos -- o primeiro com o primeiro,
+o segundo com o segundo, etc. Caso as listas tenham tamanhos diferentes a menor
+lista dita o tamanho final.
 
-Para concluir o primeiro conjunto de funções escolhemos a função `zip`. A função `zip` recebe duas listas e retorna uma lista de tuplos que a cada elemento da primeira lista faz corresponder um elemento da segunda, caso as listas tenham tamanhos diferentes a menor lista dita o tamanho final.
-
-Em Haskell uma definição possível é:
+**TODO**: Em `Haskell` uma definição possível é:
 
 ```hs
-zip:: [a] -> [b] -> [(a,b)]
+zip :: [a] -> [b] -> [(a,b)]
+
+-- Recursividade explícita
+zip []     _      = []
+zip _      []     = []
+zip (x:xs) (y:ys) = (x, y) : zip xs ys
+
+-- Funções de ordem superior
 zip = zipWith (,)
 ```
 
-Já do lado de C++ temos:
+Já do lado de `C++` temos:
 
 ```cpp
 template <Container CA, Type A, typename AllocA = std::allocator<A>,
@@ -322,11 +329,50 @@ auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
 }
 ```
 
-Nesta função notamos uma grande diferença visual em termos de código, em `Haskell` temos um código muito menor do que em `C++` e muito menos sujeito a erros de escrita. (por numa conclusão ...)
+Neste caso, não existe nenhuma função parecida na STL, e portanto, é definida à
+mão como um ciclo.
 
-Nesta função em `C++` precisamos novamente de um _container_ (res) e em termos de desempenho a função em `C++` executou em $54$ milissegundos e $136$ milissegundos em `Haskell`.
+##### Resultados
 
----
+Para comparar performance entre as duas linguagens, medimos o tempo de CPU de
+cada função, com os meios disponíveis em cada uma. Simultaneamente medimos o
+tempo de execução real do processo com o programa `/usr/bin/time`.
+
+Em `C++` usamos `std::clock()` do _header_ `<ctime>`, com o seguite macro:
+
+```cpp
+#define benchmark(str, func) \
+  do { \
+    auto start = std::clock();                                    \
+    (void) func;                                                  \
+    auto stop = std::clock();                                     \
+    auto duration = 1000000000 * (stop - start) / CLOCKS_PER_SEC; \
+    std::cout << str << ": " << duration                          \
+              << " nanoseconds" <<  std::endl;                    \
+  } while (0)
+```
+
+Em `Haskell` usamos `getCPUTime` de `System.CPUTime`, com a seguinte função:
+
+```hs
+timeSomething :: NFData a => String -> a -> IO ()
+timeSomething str something = do
+  start <- liftIO getCPUTime
+  let !result = deepforce $! something
+  end <- liftIO getCPUTime
+  let diff = round . (/1000) . fromIntegral $ end - start
+  putStrLn $ str ++ ": " ++ show diff ++ " nanoseconds"
+```
+
+|                             | `C++`   | `Haskell` |
+| :-------------------------: | :-----: | :-------: |
+| `map (*2)`                  | 14 ms   | 149 ms    |
+| `filter even`               | 48 ms   | 139 ms    |
+| `reverse`                   | 11 ms   | 806 ms    |
+| `uncurry zip . split id id` | 36 ms   | 126 ms    |
+| Tempo real do processo      | 02.35 s | 30.18 s   |
+
+#### _Google Hash Code 2020_
 
 Falemos agora sobre o problema do _Google Hash Code 2020_. O programa original,
 escrito em `Haskell`, foi desenvolvido durante a competição, que durou quatro
@@ -369,11 +415,18 @@ dos ficheiros de _input_, o programa em `C++` dá um resultado ligeiramente
 diferente do original. Acreditamos que isto se deva a diferenças entre as
 implementações do algoritmo de ordenação nas duas linguagens.
 
-Quanto a performance, o programa original demora cerca de $7$ segundos para
-processar todos os ficheiros de input, e o programa em `C++` demora cerca de
-$30$ minutos. Esta diferença tão grande achamos que se deve às estruturas
-usadas em `C++` não serem adequadas para o uso que lhes estamos a dar -- há
-muita cópia de memória.
+Quanto a performance, o programa original demora cerca de 7 segundos para
+processar todos os ficheiros de _input_, e o programa em `C++` demora cerca de
+30 minutos. Esta diferença tão grande achamos que se deve às estruturas usadas
+em `C++` não serem adequadas para o uso que lhes estamos a dar -- há muita
+cópia de memória.
+
+## Aspectos Importantes de Programação Funcional
+
+### Imutabilidade
+### Lazy Evaluation
+### Composição
+### ADTs
 
 [^awkward_squad]: Ver _[Tackling the Awkward Squad]_.
 [^cpp_prelude]: Ver _[CPP Prelude]_.
