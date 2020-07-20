@@ -237,24 +237,26 @@ milisegundos e em `Haskell` $135$ milisegundos.
 A segunda função que comparamos foi o `filter`, que é uma função que recebe uma lista e aplica uma função a todos os elementos dessa lista, a função aplicada neste caso foi a função `even` obtendo uma lista com somente os números pares.
 
 Em Haskell uma definição possível é:
+
 ```hs
-  filter' :: (a -> Bool) -> [a] -> [a]
-  filter' f [] = []
-  filter' f (h:t)  | f h = h: filter' f t
-                  | otherwise = filter' f t
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' f [] = []
+filter' f (h:t)  | f h = h: filter' f t
+                 | otherwise = filter' f t
 ```
 
 Já do lado de C++ temos:
+
 ```cpp
-  template <Predicate PR, Container CN, Type A,
-            typename AllocA = std::allocator<A>>
-  auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
-    auto res = CN<A, AllocA>{};
-    res.reserve(c.size());
-    std::copy_if(std::begin(c), std::end(c), std::back_inserter(res), p);
-    res.shrink_to_fit();
-    return res;
-  }
+template <Predicate PR, Container CN, Type A,
+          typename AllocA = std::allocator<A>>
+auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
+  auto res = CN<A, AllocA>{};
+  res.reserve(c.size());
+  std::copy_if(std::begin(c), std::end(c), std::back_inserter(res), p);
+  res.shrink_to_fit();
+  return res;
+}
 
 ```
 
@@ -266,19 +268,21 @@ Em relação a eficiência, `C++` continua com excelentes resultados de $59$ mil
 A nossa terceira função escolhida foi a função `reverse` que basicamente recebe uma lista e devolve uma lista invertida.
 
 Em Haskell uma definição possível é:
+
 ```hs
-  reverse :: [a] -> [a]
-  reverse = foldl (flip (:)) []
+reverse :: [a] -> [a]
+reverse = foldl (flip (:)) []
 ```
 
 Já do lado de C++ temos:
+
 ```cpp
-  template <Container CN, Type A, typename AllocA = std::allocator<A>>
-  auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
-    auto res = CN<A, AllocA>{c};
-    std::reverse(std::begin(res), std::end(res));
-    return res;
-  }
+template <Container CN, Type A, typename AllocA = std::allocator<A>>
+auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
+  auto res = CN<A, AllocA>{c};
+  std::reverse(std::begin(res), std::end(res));
+  return res;
+}
 ```
 
 Neste caso já não é necessário criar um _container_ em `C++`??
@@ -290,29 +294,31 @@ Comparando os dois programas em termos de eficiência notamos, como esperado, um
 Para concluir o primeiro conjunto de funções escolhemos a função `zip`. A função `zip` recebe duas listas e retorna uma lista de tuplos que a cada elemento da primeira lista faz corresponder um elemento da segunda, caso as listas tenham tamanhos diferentes a menor lista dita o tamanho final.
 
 Em Haskell uma definição possível é:
+
 ```hs
-  zip:: [a] -> [b] -> [(a,b)]
-  zip = zipWith (,)
+zip:: [a] -> [b] -> [(a,b)]
+zip = zipWith (,)
 ```
 
 Já do lado de C++ temos:
+
 ```cpp
-  template <Container CA, Type A, typename AllocA = std::allocator<A>,
-            Container CB, Type B, typename AllocB = std::allocator<B>,
-            Container CRES = CA, typename RES = std::tuple<A, B>,
-            typename AllocRES = std::allocator<RES>>
-  auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
-      -> CRES<RES, AllocRES> {
-    auto res = CRES<RES, AllocRES>{};
-    res.reserve((left.size() < right.size()) ? left.size() : right.size());
-    auto l = std::begin(left);
-    auto r = std::begin(right);
-    while (l != std::end(left) && r != std::end(right)) {
-      res.emplace_back(*l, *r);
-      ++l;
-      ++r;
-    }
-    return res;
+template <Container CA, Type A, typename AllocA = std::allocator<A>,
+          Container CB, Type B, typename AllocB = std::allocator<B>,
+          Container CRES = CA, typename RES = std::tuple<A, B>,
+          typename AllocRES = std::allocator<RES>>
+auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
+    -> CRES<RES, AllocRES> {
+  auto res = CRES<RES, AllocRES>{};
+  res.reserve((left.size() < right.size()) ? left.size() : right.size());
+  auto l = std::begin(left);
+  auto r = std::begin(right);
+  while (l != std::end(left) && r != std::end(right)) {
+    res.emplace_back(*l, *r);
+    ++l;
+    ++r;
+  }
+  return res;
 }
 ```
 
