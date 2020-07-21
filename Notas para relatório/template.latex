@@ -227,7 +227,7 @@ $else$
 $endif$
 $endif$
 $if(graphics)$
-\usepackage{graphicx,grffile}
+\usepackage{grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
@@ -281,21 +281,10 @@ $endif$
 $for(header-includes)$
 $header-includes$
 $endfor$
-$if(lang)$
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[shorthands=off,$for(babel-otherlangs)$$babel-otherlangs$,$endfor$main=$babel-lang$]{babel}
-$if(babel-newcommands)$
-  $babel-newcommands$
-$endif$
-\else
-  % load polyglossia as late as possible as it *could* call bidi if RTL lang (e.g. Hebrew or Arabic)
-  \usepackage{polyglossia}
-  \setmainlanguage[$polyglossia-lang.options$]{$polyglossia-lang.name$}
-$for(polyglossia-otherlangs)$
-  \setotherlanguage[$polyglossia-otherlangs.options$]{$polyglossia-otherlangs.name$}
-$endfor$
-\fi
-$endif$
+
+% NOTE: Linguagem para keywords e assim
+%\usepackage[portuguese]{babel}
+
 $if(dir)$
 \ifxetex
   % load bidi as late as possible as it modifies e.g. graphicx
@@ -359,10 +348,6 @@ $abstract$
 \end{abstract}
 $endif$
 
-\begin{figure}[]
-    \includegraphics[]{minho.png}
-\end{figure}
-
 $endif$
 
 $for(include-before)$
@@ -370,7 +355,15 @@ $include-before$
 
 $endfor$
 $if(toc)$
+
+\begin{figure}[h]
+    \includegraphics[scale=0.5]{minho.png}
+    \centering
+\end{figure}
+
+% NOTE: pagebreak entre o titulo e indice
 \pagebreak
+
 $if(toc-title)$
 \renewcommand*\contentsname{$toc-title$}
 $endif$
@@ -387,10 +380,15 @@ $if(colorlinks)$
 \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
 $endif$
 \setcounter{tocdepth}{$toc-depth$}
+% NOTE: Indice em PT
 \renewcommand*\contentsname{Índice}
 \tableofcontents
 }
 $endif$
+
+% NOTE: pagebreak entre o indice e o inicio do documento
+\pagebreak
+
 $endif$
 $if(lot)$
 \listoftables
