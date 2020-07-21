@@ -142,7 +142,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
  * Utilizar bibliotecas funcionais existentes, como _"Functional
    Plus"_[^fplus], _"CPP Prelude"_[^cpp_prelude], ou _"Ranges"_[^ranges].
 
-## Comparação e análise de programas equivalentes em `Haskell` e `C++`
+# Comparação e Análise de Programas Equivalentes em `Haskell` e `C++`
 
 Neste capítulo, faremos uma comparação mais específica sobre programas escritos
 em âmbas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
@@ -155,7 +155,7 @@ utilizado na ronda de qualificação do _Google Hash Code 2020_, do qual tinhamo
 a versão em `Haskell` e fizemos a conversão para `C++` utilizando a biblioteca
 _"Functional Plus"_, para uma comparação mais realista.
 
-### _Prelude_
+## _Prelude_
 
 De forma a comparar a performance de pequenos programas em âmbas as linguagens,
 geramos um ficheiro de _input_ com uma lista de 10000000 de inteiros. Note-se
@@ -165,7 +165,7 @@ função, vamos apresentar uma definição com recursividade explícita e uma
 definição recorrendo a funções de ordem superior em `Haskell`, seguidas de uma
 implementação em `C++` e no final apresentamos os tempos de execução.
 
-#### `map`
+### `map`
 
 Comecemos pelo `map`{.hs}. Esta função _mapeia_ todos os elementos de uma dada
 lista com uma dada função. Por exemplo, em `Haskell`, se tivermos uma lista de
@@ -210,7 +210,7 @@ Como tal, podemos aproveitar o `std::transform`{.cpp} para definir o `map`{.hs}
 em `C++`. Como devolve uma colecção, temos de criar uma a colecção de resultado
 (`res`{.cpp}) -- em `Haskell` isto é feito de forma automática.
 
-#### `filter`
+### `filter`
 
 A segunda função que comparamos foi o `filter`{.hs}, que recebe uma lista e um
 predicado, e calcula a lista que tem todos os elementos que satisfazem esse
@@ -255,7 +255,7 @@ para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
 
 \pagebreak
 
-#### `reverse`
+### `reverse`
 
 A nossa terceira função escolhida foi o `reverse`{.hs} que, dada uma lista,
 inverte a ordem dos seus elementos. Por exemplo, se tivermos a lista `l = [1,
@@ -291,7 +291,7 @@ auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
 Mais uma vez, já existe uma função parecida: `std::reverse`. No entanto, o
 `std::reverse` altera a colecção, em vez de devolver uma nova.
 
-#### `zip`
+### `zip`
 
 Para concluir o primeiro conjunto de funções escolhemos a função `zip`. Esta
 recebe duas listas, e emparelha os seus elementos -- o primeiro com o primeiro,
@@ -337,7 +337,7 @@ auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
 Neste caso, não existe nenhuma função parecida na STL, e portanto, é definida
 manualmente como um ciclo.
 
-#### Resultados
+### Resultados
 
 Para comparar performance entre as duas linguagens, medimos o tempo de CPU de
 cada função, com os meios disponíveis em cada uma. Simultaneamente medimos o
@@ -386,7 +386,7 @@ sendo `deepseq a b` a função que força a avaliação de `a` e devolve `b`.
 | `uncurry zip . split id id` | 36 ms   | 126 ms    |
 | Tempo real do processo      | 02.35 s | 30.18 s   |
 
-### _Google Hash Code 2020_
+## _Google Hash Code 2020_
 
 Falemos agora sobre o problema do _Google Hash Code 2020_. O programa original,
 escrito em `Haskell`, foi desenvolvido durante a competição, que durou quatro
@@ -709,22 +709,27 @@ se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
 Com estas duas técnicas de composição é possível representar qualquer estrutura
 de dados. Será então útil saber como usar estas duas técnicas numa linguagem de
 programação. Em `Haskell`, com o seu sistema de tipos avançado, âmbas estão
-disponíveis nativamente. Em `C++`, tal como em C, só o produto está disponível,
-sob a forma de _structs_. Na STL também há `std::pair` e `std::tuple` que podem
-considerar-se alternativas a _structs_ em alguns casos.
+disponíveis nativamente. Em `C++`, tal como em `C`, só o produto está
+disponível, sob a forma de `struct`{.cpp}s. Na STL também existem
+`std::pair`{.cpp} e `std::tuple`{.cpp} que podem considerar-se alternativas em
+alguns casos.
 
 De seguida vamos apresentar as três formas de compor tipos em `C++`, com as
-_keywords_ `struct`, `enum`, e `union`, qual o equivalente em `Haskell` e como
-cada uma se relaciona com ADTs.
+_keywords_ `struct`{.cpp}/`class`{.cpp}, `enum`{.cpp}, e `union`{.cpp}, qual o
+equivalente em `Haskell` e como cada uma se relaciona com ADTs.
 
-#### `struct`
+### `struct`/`class`
 
-Por exemplo, para representar um filme, com o seu título (`String`), ano de
-lançamento (`Int`), e uma pontuação (`Float`), podemos definir o tipo `Filme`
-como o produto dos seus três atributos, ou seja $Filme \cong String \times Int
-\times Float$.
+Juntamos estas duas _keywords_ visto que servem o mesmo propósito; a única
+diferença está em que, caso nada seja dito em contrário, numa `struct`{.cpp}
+todos os membros são públicos, enquanto que numa `class`{.cpp} são privados.
 
-Em `Haskell` existem várias maneiras de definir o tipo `Filme`.
+Por exemplo, para representar um filme, com o seu título (`String`{.hs}), ano
+de lançamento (`Int`{.hs}), e uma pontuação (`Float`{.hs}), podemos definir o
+tipo `Filme`{.hs} como o produto dos seus três atributos, ou seja $Filme \cong
+String \times Int \times Float$.
+
+Em `Haskell` existem várias maneiras de definir o tipo `Filme`{.hs}.
 
 ```hs
 type Filme = (String, Int, Float)
@@ -757,7 +762,7 @@ typedef std::tuple<std::string, unsigned, float> Filme;
 A primeira, que é mais idiomática, e a segunda, que é mais parecida com o tipo
 teórico, como a primeira definição em `Haskell`.
 
-#### `enum`
+### `enum`
 
 Um exemplo simples e conhecido a todos do uso de _enums_ é na definição do tipo
 dos booleanos: `enum bool { false, true };`{.cpp} em `C++`, e `data Bool =
@@ -768,25 +773,23 @@ singular, e denotarmos esse conjunto por `false` e `true` respectivamente,
 podemos pensar no tipo booleano como o co-produto de `false` e `true`, isto é,
 $Bool \cong False + True$.
 
-Poderíamos assim achar que `enum` em `C++` serve para representar co-produtos
-em geral mas estariamos errados. `enum` serve apenas para representar o
-co-produto de vários conjuntos singulares ou um único conjunto enumerável de
-valores não inteiros e sem ordem. Veremos mais a frente como representar tipos
-de soma.
+Poderíamos assim achar que `enum`{.cpp} em `C++` serve para representar
+co-produtos em geral mas estariamos errados. `enum`{.cpp} serve apenas para
+representar o co-produto de vários conjuntos singulares ou um único conjunto
+enumerável de valores não inteiros e sem ordem. Veremos mais a frente como
+representar tipos de soma.
 
-#### `union`
+### `union`
 
 Esta é a menos comum das três _keywords_, por ser de uso muito limitado, e não
 existe equivalente em `Haskell`. Esta "falha" do lado de `Haskell` na verdade
 não é grave -- possivelmente nem sequer é uma falha. Ao contrário do que o nome
-sugere, `union` não serve para representar a união de tipos, e não vamos aqui
-listar os seus usos além do necessário para este texto.
+sugere, `union`{.cpp} não serve para representar a união de tipos, e não vamos
+aqui listar os seus usos além do necessário para este texto.
 
-\pagebreak
-
-`union` pode ser usada quando se pretende guardar qualquer um de vários
+`union`{.cpp} pode ser usada quando se pretende guardar qualquer um de vários
 valores, mas não vários em simultâneo. Por exemplo, se se pretender um tipo
-para guardar ou inteiros ou _floats_, pode-se usar a seguinte `union`:
+para guardar ou inteiros ou _floats_, pode-se usar a seguinte `union`{.cpp}:
 
 ```cpp
 union {
@@ -795,7 +798,7 @@ union {
 }
 ```
 
-#### ADTs em `C++`
+### ADTs em `C++`
 
 Vamos agora, finalmente, descrever como implementar ADTs em `C++`. A maneira
 mais idiomática, possível também em `C`, é usar uma _tagged union_.
@@ -803,10 +806,14 @@ mais idiomática, possível também em `C`, é usar uma _tagged union_.
 Como exemplo, vamos definir um tipo de árvores binárias de nós, com valores nos
 nós e nas folhas: $BTree\ A \cong A + (A \times BTree\ A \times BTree\ A)$.
 
+Em `Haskell`:
+
 ```hs
 data BTree a = Leaf a
              | Node a (BTree a) (Btree a)
 ```
+
+Em `C++`:
 
 ```cpp
 template <typename A>
@@ -833,13 +840,16 @@ acima de transformar um co-produto num produto, ou seja,
 
 $$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
 
+\pagebreak
+
 Ou, para aproximar melhor a implementação,
 
 $$BTree\ A \cong \{\ Leaf,\ Node \ \} \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
 
-Neste caso, a `union` está realmente a simular a união de conjuntos.
+Neste caso, a `union`{.cpp} está realmente a simular a união de conjuntos.
 
-Uma alternativa à tagged union, é usar `std::variant`, como a que se segue:
+Uma alternativa à _tagged union_, é usar `std::variant`{.cpp}, como a que se
+segue:
 
 ```cpp
 template <typename A>
