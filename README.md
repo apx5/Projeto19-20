@@ -16,8 +16,6 @@ Haskell, pretendemos organizar o nosso trabalho da seguinte forma:
  - [X] Comparação mais detalhada de aspectos do paradigma funcional em Haskell
        e C++
  - [X] Conclusões
- - [ ] Capa
- - [ ] Terminar composição
 
 Se houver tempo, pretendemos ainda incluir os seguintes tópicos:
 
