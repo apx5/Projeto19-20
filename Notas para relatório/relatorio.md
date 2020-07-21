@@ -135,10 +135,10 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    gratuita a inferência de tipos por parte do compilador, através da keyword
    `auto`.
 
- * Recorrer ao uso de _lambdas_ para criar abstrações (desde `C++11`)
+ * Recorrer ao uso de _lambdas_ para criar abstrações (desde `C++11`).
 
- * Utilizar bibliotecas funcionais existentes, como _"Functional Plus"_, _"CPP
-   Prelude"_, ou _"Ranges"_
+ * Utilizar bibliotecas funcionais existentes, como _"Functional
+   Plus"_[^fplus], _"CPP Prelude"_[^cpp_prelude], ou _"Ranges"_[^ranges].
 
 ## Comparação e análise de programas equivalentes em `Haskell` e `C++`
 
@@ -147,11 +147,11 @@ em âmbas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-
 equivalentes. Durante a pesquisa que efectuamos, encontramos duas bibliotecas
 que tentam transpôr o paradigma funcional para `C++`, que vão de encontro aos
 objectivos do nosso projeto. Vamos começar por algumas funções sobre listas do
-_prelude_ do `Haskell`, usando a biblioteca _"CPP Prelude"_[^cpp_prelude], para
-uma comparação mais directa, e terminaremos com um programa mais robusto que
-foi utilizado na ronda de qualificação do _Google Hash Code 2020_, do qual
-tinhamos a versão em `Haskell` e fizemos a conversão para `C++` utilizando a
-biblioteca _"Functional Plus"_[^fplus], para uma comparação mais realista.
+_prelude_ do `Haskell`, usando a biblioteca _"CPP Prelude"_, para uma
+comparação mais directa, e terminaremos com um programa mais robusto que foi
+utilizado na ronda de qualificação do _Google Hash Code 2020_, do qual tinhamos
+a versão em `Haskell` e fizemos a conversão para `C++` utilizando a biblioteca
+_"Functional Plus"_, para uma comparação mais realista.
 
 ### _Prelude_
 
@@ -874,7 +874,9 @@ ao material já existente.
 [^cpp_prelude]: Ver _[CPP Prelude]_.
 [^fplus]: Ver _[Functional Plus]_.
 [^let_over_lambda]: Para mais informação sobre este assunto, ler [_Let Over Lambda_](https://letoverlambda.com).
+[^ranges]: Ver _[Ranges]_.
 
 [CPP Prelude]: https://github.com/kdungs/cpp-prelude
 [Functional Plus]: https://github.com/Dobiasd/FunctionalPlus
+[Ranges]: https://github.com/ericniebler/range-v3
 [Tackling the Awkward Squad]: https://www.microsoft.com/en-us/research/publication/tackling-awkward-squad-monadic-inputoutput-concurrency-exceptions-foreign-language-calls-haskell
