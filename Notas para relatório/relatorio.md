@@ -48,6 +48,8 @@ cuidar e evitar que problemas aconteçam. O paradigma Funcional evita este
 problema parcial ou completamente, ao desencorajar ou impedir esta prática e,
 ao mesmo tempo, encorajar e facilitar "boa pratica".
 
+\pagebreak
+
 Um exemplo extremo e pouco realista seria:
 
 ```cpp
@@ -251,6 +253,8 @@ colecção de resultado, por razões de performance, podemos na mesma reservar
 espaço. No fim, a colecção pode conter menos elementos que os reservados, e
 para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
 
+\pagebreak
+
 #### `reverse`
 
 A nossa terceira função escolhida foi o `reverse`{.hs} que, dada uma lista,
@@ -354,6 +358,8 @@ Em `C++` usamos `std::clock()` do _header_ `<ctime>`, com o seguite macro:
               << " nanoseconds" <<  std::endl; \
   } while (0)
 ```
+
+\pagebreak
 
 Em `Haskell` usamos `getCPUTime` de `System.CPUTime`, com a seguinte função:
 
@@ -619,8 +625,10 @@ for (auto x : xs) {
 }
 ```
 
+\pagebreak
+
 Mas não é preciso escrever _loops_ `for` manualmente grande parte das vezes --
-podemos em vez disso escrever o seguinte:
+podemos em vez disso escrever o seguinte[^fplus_examples]:
 
 ```cpp
 fplus::fwd::apply(
@@ -630,11 +638,6 @@ fplus::fwd::apply(
     , fplus::fwd::product()
     )
 ```
-
-Para mais exemplos de uso, podem ver o programa do [_Google Hash Code
-2020_](#_google-hash-code-2020_).
-
----
 
 O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. A
 partir do livro _Functional Programming in C++_, do _Ivan Čukić_, pudemos obter
@@ -779,6 +782,8 @@ não é grave -- possivelmente nem sequer é uma falha. Ao contrário do que o n
 sugere, `union` não serve para representar a união de tipos, e não vamos aqui
 listar os seus usos além do necessário para este texto.
 
+\pagebreak
+
 `union` pode ser usada quando se pretende guardar qualquer um de vários
 valores, mas não vários em simultâneo. Por exemplo, se se pretender um tipo
 para guardar ou inteiros ou _floats_, pode-se usar a seguinte `union`:
@@ -873,6 +878,7 @@ ao material já existente.
 [^awkward_squad]: Ver _[Tackling the Awkward Squad]_.
 [^cpp_prelude]: Ver _[CPP Prelude]_.
 [^fplus]: Ver _[Functional Plus]_.
+[^fplus_examples]: Para mais exemplos de uso, ver o programa do [_Google Hash Code 2020_](#_google-hash-code-2020_).
 [^let_over_lambda]: Para mais informação sobre este assunto, ler [_Let Over Lambda_](https://letoverlambda.com).
 [^ranges]: Ver _[Ranges]_.
 
