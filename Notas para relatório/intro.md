@@ -23,7 +23,7 @@ criar programas polimórficos. Também é possível obter computação em tempo 
 compilação com `template`s, mas esta não é essencial a Programação Funcional, e
 portanto não vamos desenvolver sobre este assunto.[^let_over_lambda]
 
-Aproveitaremos também para aprofundar alguns aspectos importantes de
+Aproveitaremos também para aprofundar alguns aspectos/características importantes da
 Programação Funcional tais como:
 
  * Imutabilidade
@@ -38,12 +38,12 @@ linguagens.
 
 ## Abordagem ao Paradigma Funcional em `Haskell` e `C++`
 
-### Explicação genérica sobre o paradigma funcional
+### O paradigma funcional
 
 Na programação funcional, os programas são executados através da avaliação de
 expressões, em contraste, por exemplo, com o paradigma imperativo onde os
 programas são compostos por instruções que vão alterando o estado global à
-medida que executam. Isto significa que os procedimentos podem ter acesso a
+medida que executam. Isto significa que os procedimentos podem ter acesso ao
 estado global e/ou partilhado entre varios procedimentos. Esta partilha não
 está especificada de forma nenhuma e, portanto, tem de ser o programador a
 cuidar e evitar que problemas aconteçam. O paradigma Funcional evita este
@@ -61,19 +61,19 @@ void accoes (void)
 }
 ```
 
-Deste pequeno excerto, podemos concluir uma de duas hipoteses:
+Deste pequeno excerto, podemos concluír uma de duas hipóteses:
 
  1. Como nenhum dos procedimentos `accao1`, `accao2` ou `accao3` recebe
     argumentos, e o resultado não é utilizado, então estes procedimentos não
     fazem nada de útil e, portanto, `accoes` também não faz nada de útil;
 
- 2. Cada um dos procedimentos faz algo de util, mas para tal acede e altera
+ 2. Cada um dos procedimentos faz algo de útil, mas para tal acede e altera
     alguma estrutura de dados partilhada; esta relacao _input_-_output_ não é
     explicita.
 
 Por outro lado, numa linguagem funcional escreveriamos (em notacao `Haskell`)
 `accoes = accao3 . accao2 . accao1`{.hs} para representar a mesma sequência de
-acções mas sem partilha de memoria nem estruturas de dados a serem mutadas:
+acções mas sem partilha de memória nem estruturas de dados a serem mutadas:
 cada uma das acções é uma função que devolve uma estrutura de dados, dada outra
 estrutura de dados.
 
@@ -83,7 +83,7 @@ contexto concorrente com threads e partilha de memoria.
 ### `Haskell` como linguagem funcionalmente pura
 
 `Haskell` adopta o paradigma Funcionalmente Puro, o que quer dizer que um
-programa é uma funcao no sentido matematico, ou seja, dado o mesmo _input_ é
+programa é uma funcao no sentido matemático, ou seja, dado o mesmo _input_ é
 sempre devolvido o mesmo _output_.
 
 Para se implementar efeitos secundários, em `Haskell`, em vez de se aceder ao
@@ -101,7 +101,7 @@ está descrito no próprio tipo da função: `IO ()`.
 Pode-se pensar neste `IO a` como sendo `World -> (a, World)`, ou seja, dado um
 mundo, é devolvido o resultado da computação, e o novo mundo.[^awkward_squad]
 
-### Breve descrição sobre como pensar funcionalmente em `C++`
+### `C++ "funcional"`
 
 Devido à sua herança, `C++` promove um estilo frágil de programação, devendo
 ser o programador a ter alguma atenção e a tomar algumas decisões quando
@@ -111,10 +111,10 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    receber a estrutura por referência e a alterar, será melhor receber a
    estrutura por valor e devolver uma nova. Por razões de performance, tambem
    pode ser boa ideia passar a estrutura por referencia `const`{.c}, que se
-   traduz em menos movimentação de memoria.
+   traduz em menos movimentação de memória.
 
- * Para um estilo de programacao mais genérico, mas ao mesmo tempo mais seguro,
-   preferir `template`s a `void *`, o que permite uma abstraccao de tipos, indo
+ * Para um estilo de programação mais genérico, mas ao mesmo tempo mais seguro,
+   preferir `template`s a `void *`, o que permite uma abstração de tipos, indo
    de encontro ao que acontece em `Haskell`. Vejamos o exemplo de uma função
    que soma dois valores passados como argumento.
 
@@ -424,7 +424,7 @@ implementações do algoritmo de ordenação nas duas linguagens.
 Quanto a performance, o programa original demora cerca de 7 segundos para
 processar todos os ficheiros de _input_, e o programa em `C++` demora cerca de
 30 minutos. Esta diferença tão grande achamos que se deve às estruturas usadas
-em `C++` não serem adequadas para o uso que lhes estamos a dar -- há muita
+em `C++` não serem adequadas para o uso que lhes estamos a dar -- existe muita
 cópia de memória.
 
 ## Aspectos Importantes de Programação Funcional
