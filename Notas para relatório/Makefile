@@ -1,7 +1,5 @@
 MD := \
-    intro.md          \
-    relatorio.md      \
-    Biblioteca.md     \
+    relatorio.md \
 
 PDF := $(MD:.md=.pdf)
 
