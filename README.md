@@ -8,17 +8,21 @@ Haskell, pretendemos organizar o nosso trabalho da seguinte forma:
      - [X] Descrição do objectivo
      - [X] Descrição do que vamos detalhar durante o relatório
  - [ ] Abordagem do paradigma funcional em Haskell e C++
-     - [ ] Explicação genérica sobre o paradigma funcional
-     - [ ] Haskell como linguagem funcionalmente pura
-     - [ ] Breve descrição sobre como pensar funcionalmente em C++
- - [ ] Criação de uma biblioteca funcional em C++, com programas de exemplos em
+     - [X] Explicação genérica sobre o paradigma funcional
+     - [X] Haskell como linguagem funcionalmente pura
+     - [X] Breve descrição sobre como pensar funcionalmente em C++
+ - [X] Criação de uma biblioteca funcional em C++, com programas de exemplos em
        Haskell e C++, e a sua explicação
- - [ ] Comparação mais detalhada de aspectos do paradigma funcional em Haskell
+ - [X] Comparação mais detalhada de aspectos do paradigma funcional em Haskell
        e C++
- - [ ] Conclusões
+ - [X] Conclusões
+ - [ ] Capa
+ - [ ] Terminar composição
 
 Se houver tempo, pretendemos ainda incluir os seguintes tópicos:
 
- - [ ] Um programa mais elaborado para comparar a implementação nas duas
+ - [X] Um programa mais elaborado para comparar a implementação nas duas
        linguagens
  - [ ] Características do paradigma funcional que não são implementáveis em C++
+
+ 
