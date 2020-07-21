@@ -114,9 +114,9 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    traduz em menos movimentação de memória.
 
  * Para um estilo de programação mais genérico, mas ao mesmo tempo mais seguro,
-   preferir `template`s a `void *`, o que permite uma abstração de tipos, indo
-   de encontro ao que acontece em `Haskell`. Vejamos o exemplo de uma função
-   que soma dois valores passados como argumento.
+   preferir `template`{.cpp}s a `void *`{.cpp}, o que permite uma abstração de
+   tipos, indo de encontro ao que acontece em `Haskell`. Vejamos o exemplo de
+   uma função que soma dois valores passados como argumento.
 
    ```cpp
    template <typename T>
@@ -135,7 +135,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    Esta função pode ser invocada com diferentes tipos, tornando desnecessária a
    implementação da mesma função para tipos diferentes, e ganhando de forma
    gratuita a inferência de tipos por parte do compilador, através da keyword
-   `auto`.
+   `auto`{.cpp}.
 
  * Recorrer ao uso de _lambdas_ para criar abstrações (desde `C++11`).
 
@@ -182,7 +182,7 @@ map f [] = []
 map f (h:t) = f h : map f t
 
 -- Funções de ordem superior
-map f = foldr (\a b -> f a : b) []
+map f = foldr (\a -> (f a :)) []
 ```
 
 Em `C++`:
@@ -230,7 +230,7 @@ filter p (h:t)
     | otherwise =     filter p t
 
 -- Funções de ordem superior
-filter p = foldr (\a b -> if p a then a:b else b) []
+filter p = foldr (\a -> if p a then (a:) else id) []
 ```
 
 Em `C++`:
@@ -341,9 +341,10 @@ manualmente como um ciclo.
 
 Para comparar performance entre as duas linguagens, medimos o tempo de CPU de
 cada função, com os meios disponíveis em cada uma. Simultaneamente medimos o
-tempo de execução real do processo com o programa `/usr/bin/time`.
+tempo de execução real do processo com o programa `/usr/bin/time`{.sh}.
 
-Em `C++` usamos `std::clock()` do _header_ `<ctime>`, com o seguite macro:
+Em `C++` usamos `std::clock()`{.cpp} do _header_ `<ctime>`{.cpp}, com o seguite
+macro:
 
 ```cpp
 #define benchmark(str, func)                   \
@@ -361,7 +362,8 @@ Em `C++` usamos `std::clock()` do _header_ `<ctime>`, com o seguite macro:
 
 \pagebreak
 
-Em `Haskell` usamos `getCPUTime` de `System.CPUTime`, com a seguinte função:
+Em `Haskell` usamos `getCPUTime`{.hs} de `System.CPUTime`{.hs}, com a seguinte
+função:
 
 ```hs
 timeSomething :: NFData a => String -> a -> IO ()
@@ -375,8 +377,9 @@ timeSomething str something = do
 
 Como `Haskell` é _lazy-by-default_, para obter-mos uma comparação justa é
 necessário forçar a avaliação das expressões que pretendemos testar. Para isso
-usamos o `deepforce`, que está definido como `deepforce x = deepseq x x`{.hs},
-sendo `deepseq a b` a função que força a avaliação de `a` e devolve `b`.
+usamos o `deepforce`{.hs}, que está definido como `deepforce x = deepseq x
+x`{.hs}, sendo `deepseq a b`{.hs} a função que força a avaliação de `a`{.hs} e
+devolve `b`{.hs}.
 
 |                             | `C++`   | `Haskell` |
 | :-------------------------: | :-----: | :-------: |
