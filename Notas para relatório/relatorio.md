@@ -2,7 +2,7 @@
 % André Sá (A76361) ; João Rodrigues (A84505) ; Pedro Oliveira (A86328)
 % 2020/07/21
 
-# Introducao
+# Introdução
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
 programadores em detrimento de outros, pois permite que em poucas linhas de
