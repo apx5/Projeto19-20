@@ -1,6 +1,7 @@
-% Titulo
+% Paradigma funcional em Haskell e C++
 % André Sá a76361; João Rodrigues a84505; Pedro Oliveira a86328
 % 2020-07-21
+
 
 ## Introducao
 
@@ -11,7 +12,6 @@ e eficientes.
 
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
 forma podemos aproveitar essas vantagens em `C++`.
-
 Iremos estudar e analisar as características funcionais em programas escritos
 em `C++`, através de algumas bibliotecas existentes para esse efeito e,
 aproveitaremos para efectuar uma análise comparativa de performance, sintaxe,
