@@ -1,6 +1,6 @@
 % Paradigma Funcional em Haskell e C++
 % André Sá (A76361) ; João Rodrigues (A84505) ; Pedro Oliveira (A86328)
-% 2020/07/21
+% 2020/07/22 \linebreak\linebreak Licenciatura em Ciências da Computação
 
 # Introdução
 
@@ -469,17 +469,17 @@ como se faz em `Haskell` e como se pode fazer em `C++`.
 
 ## Imutabilidade
 
-Uma das características mais importantes do paradigma funcional, nomeadamente
-na linguagem `Haskell` (existem linguagens funcionais impuras) é a noção de
+Uma das características mais importantes do paradigma funcional, é a noção de
 imutabilidade das expressões. Isto faz com que não seja possível alterar o
 valor de variáveis já existentes mas sim, criar novas variáveis com os novos
 valores.
 
 A linguagem `C++` tenta também lidar com esta noção de imutabilidade. A noção
 de funções puras é dada pela avaliação de _referential transparency_. Uma
-função é referencialmente transparente se para o mesmo _input_, a função
-devolve sempre o mesmo valor de retorno, ou seja, substituindo uma expressão
-pelo seu valor de retorno, o seu significado permanece inalterado. Por exemplo:
+função é referencialmente transparente se para o mesmo _input_, é sempre
+devolvido o mesmo valor de retorno -- ou seja, substituindo uma expressão pelo
+seu valor de retorno, o seu significado permanece inalterado -- e não tem
+efeitos colaterais observáveis. Por exemplo:
 
 ```cpp
 int g = 0;
@@ -493,23 +493,32 @@ int ref_trans (int x) {
  * Não referencialmente transparente -- cada vez que a função é
  * invocada, tem um valor de retorno diferente
  */
-int not_ref_trans (int x) {
+int not_ref_trans1 (int x) {
     g++;
     return x + g;
 }
+
+/*
+ * Não referencialmente transparente -- embora o valor de retorno seja sempre o
+ * mesmo, dado o mesmo input, há um efeito colateral, o incremento de `g`
+ */
+int not_ref_trans2 (int x) {
+    g++;
+    return x + 1;
+}
 ```
 
-Se uma expressão é referencialmente transparente, não tem efeitos colaterais
-observáveis e, portanto, todas as funções usadas nessa expressão são
-consideradas puras. A ideia de imutabilidade é particularmente útil em
-ambientes em que se gera concorrência, pois, existem variáveis partilhadas que
-podem gerar comportamentos inesperados nos programas se não for devidamente
-protegida a sua alteração. Em `C++` está disponível a keyword `const`{.cpp} que
-permite controlar a imutabilidade de uma variável. Ao declarar uma variável
-`const x`{.cpp} estamos a dizer ao compilador que esta variável é imutável e,
-qualquer tentativa de alteração à variável irá originar um erro de compilação.
-De seguida analisamos a declaração de uma variável `const`{.cpp} e os possíveis
+A ideia de imutabilidade é particularmente útil em ambientes em que se gera
+concorrência, pois, existem variáveis partilhadas que podem gerar
+comportamentos inesperados nos programas se não for devidamente protegida a sua
+alteração. Em `C++` está disponível a keyword `const`{.cpp} que permite
+controlar a imutabilidade de uma variável. Ao declarar uma variável `const
+x`{.cpp} estamos a dizer ao compilador que esta variável é imutável e, qualquer
+tentativa de alteração à variável irá originar um erro de compilação.  De
+seguida analisamos a declaração de uma variável `const`{.cpp} e os possíveis
 erros que podem ser cometidos ao tentar manipular essa variável.
+
+\pagebreak
 
 ```cpp
 const std::string name{"John Smith"};
@@ -555,6 +564,8 @@ necessário ter em atenção os seguintes pontos:
  * Função sobre a qual queremos adiar o cálculo
  * Uma _flag_ que indica se já calculamos o resultado da função
  * O resultado calculado
+
+\pagebreak
 
 ```cpp
 template <typename F>
@@ -627,8 +638,6 @@ for (auto x : xs) {
     }
 }
 ```
-
-\pagebreak
 
 Mas não é preciso escrever _loops_ `for` manualmente grande parte das vezes --
 podemos em vez disso escrever o seguinte[^fplus_examples]:
@@ -816,6 +825,8 @@ data BTree a = Leaf a
              | Node a (BTree a) (Btree a)
 ```
 
+\pagebreak
+
 Em `C++`:
 
 ```cpp
@@ -842,8 +853,6 @@ devido à verbosidade de `C++`, como à necessidade de usar o truque mencionado
 acima de transformar um co-produto num produto, ou seja,
 
 $$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
-
-\pagebreak
 
 Ou, para aproximar melhor a implementação,
 
