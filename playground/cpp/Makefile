@@ -14,10 +14,10 @@ EXAMPLES := \
 
 # -pthread for lazy_eval
 FLAGS := \
-    -I../../include/ \
-    -Wall            \
-    -Wextra          \
-    -pthread         \
+    -I../../Biblioteca \
+    -Wall              \
+    -Wextra            \
+    -pthread           \
 
 CXXFLAGS := $(FLAGS) \
     -std=c++17 \
