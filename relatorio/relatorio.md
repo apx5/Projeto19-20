@@ -391,11 +391,14 @@ devolve `b`{.hs}.
 
 ## _Google Hash Code 2020_
 
-Falemos agora sobre o problema do _Google Hash Code 2020_. O programa original,
-escrito em `Haskell`, foi desenvolvido durante a competição, que durou quatro
-horas, e está estruturado simplesmente como a composição de três passos -- ler
-o _input_, resolver o problema, e escrever o _output_ -- como se pode verificar
-no código:
+Falemos agora sobre o problema do _Google Hash Code 2020_. O problema é de
+optimização, e consiste em planear que livros serão examinados e de que
+biblioteca, de forma a maximizar a pontuação.[^hash_code_2020]
+
+O programa original, escrito em `Haskell`, foi desenvolvido durante a
+competição, que durou quatro horas, e está estruturado simplesmente como a
+composição de três passos -- ler o _input_, resolver o problema, e escrever o
+_output_ -- como se pode verificar no código:
 
 ```hs
 main = interact (outputToString . solve . readLibraries)
@@ -425,6 +428,294 @@ void output_to_string (output_t output);
 
 Isto porque seria mais difícil implementar de uma forma mais funcional e o
 resultado seria muito menos idiomático -- estranho, até.
+
+### Tipos e Estruturas de Dados
+
+Definimos apenas três tipos para uso no programa, -- um para representar o
+_input_, outro para representar o _output_, e um para representar uma
+biblioteca -- e as únicas estruturas de dados usadas foram listas e vectores --
+só vectores do lado de `C++`. Apresentamos as suas definições a seguir.
+
+Em `Haskell`:
+
+```hs
+--                  ID    nBooks  Signup books/day books
+type LibraryDesc = (Int, (Int,    Int,   Int,      V.Vector Int))
+
+data Libraries = Libraries {
+  nBooks :: Int,
+  nLibraries :: Int,
+  nDays :: Int,
+  bookScore :: V.Vector Int,
+  libraries :: [LibraryDesc]
+  } deriving Show
+
+--                        lib  nb   books
+newtype Output = Output [(Int, Int, V.Vector Int)]
+```
+
+Em `C++`:
+
+```cpp
+typedef std::pair<int, std::tuple<int, int, int, std::vector<int>>>
+        library_desc_t;
+
+struct libraries {
+  int n_books;
+  int n_libraries;
+  int n_days;
+  std::vector<int> book_scores;
+  std::vector<library_desc_t> libraries;
+};
+
+typedef std::vector<std::tuple<int, int, std::vector<int>>> output_t;
+```
+
+### Ler o _Input_
+
+Para a leitura do _input_ tiramos proveito da _lazyness_ do `Haskell`, e
+tomamos o _input_ como uma `String`{.hs}. Do lado do `C++` usamos também
+`std::string`{.cpp}, simplesmente porque pretendiamos uma conversão mais
+directa -- esta não é a melhor escolha para performance, mas para os ficheiros
+de _input_ não é expectável qualquer penalização, visto que o maior destes tem
+apenas 3.4MB.
+
+Em `Haskell`:
+
+```hs
+onTSBD (_, (_, ts, bd, _)) = (ts, bd)
+
+readLibraries :: String -> Libraries
+readLibraries = proc . map (map read . words) . lines
+  where
+    proc ([nb, nl, nd]:scores:library_desc) = Libraries nb nl nd scs libs
+      where
+        scs = V.fromList scores
+        libs = (proc3 . zip [0..] $ proc2 library_desc)
+
+    proc3 = sortOn onTSBD
+
+    proc2 ([nb, su, bd]:books:t) = (nb, su, bd, V.fromList books):(proc2 t)
+    proc2 _ = []
+```
+
+Em `C++`:
+
+```cpp
+struct libraries read_libraries (void)
+{
+  std::string input(std::istreambuf_iterator<char>{std::cin}, {});
+  std::vector<std::vector<int>> values = fplus::fwd::apply(
+      input,
+      fplus::fwd::split_lines(false),
+      fplus::fwd::transform([](std::string line) -> std::vector<int> {
+        return fplus::fwd::apply(
+            line,
+            fplus::fwd::split_words(false),
+            fplus::fwd::transform(fplus::read_value_unsafe<int>));
+        }));
+
+  struct libraries ret;
+
+  { /* Primeira linha */
+    ret.n_books = values[0][0];
+    ret.n_libraries = values[0][1];
+    ret.n_days = values[0][2];
+  }
+
+  { /* Segunda linha */
+    ret.book_scores = values[1];
+  }
+
+  { /* Resto */
+    ret.libraries.reserve(ret.n_libraries);
+    for (int i = 0; i < ret.n_libraries; i++) {
+      std::vector<int> props = values[2 * i + 2 + 0];
+      std::vector<int> books = values[2 * i + 2 + 1];
+
+      int n_books = props[0];
+      int sign_up = props[1];
+      int books_per_day = props[2];
+
+      ret.libraries.push_back(
+          std::make_pair(
+            i,
+            std::make_tuple(n_books,
+              sign_up,
+              books_per_day,
+              books)));
+    }
+  }
+
+  ret.libraries = fplus::sort_on(&on_ts_bd, ret.libraries);
+
+  return ret;
+}
+```
+
+Como se pode verificar, o passo de separar a _string_ de _input_ em linhas e
+palavras, e de ler essas palavras para inteiros, está muito parecido ao
+original. O passo `zip [0..] . proc2`{.hs} já foi fundido num só _loop_ _for_.
+
+### Resolver o Problema
+
+```hs
+ordBookScore :: Libraries -> Int -> Int
+ordBookScore l id = (V.! id) $ bookScore l
+
+solve :: Libraries -> Output
+solve l = cenas . sortOn onTSBD $ solve' (nDays l) (distinct $ libraries l)
+  where
+    distinct :: [LibraryDesc] -> [LibraryDesc]
+    distinct = map mapper . filter pred . fst . foldl' folder def
+      where
+        mapper (id, (nb, ts, bd, bs)) = (id, (nb, ts, bd, sorted))
+          where
+            sorted = V.fromList . sortOn (ordBookScore l) $ V.toList bs
+
+        pred (_, (_, _, _, bs)) = not $ V.null bs
+
+        def = ([], S.empty)
+        folder (ret, s) (id, (nb, ts, bd, bs)) = let
+          bss = S.fromList $ V.toList bs
+          bs' = S.difference bss s
+          ss = S.union s bs'
+          bs'' = V.fromList $ S.toList bs'
+          in ((id, (S.size bs', ts, bd, bs'')):ret, ss)
+
+    cenas = Output . map (\(id, (nb, ts, bd, bs)) -> (id, nb, bs))
+
+    solve' 0 _ = []
+    solve' _ [] = []
+    solve' nd (e@(_, (_, ts, _, _)):t)
+      | ts <= nd = e:(solve' (nd - ts) t)
+      | otherwise = solve' nd t
+```
+
+```cpp
+struct libraries distinct (struct libraries libs)
+{
+  libs.libraries = fplus::fwd::apply(
+      libs.libraries,
+      fplus::fwd::fold_left(
+        [](std::pair<std::vector<library_desc_t>, std::set<int>> a,
+          library_desc_t b) {
+        std::vector<library_desc_t> ret = a.first;
+        std::set<int> s = a.second;
+
+        int id = b.first;
+        int ts, bd;
+        std::vector<int> bs;
+        std::tie(std::ignore, ts, bd, bs) = b.second;
+
+        std::set<int> bss(bs.begin(), bs.end());
+        std::set<int> bs_ = fplus::set_difference(bss, s);
+        std::set<int> ss = fplus::set_merge(s, bs_);
+
+        return std::make_pair(
+            fplus::prepend_elem(
+              std::make_pair(
+                id,
+                std::make_tuple(
+                  bs_.size(),
+                  ts,
+                  bd,
+                  std::vector<int>(bs_.begin(), bs_.end()))),
+              ret),
+            ss);
+        },
+          std::make_pair(std::vector<library_desc_t>(), std::set<int>())),
+          fplus::fwd::fst(),
+          fplus::fwd::keep_if([](library_desc_t pt)
+              { return !std::get<3>(pt.second).empty(); }),
+          fplus::fwd::transform(
+              fplus::fwd::transform_snd(
+                [libs](std::tuple<int, int, int, std::vector<int>> tup) {
+                int nb, ts, bd;
+                std::vector<int> bs;
+                std::tie(nb, ts, bd, bs) = tup;
+                bs = fplus::sort_on([libs](int bid) { return libs.book_scores[bid]; }, bs);
+                return std::make_tuple(nb, ts, bd, bs);
+                }))
+  );
+  return libs;
+}
+
+std::vector<library_desc_t>
+solve_ (int n_days, std::vector<library_desc_t> libs)
+{
+  std::vector<library_desc_t> ret;
+  int len = libs.size();
+  assert(len > 0);
+
+  for (int i = 0; i < len && n_days > 0; i++) {
+    library_desc_t e = libs[i];
+    int ts = std::get<1>(e.second);
+
+    if (ts <= n_days) {
+      ret.push_back(e);
+      n_days -= ts;
+    }
+  }
+
+  return ret;
+}
+
+output_t solve (struct libraries libs)
+{
+  libs = distinct(libs);
+  return fplus::fwd::apply(
+      solve_(libs.n_days, libs.libraries),
+      fplus::fwd::sort_on(&on_ts_bd),
+      fplus::fwd::transform(
+        [](library_desc_t pt) {
+          int id = pt.first;
+          int nb;
+          std::vector<int> bs;
+          std::tie(nb, std::ignore, std::ignore, bs) = pt.second;
+          return std::make_tuple(id, nb, bs);
+        }));
+}
+```
+
+### Escrever o _Output_
+
+```hs
+outputToString :: Output -> String
+outputToString (Output libs) = unlines
+                             . ((show nLibs):)
+                             $ concatMap mapper libs
+  where
+    mapper = map (unwords . map show)
+           . (\(x, y, l) -> [[x, y], V.toList l])
+    nLibs = length libs
+```
+
+```cpp
+void output_to_string (output_t output)
+{
+  std::cout << output.size() << std::endl;
+
+  for (const std::tuple<int, int, std::vector<int>> & lib : output) {
+    int x, y;
+    std::vector<int> l;
+    std::tie(x, y, l) = lib;
+
+    std::cout << x << " " << y << std::endl;
+
+    int len = l.size();
+    assert(len > 0);
+    std::cout << l[0];
+
+    for (int i = 1; i < len; i++)
+      std::cout << " " << l[i];
+
+    std::cout << std::endl;
+  }
+}
+```
+
+### Resultados
 
 A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
 demorou duas tardes a completar, um total de cerca de oito horas. Para alguns
@@ -901,6 +1192,7 @@ ao material já existente.
 [^cpp_prelude]: Ver _[CPP Prelude]_.
 [^fplus]: Ver _[Functional Plus]_.
 [^fplus_examples]: Para mais exemplos de uso, ver o programa do [_Google Hash Code 2020_](#_google-hash-code-2020_).
+[^hash_code_2020]: O enunciado do problema e ficheiros de input podem ser descarregados daqui: https://codingcompetitions.withgoogle.com/hashcode/archive
 [^let_over_lambda]: Para mais informação sobre este assunto, ler [_Let Over Lambda_](https://letoverlambda.com).
 [^ranges]: Ver _[Ranges]_.
 
