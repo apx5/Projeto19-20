@@ -6,8 +6,8 @@
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
 programadores em detrimento de outros, pois permite que em poucas linhas de
-código, quando comparado com outros estilos, se consiga criar soluções robustas
-e eficientes.
+código, quando comparado com outros estilos, se consigam criar soluções
+robustas e eficientes.
 
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
 forma podemos aproveitar essas vantagens em `C++`. Iremos estudar e analisar as
@@ -26,7 +26,7 @@ Aproveitaremos também para aprofundar alguns aspectos/características
 importantes da Programação Funcional tais como:
 
  * Imutabilidade
- * Lazy Evaluation
+ * _Lazy Evaluation_
  * Composição
  * ADTs
 
@@ -48,13 +48,10 @@ cuidar e evitar que problemas aconteçam. O paradigma Funcional evita este
 problema parcial ou completamente, ao desencorajar ou impedir esta prática e,
 ao mesmo tempo, encorajar e facilitar "boa prática".
 
-\pagebreak
-
 Um exemplo extremo e pouco realista seria:
 
 ```cpp
-void accoes (void)
-{
+void accoes (void) {
     accao1();
     accao2();
     accao3();
@@ -123,9 +120,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    T add(T a, T b) {
        return a + b;
    };
-
-   int main ()
-   {
+   int main () {
        auto i = add(2, 3);
        auto f = add(2.2, 4.1);
        return 0;
@@ -176,11 +171,9 @@ Em `Haskell`:
 
 ```hs
 map :: (a -> b) -> [a] -> [b]
-
 -- Recursividade explícita
 map f [] = []
 map f (h:t) = f h : map f t
-
 -- Funções de ordem superior
 map f = foldr (\a -> (f a :)) []
 ```
@@ -222,13 +215,11 @@ Em `Haskell`:
 
 ```hs
 filter :: (a -> Bool) -> [a] -> [a]
-
 -- Recursividade explícita
 filter p [] = []
 filter p (h:t)
     | p h       = h : filter p t
     | otherwise =     filter p t
-
 -- Funções de ordem superior
 filter p = foldr (\a -> if p a then (a:) else id) []
 ```
@@ -264,13 +255,11 @@ Em `Haskell`:
 
 ```hs
 reverse :: [a] -> [a]
-
 -- Recursividade explícita
 reverse = reverse' []
     where
         reverse' ret []    = ret
         reverse' ret (h:t) = reverse' (h:ret) t
-
 -- Funções de ordem superior
 reverse = foldl (flip (:)) []
 ```
@@ -300,12 +289,10 @@ Em `Haskell`:
 
 ```hs
 zip :: [a] -> [b] -> [(a,b)]
-
 -- Recursividade explícita
 zip []     _      = []
 zip _      []     = []
 zip (x:xs) (y:ys) = (x, y) : zip xs ys
-
 -- Funções de ordem superior
 zip = zipWith (,)
 ```
@@ -357,8 +344,6 @@ macro:
               << " nanoseconds" <<  std::endl; \
   } while (0)
 ```
-
-\pagebreak
 
 Em `Haskell` usamos `getCPUTime`{.hs} de `System.CPUTime`{.hs}, com a seguinte
 função:
@@ -413,8 +398,6 @@ código:
 output_to_string(solve(read_libraries()));
 ```
 
-\pagebreak
-
 Tem apenas duas pequenas excepções: enquanto que em `Haskell` temos as
 seguintes funções:
 
@@ -433,17 +416,9 @@ void output_to_string (output_t output);
 Isto porque seria mais difícil implementar de uma forma mais funcional e o
 resultado seria muito menos idiomático -- estranho, até.
 
+\pagebreak
+
 ### Notas Sobre Funções Relevantes Utilizadas
-
-#### `fplus::fwd::apply`
-
-Esta função é usada para aplicar funções sobre colecções a uma colecção. Por
-exemplo, quando em `Haskell` escreveríamos `func3 . func2 . func1 $ col`{.hs},
-em `C++`, com a biblioteca _"Functional Plus"_, escrevemos
-`fplus::fwd::apply(col, func1, func2, func3)`{.cpp}.
-
-Funções úteis para usar com `fplus::fwd::apply` podem ser encontradas no
-_namespace_ `fplus::fwd`.
 
 #### `fplus::transform`
 
@@ -456,6 +431,16 @@ biblioteca _"Functional Plus"_, escrevemos `fplus::transform(func, col)`{.cpp}.
 Esta função serve um propósito similar ao da função `filter`{.hs} em `Haskell`.
 Enquanto que em `Haskell` escreveríamos `filter pred col`{.hs}, em `C++`, com a
 biblioteca _"Functional Plus"_, escrevemos `fplus::keep_if(pred, col)`{.cpp}.
+
+#### `fplus::fwd::apply`
+
+Esta função é usada para aplicar funções sobre colecções a uma colecção. Por
+exemplo, quando em `Haskell` escreveríamos `func3 . func2 . func1 $ col`{.hs},
+em `C++`, com a biblioteca _"Functional Plus"_, escrevemos\
+`fplus::fwd::apply(col, func1, func2, func3)`{.cpp}.
+
+Funções úteis para usar com `fplus::fwd::apply` podem ser encontradas no
+_namespace_ `fplus::fwd`.
 
 #### `fplus::fwd`
 
@@ -512,7 +497,6 @@ Em `Haskell`:
 ```hs
 --                  ID    nBooks  Signup books/day books
 type LibraryDesc = (Int, (Int,    Int,   Int,      V.Vector Int))
-
 data Libraries = Libraries {
   nBooks :: Int,
   nLibraries :: Int,
@@ -520,19 +504,15 @@ data Libraries = Libraries {
   bookScore :: V.Vector Int,
   libraries :: [LibraryDesc]
   } deriving Show
-
 --                        lib  nb   books
 newtype Output = Output [(Int, Int, V.Vector Int)]
 ```
-
-\pagebreak
 
 Em `C++`:
 
 ```cpp
 typedef std::pair<int, std::tuple<int, int, int, std::vector<int>>>
         library_desc_t;
-
 struct libraries {
   int n_books;
   int n_libraries;
@@ -540,14 +520,14 @@ struct libraries {
   std::vector<int> book_scores;
   std::vector<library_desc_t> libraries;
 };
-
-typedef std::vector<std::tuple<int, int, std::vector<int>>> output_t;
+typedef std::vector<std::tuple<int, int, std::vector<int>>>
+        output_t;
 ```
 
 ### Ler o _Input_
 
 Para a leitura do _input_ tiramos proveito da _lazyness_ do `Haskell`, e
-tomamos o _input_ como uma `String`{.hs}. Do lado do `C++` usamos também
+tomando-o como uma `String`{.hs}. Do lado do `C++` usamos também
 `std::string`{.cpp}, simplesmente porque pretendíamos uma conversão mais
 directa -- esta não é a melhor escolha para performance, mas para os ficheiros
 de _input_ não é expectável qualquer penalização, visto que o maior destes tem
@@ -556,12 +536,12 @@ apenas 3.4MB.
 De seguida apresentamos o ficheiro de exemplo mais pequeno:
 
 ```
-6 2 7       -- 6 livros, 2 bibliotecas, 7 dias
-1 2 3 6 5 4 -- pontuação de cada livro
-5 2 2       -- A biblioteca 0 tem 5 livros, 2 dias de signup, 2 livros/dia
-0 1 2 3 4   -- Os livros que a biblioteca 0 tem
-4 3 1       -- A biblioteca 1 tem 4 livros, 3 dias de signup, 1 livro/dia
-0 2 3 5     -- Os livros que a biblioteca 1 tem
+6 2 7       ; 6 livros, 2 bibliotecas, 7 dias
+1 2 3 6 5 4 ; Pontuação de cada livro
+5 2 2       ; Biblioteca 0: 5 livros, 2 dias de signup, 2 livros/dia
+0 1 2 3 4   ; Os livros da biblioteca 0
+4 3 1       ; Biblioteca 1: 4 livros, 3 dias de signup, 1 livro/dia
+0 2 3 5     ; Os livros da biblioteca 1
 ```
 
 Em `Haskell`:
@@ -586,8 +566,7 @@ readLibraries = proc . map (map read . words) . lines
 Em `C++`:
 
 ```cpp
-struct libraries read_libraries (void)
-{
+struct libraries read_libraries (void) {
   std::string input(std::istreambuf_iterator<char>{std::cin}, {});
   std::vector<std::vector<int>> values = fplus::fwd::apply(
       input,
@@ -600,39 +579,29 @@ struct libraries read_libraries (void)
         }));
 
   struct libraries ret;
-
-  { /* Primeira linha */
-    ret.n_books = values[0][0];
-    ret.n_libraries = values[0][1];
-    ret.n_days = values[0][2];
+  /* Primeira linha */
+  ret.n_books = values[0][0];
+  ret.n_libraries = values[0][1];
+  ret.n_days = values[0][2];
+  /* Segunda linha */
+  ret.book_scores = values[1];
+  /* Resto */
+  ret.libraries.reserve(ret.n_libraries);
+  for (int i = 0; i < ret.n_libraries; i++) {
+    std::vector<int> props = values[2 * i + 2 + 0];
+    std::vector<int> books = values[2 * i + 2 + 1];
+    int n_books = props[0];
+    int sign_up = props[1];
+    int books_per_day = props[2];
+    ret.libraries.push_back(
+        std::make_pair(i,
+          std::make_tuple(n_books,
+            sign_up,
+            books_per_day,
+            books)));
   }
-
-  { /* Segunda linha */
-    ret.book_scores = values[1];
-  }
-
-  { /* Resto */
-    ret.libraries.reserve(ret.n_libraries);
-    for (int i = 0; i < ret.n_libraries; i++) {
-      std::vector<int> props = values[2 * i + 2 + 0];
-      std::vector<int> books = values[2 * i + 2 + 1];
-
-      int n_books = props[0];
-      int sign_up = props[1];
-      int books_per_day = props[2];
-
-      ret.libraries.push_back(
-          std::make_pair(
-            i,
-            std::make_tuple(n_books,
-              sign_up,
-              books_per_day,
-              books)));
-    }
-  }
-
+  /* `proc3` */
   ret.libraries = fplus::sort_on(&on_ts_bd, ret.libraries);
-
   return ret;
 }
 ```
@@ -679,14 +648,11 @@ solve l = cenas . sortOn onTSBD $ solve' (nDays l) (distinct $ libraries l)
       | otherwise = solve' nd t
 ```
 
-\pagebreak
-
 Em `C++`:
 
 ```cpp
 /* Esta função representa a função `distinct` acima */
-struct libraries distinct (struct libraries libs)
-{
+struct libraries distinct (struct libraries libs) {
   libs.libraries = fplus::fwd::apply(
       libs.libraries,
       fplus::fwd::fold_left(
@@ -694,16 +660,13 @@ struct libraries distinct (struct libraries libs)
           library_desc_t b) {
         std::vector<library_desc_t> ret = a.first;
         std::set<int> s = a.second;
-
         int id = b.first;
         int ts, bd;
         std::vector<int> bs;
         std::tie(std::ignore, ts, bd, bs) = b.second;
-
         std::set<int> bss(bs.begin(), bs.end());
         std::set<int> bs_ = fplus::set_difference(bss, s);
         std::set<int> ss = fplus::set_merge(s, bs_);
-
         return std::make_pair(
             fplus::prepend_elem(
               std::make_pair(
@@ -726,7 +689,8 @@ struct libraries distinct (struct libraries libs)
                 int nb, ts, bd;
                 std::vector<int> bs;
                 std::tie(nb, ts, bd, bs) = tup;
-                bs = fplus::sort_on([libs](int bid) { return libs.book_scores[bid]; }, bs);
+                bs = fplus::sort_on([libs](int bid)
+                { return libs.book_scores[bid]; }, bs);
                 return std::make_tuple(nb, ts, bd, bs);
                 }))
   );
@@ -735,12 +699,10 @@ struct libraries distinct (struct libraries libs)
 
 /* Esta função representa a função `solve'` acima */
 std::vector<library_desc_t>
-solve_ (int n_days, std::vector<library_desc_t> libs)
-{
+solve_ (int n_days, std::vector<library_desc_t> libs) {
   std::vector<library_desc_t> ret;
   int len = libs.size();
   assert(len > 0);
-
   for (int i = 0; i < len && n_days > 0; i++) {
     library_desc_t e = libs[i];
     /*
@@ -751,18 +713,15 @@ solve_ (int n_days, std::vector<library_desc_t> libs)
      * `std::get<1>` acede à componente de índice 1
      */
     int ts = std::get<1>(e.second);
-
     if (ts <= n_days) {
       ret.push_back(e);
       n_days -= ts;
     }
   }
-
   return ret;
 }
 
-output_t solve (struct libraries libs)
-{
+output_t solve (struct libraries libs) {
   libs = distinct(libs);
   return fplus::fwd::apply(
       solve_(libs.n_days, libs.libraries),
@@ -784,11 +743,11 @@ Aqui apresentamos o _output_ gerado pelos dois programas, dado o ficheiro de
 exemplo mostrado acima:
 
 ```
-2           -- 2 bibliotecas
-0 5         -- 5 livros, da biblioteca 0
-0 1 2 4 3   -- Livros 0, 1, 2, 4, 3, por esta ordem
-1 1         -- 1 livro, da biblioteca 1
-5           -- Livro 5
+2         ; 2 bibliotecas
+0 5       ; 5 livros, da biblioteca 0
+0 1 2 4 3 ; Livros 0, 1, 2, 4, 3, por esta ordem
+1 1       ; 1 livro, da biblioteca 1
+5         ; Livro 5
 ```
 
 Em `Haskell`:
@@ -807,26 +766,20 @@ outputToString (Output libs) = unlines
 Em `C++`:
 
 ```cpp
-void output_to_string (output_t output)
-{
+void output_to_string (output_t output) {
   /* Esta operação representa `((show nLibs):)` acima */
   std::cout << output.size() << std::endl;
-
   /* O corpo deste ciclo representa a função `mapper` acima */
   for (const std::tuple<int, int, std::vector<int>> & lib : output) {
     int x, y;
     std::vector<int> l;
     std::tie(x, y, l) = lib;
-
     std::cout << x << " " << y << std::endl;
-
     int len = l.size();
     assert(len > 0);
     std::cout << l[0];
-
     for (int i = 1; i < len; i++)
       std::cout << " " << l[i];
-
     std::cout << std::endl;
   }
 }
@@ -837,16 +790,17 @@ void output_to_string (output_t output)
 A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
 demorou duas tardes a completar, um total de cerca de oito horas. Relativamente
 a performance, apresentamos de seguida a tabela com os tempos de processamento
-por cada ficheiro.
+por cada ficheiro e se o _output_ do programa em `C++` foi igual ao do
+original.
 
-| Ficheiro                       | `Haskell` | `C++`      | _Output_ igual |
-| :----------------------------: | :-------: | :--------: | :------------: |
-| `a_example.txt`                | 0s        | 0s         | Sim            |
-| `b_read_on.txt`                | 0.7s      | 9.95s      | Não            |
-| `c_incunabula.txt`             | 1.26s     | 4m 40.83s  | Sim            |
-| `d_tough_choices.txt`          | 1.57s     | 23m 59.30s | Não            |
-| `e_so_many_books.txt`          | 3.01s     | 3m 5.39s   | Não            |
-| `f_libraries_of_the_world.txt` | 2.9s      | 3m 13.55s  | Sim            |
+| Ficheiro                       | `Haskell` | `C++`      | _Output_ igual? |
+| :----------------------------: | :-------: | :--------: | :------------:  |
+| `a_example.txt`                | 0s        | 0s         | Sim             |
+| `b_read_on.txt`                | 0.7s      | 9.95s      | Não             |
+| `c_incunabula.txt`             | 1.26s     | 4m 40.83s  | Sim             |
+| `d_tough_choices.txt`          | 1.57s     | 23m 59.30s | Não             |
+| `e_so_many_books.txt`          | 3.01s     | 3m 5.39s   | Não             |
+| `f_libraries_of_the_world.txt` | 2.9s      | 3m 13.55s  | Sim             |
 | Total                          | 9.44s     | 35m 9.02s  |
 
 Como é possível verificar na tabela, o tempo total de execução para todos os
@@ -863,7 +817,7 @@ de ordenação nas duas linguagens.
 
 # Aspectos Importantes de Programação Funcional
 
-Neste capítulo detalharemos as características da programação funcional,
+Neste capítulo detalharemos as características da programação funcional
 mencionadas na introdução.
 
 Composição é, provavelmente, o mais importante e talvez o único aspecto
@@ -876,7 +830,7 @@ para implementar mudanças. Esta propriedade ajuda a evitar erros comuns em
 Programação Imperativa, causados pela partilha de memória e a não especificação
 da relação entre estados.
 
-Lazy Evaluation, não sendo adoptada como estratégia de avaliação, pode ser
+_Lazy Evaluation_, não sendo adoptada como estratégia de avaliação, pode ser
 usada como estratégia de optimização, especialmente quando combinada com
 imutabilidade e partilha de memória.
 
@@ -887,8 +841,8 @@ sistema de tipos que ajudem a descrever o problema com que nos deparamos, dando
 significado a valores e tentando limitar o conjunto de valores possíveis aos
 estritamente válidos.
 
-A seguir, para cada um destes pontos, mostraremos e analisaremos exemplos de
-como se faz em `Haskell` e como se pode fazer em `C++`.
+A seguir, para cada um destes pontos, mostraremos e analisaremos exemplos em
+`Haskell` e como se pode fazer em `C++`.
 
 ## Imutabilidade
 
@@ -906,25 +860,19 @@ efeitos colaterais observáveis. Por exemplo:
 
 ```cpp
 int g = 0;
-
 /* Referencialmente transparente */
 int ref_trans (int x) {
     return x + 1;
 }
-
-/*
- * Não referencialmente transparente -- cada vez que a função é
- * invocada, tem um valor de retorno diferente
- */
+/* Não referencialmente transparente -- cada vez que a função é
+ * invocada, tem um valor de retorno diferente */
 int not_ref_trans1 (int x) {
     g++;
     return x + g;
 }
-
-/*
- * Não referencialmente transparente -- embora o valor de retorno seja sempre o
- * mesmo, dado o mesmo input, há um efeito colateral, o incremento de `g`
- */
+/* Não referencialmente transparente -- embora o valor de retorno seja
+ * sempre o mesmo, dado o mesmo input, há um efeito colateral, o
+ * incremento de `g` */
 int not_ref_trans2 (int x) {
     g++;
     return x + 1;
@@ -932,7 +880,7 @@ int not_ref_trans2 (int x) {
 ```
 
 A ideia de imutabilidade é particularmente útil em ambientes em que se gera
-concorrência, pois, existem variáveis partilhadas que podem gerar
+concorrência, pois existem variáveis partilhadas que podem gerar
 comportamentos inesperados nos programas se não for devidamente protegida a sua
 alteração. Em `C++` está disponível a keyword `const`{.cpp} que permite
 controlar a imutabilidade de uma variável. Ao declarar uma variável `const
@@ -943,7 +891,6 @@ erros que podem ser cometidos ao tentar manipular essa variável.
 
 ```cpp
 const std::string name{"John Smith"};
-
 1 - std::string name_copy = name;
 2 - std::string& name_ref = name; // erro
 3 - const std::string& name_constref = name;
@@ -951,12 +898,12 @@ const std::string name{"John Smith"};
 5 - const std::string* name_constptr = &name;
 ```
 
-Em 1 não há ocorrências de erros pois apenas se está a associar o valor de name
-a uma nova variável. Em 2 teremos um erro de compilação pois estamos a passar
-`name`{.cpp} por referência a uma variável não `const`{.cpp}, situação que é
-resolvida em 3. Em 4 voltamos a ter um erro de compilação pois estamos a criar
-um apontador não `const`{.cpp} para `name`{.cpp}. Este erro é resolvido em 5. O
-facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de
+Em 1 não há ocorrências de erros pois apenas se está a associar o valor de
+`name` a uma nova variável. Em 2 teremos um erro de compilação pois estamos a
+passar `name`{.cpp} por referência a uma variável não `const`{.cpp}, situação
+que é resolvida em 3. Em 4 voltamos a ter um erro de compilação pois estamos a
+criar um apontador não `const`{.cpp} para `name`{.cpp}. Este erro é resolvido
+em 5. O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de
 `name_ref`{.cpp} e `name_ptr`{.cpp} não estarem qualificados com `const`{.cpp}
 e poderem ser alterados. No entanto, como apontam para uma variável
 `const`{.cpp}, gera-se uma contradição.
@@ -994,12 +941,9 @@ class lazy_funcall
     typedef decltype(func()) RetType;
     mutable std::optional<RetType> ret;
     mutable std::once_flag call_once_flag;
-
 public:
     lazy_funcall (F f) : func(f) { }
-
-    const RetType & operator() () const
-    {
+    const RetType & operator() () const {
         std::call_once(call_once_flag, [this] { ret = func(); });
         return ret.value();
     }
@@ -1010,11 +954,11 @@ public:
 
 Uma parte importante de Programação Funcional é a composição de funções. Ao
 escrever funções pequenas e genéricas, e ao reutilizá-las com composição, é
-possível escrever programas completos rapidamente e com menos bugs. Em
+possível escrever programas completos rapidamente e com menos _bugs_. Em
 linguagens funcionais, composição é usada frequentemente; numa linguagem como
 `C++` não é muito conveniente usar composição em todo o lado, principalmente
 por causa da sintaxe e da semântica de passar variáveis por valor ou
-referência. Há um sitio, no entanto, onde composição não tem de ser
+referência. Existe um caso, no entanto, onde composição não tem de ser
 _pointwise_: trabalhar com colecções. Quando há um conjunto de operações a
 aplicar a uma colecção, seja no seu todo ou parte dela, expressar estas
 operações com algum tipo de _pipeline_ é bastante intuitivo, legível e barato
@@ -1028,8 +972,8 @@ _pipeline_, sendo muitas delas bastante comuns. Programá-las de cada vez
 manualmente como um _loop_ é tedioso e muito provavelmente menos legível do que
 simplesmente usar as abstracções. Algumas destas operações comuns incluem
 somar, multiplicar, filtrar, mapear e o canivete suíço, com o qual muitas das
-outras operações são implementadas, o `fold` -- também comummente conhecido
-como `reduce`, mas com semântica ligeiramente diferente.
+outras operações são implementadas, o `fold`{.scm} -- também comummente
+conhecido como `reduce`{.scm}, mas com semântica ligeiramente diferente.
 
 A STL de `C++` já tem algumas destas operações. Para os casos mais simples e
 comuns estas podem ser suficientes. É definitivamente melhor do que escrever um
@@ -1039,39 +983,36 @@ _"Functional Plus"_ no documento. No entanto, existe uma outra biblioteca
 parecida, _"Ranges"_, com melhor performance, mas a documentação é escassa, o
 que torna difícil perceber como a usar.
 
-Como exemplo, dado um vector (ou uma lista em `Haskell`), filtrar os elementos
-dado um predicado, aplicar uma função a cada um deles, e depois multiplicar os
-resultados pode ser feito assim em `Haskell`:
+Como exemplo, dada uma lista em `Haskell`, filtrar os elementos que satisfazem
+um predicado, aplicar uma função a cada um deles, e por fim calcular o
+produtório pode ser escrito assim em `Haskell`:
 
 ```hs
 product . map mapper . filter pred $ xs
 ```
 
-Um _loop_ `for` em `C++` escrito manualmente podia ser como o que se segue --
-omitindo a declaração e inicialização da variável `ret`{.hs}:
+Um _loop_ `for` para o mesmo efeito em `C++`, escrito manualmente, podia ser
+como o que se segue -- omitindo a declaração e inicialização da variável
+`ret`{.hs}:
 
 ```cpp
-for (auto x : xs) {
-    if (pred(x)) {
+for (auto x : xs)
+    if (pred(x))
         ret *= mapper(x);
-    }
-}
 ```
 
 Mas não é preciso escrever _loops_ `for` manualmente grande parte das vezes --
 podemos em vez disso escrever o seguinte[^fplus_examples]:
 
 ```cpp
-fplus::fwd::apply(
-    xs
+fplus::fwd::apply(xs
     , fplus::fwd::keep_if(pred)
     , fplus::fwd::transform(mapper)
-    , fplus::fwd::product()
-    )
+    , fplus::fwd::product())
 ```
 
 O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. A
-partir do livro _Functional Programming in C++_, do _Ivan Čukić_, pudemos obter
+partir do livro _Functional Programming in C++_, de _Ivan Čukić_, pudemos obter
 uma amostra do que é possível neste tipo de biblioteca. Em particular, o livro
 explica por alto porque é que a biblioteca _"Ranges"_ tem melhor performance
 que a STL, e que a _"Functional Plus"_.
@@ -1093,7 +1034,7 @@ pontos a melhorar saltam à vista:
 
 A _"Functional Plus"_ melhora o primeiro destes pontos, -- basta passar a
 colecção em si, não iteradores para ela -- mas o segundo ponto continua um
-problema presente -- e sempre devolvida uma nova operação como resultado.
+problema presente -- é sempre devolvida uma nova operação como resultado.
 
 A _"Ranges"_ melhora estes dois aspectos ao simplesmente abstrair colecções
 como _ranges_, e devolver _ranges_ como resultado das operações. Pode-se pensar
@@ -1104,7 +1045,7 @@ transformada num _range_, ou o resultado de uma outra operação, que já é um
 _range_. Esta última parte é crucial -- significa que podemos compor operações
 _pointfree_.
 
-Usabilidade está explicada. Vamos agora a porformance. O par de iteradores que
+Usabilidade está explicada. Vamos agora a performance. O par de iteradores que
 forma um _range_ é só um par de apontadores. Para operações que não alteram a
 colecção original não há necessidade de copiar memória. Para implementar, por
 exemplo, o `filter`{.hs}, basta implementar o operador `++`{.cpp} (_next_) para
@@ -1121,7 +1062,7 @@ Todas as operações são _lazy_, ou seja, acontecem _on-demand_, como em
 
 ## ADTs
 
-ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algebricos, são tipos de dados
+ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algébricos, são tipos de dados
 criados a partir de tipos já existentes, de duas maneiras diferentes. Vamos dar
 uma breve descrição, para completude, simplesmente porque nem todas as
 linguagens funcionais têm ADTs nativamente ou com este nome.
@@ -1134,8 +1075,8 @@ o co-produto. Dados dois tipos $A$ e $B$, o co-produto deles, $A + B$, é o
 conjunto cujos elementos ou são do tipo $A$ ou do tipo $B$, mas é possível
 distingui-los -- união disjunta. Este conjunto pode ser representado
 indirectamente como $Bool \times (A \cup B)$: um elemento de $A$ ou $B$, e uma
-flag a indicar se é de $A$ ou de $B$. Note-se que esta flag indica na verdade
-se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
+_flag_ a indicar se é de $A$ ou de $B$. Note-se que esta _flag_ indica na
+verdade se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
 
 Com estas duas técnicas de composição é possível representar qualquer estrutura
 de dados. Será então útil saber como usar estas duas técnicas numa linguagem de
@@ -1205,8 +1146,8 @@ podemos pensar no tipo booleano como o co-produto de `false` e `true`, isto é,
 $Bool \cong False + True$.
 
 Poderíamos assim achar que `enum`{.cpp} em `C++` serve para representar
-co-produtos em geral mas estariamos errados. `enum`{.cpp} serve apenas para
-representar o co-produto de vários conjuntos singulares ou um único conjunto
+co-produtos em geral, mas estaríamos errados. `enum`{.cpp} serve apenas para
+representar o co-produto de vários conjuntos singulares, ou um único conjunto
 enumerável de valores não inteiros e sem ordem. Veremos mais a frente como
 representar tipos de soma.
 
@@ -1244,8 +1185,6 @@ data BTree a = Leaf a
              | Node a (BTree a) (Btree a)
 ```
 
-\pagebreak
-
 Em `C++`:
 
 ```cpp
@@ -1255,7 +1194,6 @@ struct BTree {
         BTree_Leaf,
         BTree_Node,
     } variant;
-
     union {
         A leaf;
         struct {
@@ -1289,7 +1227,6 @@ struct Node {
     Node<A> left;
     Node<A> right;
 };
-
 template <typename A>
 using BTree = std::variant<A, struct Node<A>>;
 ```
@@ -1299,9 +1236,9 @@ using BTree = std::variant<A, struct Node<A>>;
 Ao longo deste documento, é possível constatar visualmente as diferenças
 sintáticas entre as duas linguagens. Em `Haskell` o código é bastante mais
 conciso do que em `C++`, pelo que a sua leitura e compreensão se torna mais
-simpática. Relativamente a eficiência e usabilidade das linguagens, em
+simpática. Relativamente à eficiência e usabilidade das linguagens, em
 `Haskell` torna-se mais simples escrever programas relativamente eficientes com
-"pouco cuidado" uma vez que não há necessidade de preocupação com certos
+"pouco cuidado", uma vez que não há necessidade de preocupação com certos
 detalhes de implementação -- gestão de memória, ordem de execução, etc. Embora
 `C++` não tenha sido inicialmente pensado para o paradigma funcional, é de
 notar que têm sido incluídas nas suas revisões alguns conceitos directamente
