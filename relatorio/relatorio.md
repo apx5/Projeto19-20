@@ -71,7 +71,7 @@ Deste pequeno excerto, podemos concluír uma de duas hipóteses:
     alguma estrutura de dados partilhada; esta relacao _input_-_output_ não é
     explicita.
 
-Por outro lado, numa linguagem funcional escreveriamos (em notacao `Haskell`)
+Por outro lado, numa linguagem funcional escreveríamos (em notacao `Haskell`)
 `accoes = accao3 . accao2 . accao1`{.hs} para representar a mesma sequência de
 acções mas sem partilha de memória nem estruturas de dados a serem mutadas:
 cada uma das acções é uma função que devolve uma estrutura de dados, dada outra
@@ -393,7 +393,10 @@ devolve `b`{.hs}.
 
 Falemos agora sobre o problema do _Google Hash Code 2020_. O problema é de
 optimização, e consiste em planear que livros serão examinados e de que
-biblioteca, de forma a maximizar a pontuação.[^hash_code_2020]
+biblioteca, de forma a maximizar a pontuação. Não iremos detalhar aqui o
+problema em si, os ficheiros de input e output, -- visto que estão disponíveis
+na página da competição[^hash_code_2020] -- nem a estratégia usada para o
+resolver, visto não estar directamente relacionado com o tema deste trabalho.
 
 O programa original, escrito em `Haskell`, foi desenvolvido durante a
 competição, que durou quatro horas, e está estruturado simplesmente como a
@@ -428,6 +431,73 @@ void output_to_string (output_t output);
 
 Isto porque seria mais difícil implementar de uma forma mais funcional e o
 resultado seria muito menos idiomático -- estranho, até.
+
+### Notas Sobre Funções Relevantes Utilizadas
+
+#### `fplus::fwd::apply`
+
+Esta função é usada para aplicar funções sobre colecções a uma colecção. Por
+exemplo, quando em `Haskell` escreveríamos `func3 . func2 . func1 $ col`{.hs},
+em `C++`, com a biblioteca _"Functional Plus"_, escrevemos
+`fplus::fwd::apply(col, func1, func2, func3)`{.cpp}.
+
+Funções uteis para usar com `fplus::fwd::apply` podem ser encontradas no
+_namespace_ `fplus::fwd`.
+
+#### `fplus::transform`
+
+Esta função serve um propósito similar ao da função `map`{.hs} em `Haskell`.
+Enquanto que em `Haskell` escreveríamos `map func col`{.hs}, em `C++`, com a
+biblioteca _"Functional Plus"_, escrevemos `fplus::transform(func, col)`{.cpp}.
+
+#### `fplus::keep_if`
+
+Esta função serve um propósito similar ao da função `filter`{.hs} em `Haskell`.
+Enquanto que em `Haskell` escreveríamos `filter pred col`{.hs}, em `C++`, com a
+biblioteca _"Functional Plus"_, escrevemos `fplus::keep_if(pred, col)`{.cpp}.
+
+#### `fplus::fwd`
+
+Como em `C++` não há _auto-currying_, de forma a ser possível compor funções da
+biblioteca, existem no _namespace_ `fplus::fwd` versões para este propósito.
+Por exemplo, podemos escrever
+
+```cpp
+fplus::fwd::apply(col,
+                 fplus::fwd::keep_if(pred),
+                 fplus::fwd::transform(func));
+```
+
+em vez de
+
+```cpp
+fplus::transform(func, fplus::keep_if(pred, col));
+```
+
+#### `std::tie`
+
+
+Para destruturar tuplos em `C++` -- mas não pares -- podemos usar
+`std::tie`{.cpp}. Isto é equivalente a fazer _pattern match_ sobre um tuplo em
+`Haskell`. Vejamos um exemplo:
+
+Em `Haskell`:
+
+```hs
+t :: (Int, Float, Char, String, Double)
+t = (0, 1, 'a', "ola", 2)
+(x, _, _, _, d) = t
+```
+
+Em `C++`:
+
+```cpp
+std::tuple<int, float, char, std::string, double> t
+    = std::make_tuple(0, 1, 'a', "ola", 2);
+int x;
+double d;
+std::tie(x, std::ignore, std::ignore, std::ignore, d) = t;
+```
 
 ### Tipos e Estruturas de Dados
 
@@ -479,6 +549,17 @@ tomamos o _input_ como uma `String`{.hs}. Do lado do `C++` usamos também
 directa -- esta não é a melhor escolha para performance, mas para os ficheiros
 de _input_ não é expectável qualquer penalização, visto que o maior destes tem
 apenas 3.4MB.
+
+De seguida apresentamos o ficheiro de exemplo mais pequeno:
+
+```
+6 2 7       -- 6 livros, 2 bibliotecas, 7 dias
+1 2 3 6 5 4 -- pontuação de cada livro
+5 2 2       -- A biblioteca 0 tem 5 livros, 2 dias de signup, 2 livros/dia
+0 1 2 3 4   -- Os livros que a biblioteca 0 tem
+4 3 1       -- A biblioteca 1 tem 4 livros, 3 dias de signup, 1 livro/dia
+0 2 3 5     -- Os livros que a biblioteca 1 tem
+```
 
 Em `Haskell`:
 
@@ -555,9 +636,12 @@ struct libraries read_libraries (void)
 
 Como se pode verificar, o passo de separar a _string_ de _input_ em linhas e
 palavras, e de ler essas palavras para inteiros, está muito parecido ao
-original. O passo `zip [0..] . proc2`{.hs} já foi fundido num só _loop_ _for_.
+original -- a definição da variável `values`{.cpp}. O passo `zip [0..] .
+proc2`{.hs} já foi fundido num só _loop_ _for_.
 
 ### Resolver o Problema
+
+Em `Haskell`:
 
 ```hs
 ordBookScore :: Libraries -> Int -> Int
@@ -592,7 +676,10 @@ solve l = cenas . sortOn onTSBD $ solve' (nDays l) (distinct $ libraries l)
       | otherwise = solve' nd t
 ```
 
+Em `C++`:
+
 ```cpp
+/* Esta função representa a função `distinct` acima */
 struct libraries distinct (struct libraries libs)
 {
   libs.libraries = fplus::fwd::apply(
@@ -641,6 +728,7 @@ struct libraries distinct (struct libraries libs)
   return libs;
 }
 
+/* Esta função representa a função `solve'` acima */
 std::vector<library_desc_t>
 solve_ (int n_days, std::vector<library_desc_t> libs)
 {
@@ -650,6 +738,13 @@ solve_ (int n_days, std::vector<library_desc_t> libs)
 
   for (int i = 0; i < len && n_days > 0; i++) {
     library_desc_t e = libs[i];
+    /*
+     * `e` é um `std::pair`
+     * `e.second` acede à componente da direita.
+     *
+     * `e.second` é um `std::tuple`
+     * `std::get<1>` acede à componente de índice 1
+     */
     int ts = std::get<1>(e.second);
 
     if (ts <= n_days) {
@@ -680,6 +775,19 @@ output_t solve (struct libraries libs)
 
 ### Escrever o _Output_
 
+Aqui apresentamos o _output_ gerado pelos dois programas, dado o ficheiro de
+exemplo mostrado acima:
+
+```
+2           -- 2 bibliotecas
+0 5         -- 5 livros, da biblioteca 0
+0 1 2 4 3   -- Livros 0, 1, 2, 4, 3, por esta ordem
+1 1         -- 1 livro, da biblioteca 1
+5           -- Livro 5
+```
+
+Em `Haskell`:
+
 ```hs
 outputToString :: Output -> String
 outputToString (Output libs) = unlines
@@ -691,11 +799,15 @@ outputToString (Output libs) = unlines
     nLibs = length libs
 ```
 
+Em `C++`:
+
 ```cpp
 void output_to_string (output_t output)
 {
+  /* Esta operação representa `((show nLibs):)` acima */
   std::cout << output.size() << std::endl;
 
+  /* O corpo deste ciclo representa a função `mapper` acima */
   for (const std::tuple<int, int, std::vector<int>> & lib : output) {
     int x, y;
     std::vector<int> l;
@@ -718,16 +830,31 @@ void output_to_string (output_t output)
 ### Resultados
 
 A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
-demorou duas tardes a completar, um total de cerca de oito horas. Para alguns
-dos ficheiros de _input_, o programa em `C++` dá um resultado ligeiramente
-diferente do original. Acreditamos que isto se deve a diferenças entre as
-implementações do algoritmo de ordenação nas duas linguagens.
+demorou duas tardes a completar, um total de cerca de oito horas. Relativamente
+a performance, apresentamos de seguida a tabela com os tempos de processamento
+por cada ficheiro.
 
-Quanto a performance, o programa original demora cerca de 7 segundos para
-processar todos os ficheiros de _input_, e o programa em `C++` demora cerca de
-30 minutos. Pensamos que esta diferença acentuada se deve ao facto de as
-estruturas usadas em `C++` não serem adequadas para o uso que lhes estamos a
-dar -- existe muita cópia de memória.
+| Ficheiro                       | `Haskell` | `C++`      | _Output_ igual |
+| :----------------------------: | :-------: | :--------: | :------------: |
+| `a_example.txt`                | 0s        | 0s         | Sim            |
+| `b_read_on.txt`                | 0.7s      | 9.95s      | Não            |
+| `c_incunabula.txt`             | 1.26s     | 4m 40.83s  | Sim            |
+| `d_tough_choices.txt`          | 1.57s     | 23m 59.30s | Não            |
+| `e_so_many_books.txt`          | 3.01s     | 3m 5.39s   | Não            |
+| `f_libraries_of_the_world.txt` | 2.9s      | 3m 13.55s  | Sim            |
+| Total                          | 9.44s     | 35m 9.02s  |
+
+Como é possível verificar na tabela, o tempo total de execução para todos os
+ficheiros de _input_ é muito superior em `C++`. Pensamos que esta diferença
+acentuada se deve ao facto de as estruturas usadas em `C++` não serem adequadas
+para o uso que lhes estamos a dar -- existe muita cópia de memória. Por outro
+lado, a biblioteca que estamos a utilizar poderá ter sido pensada para satisfazer
+os requisitos funcionais descurando performance.
+
+Para alguns dos ficheiros de _input_, o programa em `C++` dá um resultado
+ligeiramente diferente do original. Como os programas são deterministas,
+acreditamos que isto se deve a diferenças entre as implementações do algoritmo
+de ordenação nas duas linguagens.
 
 # Aspectos Importantes de Programação Funcional
 
@@ -1192,7 +1319,7 @@ ao material já existente.
 [^cpp_prelude]: Ver _[CPP Prelude]_.
 [^fplus]: Ver _[Functional Plus]_.
 [^fplus_examples]: Para mais exemplos de uso, ver o programa do [_Google Hash Code 2020_](#_google-hash-code-2020_).
-[^hash_code_2020]: O enunciado do problema e ficheiros de input podem ser descarregados daqui: https://codingcompetitions.withgoogle.com/hashcode/archive
+[^hash_code_2020]: O enunciado do problema e ficheiros de input podem ser descarregados daqui: [https://codingcompetitions.withgoogle.com/hashcode/archive](https://codingcompetitions.withgoogle.com/hashcode/archive)
 [^let_over_lambda]: Para mais informação sobre este assunto, ler [_Let Over Lambda_](https://letoverlambda.com).
 [^ranges]: Ver _[Ranges]_.
 
