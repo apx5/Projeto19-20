@@ -253,8 +253,6 @@ colecção de resultado, por razões de performance, podemos na mesma reservar
 espaço. No fim, a colecção pode conter menos elementos que os reservados, e
 para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
 
-\pagebreak
-
 ### `reverse`
 
 A nossa terceira função escolhida foi o `reverse`{.hs} que, dada uma lista,
@@ -415,6 +413,8 @@ código:
 output_to_string(solve(read_libraries()));
 ```
 
+\pagebreak
+
 Tem apenas duas pequenas excepções: enquanto que em `Haskell` temos as
 seguintes funções:
 
@@ -524,6 +524,8 @@ data Libraries = Libraries {
 --                        lib  nb   books
 newtype Output = Output [(Int, Int, V.Vector Int)]
 ```
+
+\pagebreak
 
 Em `C++`:
 
@@ -676,6 +678,8 @@ solve l = cenas . sortOn onTSBD $ solve' (nDays l) (distinct $ libraries l)
       | ts <= nd = e:(solve' (nd - ts) t)
       | otherwise = solve' nd t
 ```
+
+\pagebreak
 
 Em `C++`:
 
@@ -937,8 +941,6 @@ tentativa de alteração à variável irá originar um erro de compilação.  De
 seguida analisamos a declaração de uma variável `const`{.cpp} e os possíveis
 erros que podem ser cometidos ao tentar manipular essa variável.
 
-\pagebreak
-
 ```cpp
 const std::string name{"John Smith"};
 
@@ -983,8 +985,6 @@ necessário ter em atenção os seguintes pontos:
  * Função sobre a qual queremos adiar o cálculo
  * Uma _flag_ que indica se já calculamos o resultado da função
  * O resultado calculado
-
-\pagebreak
 
 ```cpp
 template <typename F>
@@ -1286,12 +1286,12 @@ segue:
 template <typename A>
 struct Node {
     A x;
-    BTree<A> left;
-    BTree<A> right;
+    Node<A> left;
+    Node<A> right;
 };
 
 template <typename A>
-using BTree = std::variant<A, struct Node>;
+using BTree = std::variant<A, struct Node<A>>;
 ```
 
 # Conclusão

@@ -35,11 +35,11 @@ int main (void)
 
     auto r4 = ranges::accumulate(v
             | ranges::views::filter([] (int n) { return !(n & 0x1); })
-            | ranges::views::transform([] (int _) { return 1; }),
+            | ranges::views::transform([] (int _) { (void)_; return 1; }),
             0,
             std::plus<>());
 
-    auto r5 = ranges::accumulate(v, 0, [] (int r, int _) { return r + 1; });
+    auto r5 = ranges::accumulate(v, 0, [] (int r, int _) { (void)_; return r + 1; });
 
     std::cerr
         << "v = " << print_vector(v) << std::endl

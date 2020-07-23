@@ -29,7 +29,7 @@ template<typename T, int size> void Stack<T, size>::pop(){
     top--;
 }
 
-int main(int argc, char const *argv[])
+int main (void)
 {
     Stack<int,10> s;
     s.push(2);

@@ -1,4 +1,6 @@
 EXAMPLES := \
+    CBTree            \
+    VBTree            \
     adder             \
     class_templates   \
     const_argc        \
@@ -10,7 +12,6 @@ EXAMPLES := \
     reference_array   \
     static_size_array \
     testes            \
-    try_prelude       \
 
 # -pthread for lazy_eval
 FLAGS := \

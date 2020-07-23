@@ -20,7 +20,7 @@ template <typename T> double Average(T array[], int N){
 
 
 
-int main(int argc, char const *argv[])
+int main (void)
 {
     Show(5);
     int numbers[5] = {1,2,3,4,5};

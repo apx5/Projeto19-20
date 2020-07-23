@@ -15,7 +15,7 @@ template<typename T,int size> T arraySum(T (&arr)[size]) {
 //tempo de compilação por isso qualquer non-type value
 //tem de ser const
 
-int main(int argc, char const *argv[])
+int main (void)
 {
     int array[]{1,2,3,4};
 
