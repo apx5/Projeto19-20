@@ -42,11 +42,11 @@ Na programação funcional, os programas são executados através da avaliação
 expressões, em contraste, por exemplo, com o paradigma imperativo onde os
 programas são compostos por instruções que vão alterando o estado global à
 medida que executam. Isto significa que os procedimentos podem ter acesso ao
-estado global e/ou partilhado entre varios procedimentos. Esta partilha não
+estado global e/ou partilhado entre vários procedimentos. Esta partilha não
 está especificada de forma nenhuma e, portanto, tem de ser o programador a
 cuidar e evitar que problemas aconteçam. O paradigma Funcional evita este
 problema parcial ou completamente, ao desencorajar ou impedir esta prática e,
-ao mesmo tempo, encorajar e facilitar "boa pratica".
+ao mesmo tempo, encorajar e facilitar "boa prática".
 
 \pagebreak
 
@@ -61,7 +61,7 @@ void accoes (void)
 }
 ```
 
-Deste pequeno excerto, podemos concluír uma de duas hipóteses:
+Deste pequeno excerto, podemos concluir uma de duas hipóteses:
 
  1. Como nenhum dos procedimentos `accao1`, `accao2` ou `accao3` recebe
     argumentos, e o resultado não é utilizado, então estes procedimentos não
@@ -69,7 +69,7 @@ Deste pequeno excerto, podemos concluír uma de duas hipóteses:
 
  2. Cada um dos procedimentos faz algo de útil, mas para tal acede e altera
     alguma estrutura de dados partilhada; esta relacao _input_-_output_ não é
-    explicita.
+    explícita.
 
 Por outro lado, numa linguagem funcional escreveríamos (em notacao `Haskell`)
 `accoes = accao3 . accao2 . accao1`{.hs} para representar a mesma sequência de
@@ -77,8 +77,8 @@ acções mas sem partilha de memória nem estruturas de dados a serem mutadas:
 cada uma das acções é uma função que devolve uma estrutura de dados, dada outra
 estrutura de dados.
 
-Este problema de alteração implicita de estado agrava-se ainda mais num
-contexto concorrente com threads e partilha de memoria.
+Este problema de alteração implícita de estado agrava-se ainda mais num
+contexto concorrente com _threads_ e partilha de memória.
 
 ## `Haskell` como linguagem funcionalmente pura
 
@@ -86,9 +86,9 @@ contexto concorrente com threads e partilha de memoria.
 programa é uma função no sentido matemático, ou seja, dado o mesmo _input_ é
 sempre devolvido o mesmo _output_.
 
-Para se implementar efeitos secundários, em `Haskell`, em vez de se aceder ao
+Para se implementarem efeitos secundários em `Haskell`, em vez de se aceder ao
 mundo e alterá-lo implicitamente, como na maioria das linguagens, este é
-recebido como um argumento, e as mudanças são feitas sobre esse argumento.
+recebido como um argumento e as mudanças são feitas sobre esse argumento.
 
 Para dar melhor a entender, vejamos um exemplo: `puts`{.c}. O seu protótipo em
 `C` é `int puts (const char *s)`{.c}. A string parâmetro `s` vai ser impressa
@@ -99,7 +99,7 @@ Em `Haskell`, a função equivalente é `putStrLn`, com tipo `String -> IO
 está descrito no próprio tipo da função: `IO ()`.
 
 Pode-se pensar neste `IO a` como sendo `World -> (a, World)`, ou seja, dado um
-mundo, é devolvido o resultado da computação, e o novo mundo.[^awkward_squad]
+mundo, é devolvido o resultado da computação e o novo mundo.[^awkward_squad]
 
 ## `C++ "funcional"`
 
@@ -110,11 +110,11 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
  * Evitar dados mutáveis. Numa função que altera uma estrutura, em vez de
    receber a estrutura por referência e a alterar, será melhor receber a
    estrutura por valor e devolver uma nova. Por razões de performance, também
-   pode ser boa ideia passar a estrutura por referencia `const`{.c}, que se
+   pode ser boa ideia passar a estrutura por referência `const`{.c}, que se
    traduz em menos movimentação de memória.
 
  * Para um estilo de programação mais genérico, mas ao mesmo tempo mais seguro,
-   preferir `template`{.cpp}s a `void *`{.cpp}, o que permite uma abstração de
+   preferir `template`{.cpp}s a `void *`{.cpp}, o que permite uma abstracção de
    tipos, indo de encontro ao que acontece em `Haskell`. Vejamos o exemplo de
    uma função que soma dois valores passados como argumento.
 
@@ -137,7 +137,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    gratuita a inferência de tipos por parte do compilador, através da keyword
    `auto`{.cpp}.
 
- * Recorrer ao uso de _lambdas_ para criar abstrações (desde `C++11`).
+ * Recorrer ao uso de _lambdas_ para criar abstracções (desde `C++11`).
 
  * Utilizar bibliotecas funcionais existentes, como _"Functional
    Plus"_[^fplus], _"CPP Prelude"_[^cpp_prelude], ou _"Ranges"_[^ranges].
@@ -145,9 +145,9 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
 # Comparação e Análise de Programas Equivalentes em `Haskell` e `C++`
 
 Neste capítulo, faremos uma comparação mais específica sobre programas escritos
-em âmbas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
+em ambas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
 equivalentes. Durante a pesquisa que efectuamos, encontramos duas bibliotecas
-que tentam transpôr o paradigma funcional para `C++`, que vão de encontro aos
+que tentam transpor o paradigma funcional para `C++`, que vão de encontro aos
 objectivos do nosso projeto. Vamos começar por algumas funções sobre listas do
 _prelude_ do `Haskell`, usando a biblioteca _"CPP Prelude"_, para uma
 comparação mais directa, e terminaremos com um programa mais robusto que foi
@@ -157,7 +157,7 @@ _"Functional Plus"_, para uma comparação mais realista.
 
 ## _Prelude_
 
-De forma a comparar a performance de pequenos programas em âmbas as linguagens,
+De forma a comparar a performance de pequenos programas em ambas as linguagens,
 geramos um ficheiro de _input_ com uma lista de 10000000 de inteiros. Note-se
 que deixamos de fora da análise o processo de leitura do ficheiro. Focaremos a
 comparação na aplicação de funções específicas em `Haskell` e `C++`. Para cada
@@ -295,8 +295,8 @@ Mais uma vez, já existe uma função parecida: `std::reverse`. No entanto, o
 
 Para concluir o primeiro conjunto de funções escolhemos a função `zip`. Esta
 recebe duas listas, e emparelha os seus elementos -- o primeiro com o primeiro,
-o segundo com o segundo, etc. Caso as listas tenham tamanhos diferentes a menor
-lista dita o tamanho final.
+o segundo com o segundo, e assim sucessivamente. Caso as listas tenham tamanhos
+diferentes a menor lista dita o tamanho final.
 
 Em `Haskell`:
 
@@ -340,7 +340,7 @@ manualmente como um ciclo.
 ### Resultados
 
 Para comparar performance entre as duas linguagens, medimos o tempo de CPU de
-cada função, com os meios disponíveis em cada uma. Simultaneamente medimos o
+cada função com os meios disponíveis em cada uma. Simultaneamente, medimos o
 tempo de execução real do processo com o programa `/usr/bin/time`{.sh}.
 
 Em `C++` usamos `std::clock()`{.cpp} do _header_ `<ctime>`{.cpp}, com o seguite
@@ -396,7 +396,8 @@ optimização, e consiste em planear que livros serão examinados e de que
 biblioteca, de forma a maximizar a pontuação. Não iremos detalhar aqui o
 problema em si, os ficheiros de input e output, -- visto que estão disponíveis
 na página da competição[^hash_code_2020] -- nem a estratégia usada para o
-resolver, visto não estar directamente relacionado com o tema deste trabalho.
+resolver, dado não estarem directamente relacionados com o tema deste
+trabalho.
 
 O programa original, escrito em `Haskell`, foi desenvolvido durante a
 competição, que durou quatro horas, e está estruturado simplesmente como a
@@ -441,7 +442,7 @@ exemplo, quando em `Haskell` escreveríamos `func3 . func2 . func1 $ col`{.hs},
 em `C++`, com a biblioteca _"Functional Plus"_, escrevemos
 `fplus::fwd::apply(col, func1, func2, func3)`{.cpp}.
 
-Funções uteis para usar com `fplus::fwd::apply` podem ser encontradas no
+Funções úteis para usar com `fplus::fwd::apply` podem ser encontradas no
 _namespace_ `fplus::fwd`.
 
 #### `fplus::transform`
@@ -545,7 +546,7 @@ typedef std::vector<std::tuple<int, int, std::vector<int>>> output_t;
 
 Para a leitura do _input_ tiramos proveito da _lazyness_ do `Haskell`, e
 tomamos o _input_ como uma `String`{.hs}. Do lado do `C++` usamos também
-`std::string`{.cpp}, simplesmente porque pretendiamos uma conversão mais
+`std::string`{.cpp}, simplesmente porque pretendíamos uma conversão mais
 directa -- esta não é a melhor escolha para performance, mas para os ficheiros
 de _input_ não é expectável qualquer penalização, visto que o maior destes tem
 apenas 3.4MB.
@@ -877,7 +878,7 @@ imutabilidade e partilha de memória.
 
 Finalmente, ADTs (_Algebraic Data Types_) são um forma de definir formalmente
 novos tipos de dados a partir de tipos já existentes. Apesar de não serem
-essenciais para a Programação Funcional, é desejavel criar abstrações no
+essenciais para a Programação Funcional, é desejavel criar abstracções no
 sistema de tipos que ajudem a descrever o problema com que nos deparamos, dando
 significado a valores e tentando limitar o conjunto de valores possíveis aos
 estritamente válidos.
@@ -1138,7 +1139,7 @@ se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
 
 Com estas duas técnicas de composição é possível representar qualquer estrutura
 de dados. Será então útil saber como usar estas duas técnicas numa linguagem de
-programação. Em `Haskell`, com o seu sistema de tipos avançado, âmbas estão
+programação. Em `Haskell`, com o seu sistema de tipos avançado, ambas estão
 disponíveis nativamente. Em `C++`, tal como em `C`, só o produto está
 disponível, sob a forma de `struct`{.cpp}s. Na STL também existem
 `std::pair`{.cpp} e `std::tuple`{.cpp} que podem considerar-se alternativas em
