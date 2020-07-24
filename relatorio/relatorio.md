@@ -9,10 +9,24 @@ programadores em detrimento de outros, pois permite que em poucas linhas de
 código, quando comparado com outros estilos, se consigam criar soluções
 robustas e eficientes.
 
-A linguagem `Haskell` é uma linguagem de programação criada nos anos 80 por um comitê de académias baseada nas observações de `Haskell Curry`. Caracteriza-se por ser uma linguagem puramente funcional, sendo uma linguagem de alto nível e com uma estratégia de avaliação _lazy_, a programação _lazy_ é um estilo de programação em que os argumentos são avaliados apenas quando o valor é realmente necessário. A linguagem `Haskell` tem sofrido constantes desenvolvimentos e é cada vez mais usada na indústria, pois permite programar de forma clara e consisa e com alto nível de abstração e produtividade, tornando-se uma linguagem simples e muito poderosa.
+A linguagem `Haskell` é uma linguagem de programação criada nos anos 80 por um
+comitê de académias baseada nas observações de `Haskell Curry`. Caracteriza-se
+por ser uma linguagem puramente funcional, sendo uma linguagem de alto nível e
+com uma estratégia de avaliação _lazy_, a programação _lazy_ é um estilo de
+programação em que os argumentos são avaliados apenas quando o valor é
+realmente necessário. A linguagem `Haskell` tem sofrido constantes
+desenvolvimentos e é cada vez mais usada na indústria, pois permite programar
+de forma clara e consisa e com alto nível de abstração e produtividade,
+tornando-se uma linguagem simples e muito poderosa.
 
-Do lado do `C++` temos uma linguagem que surgiu também na década dos 80, inicialmente desenvolvida por `Bjarne Stroustrup` dos `Bell Labs`, com o propósito de melhorar uma versão do núcleo `Unix`. Como o `Unix` era escrito em `C`, a linguagem `C++` tinha de ser compatível com `C` e ao mesmo tempo estender a linguagem com algumas funcionalidades como memória partilhada entre outras.
-É uma linguagem de baixo nível e de elevada complexidade, recebendo novas revisões regularmente. A última revisão feita a linguagem foi em 2017 conhecida como `C++17` que é a versão utilizada neste projeto.
+Do lado do `C++` temos uma linguagem que surgiu também na década dos 80,
+inicialmente desenvolvida por `Bjarne Stroustrup` dos `Bell Labs`, com o
+propósito de melhorar uma versão do núcleo `Unix`. Como o `Unix` era escrito em
+`C`, a linguagem `C++` tinha de ser compatível com `C` e ao mesmo tempo
+estender a linguagem com algumas funcionalidades como memória partilhada entre
+outras. É uma linguagem de baixo nível e de elevada complexidade, recebendo
+novas revisões regularmente. A última revisão feita a linguagem foi em 2017
+conhecida como `C++17` que é a versão utilizada neste projeto.
 
 
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
@@ -47,7 +61,7 @@ pode ser encontrado no nosso repositório, criado para esse propósito.
 
 # Abordagem ao Paradigma Funcional em `Haskell` e `C++`
 
-## O paradigma funcional
+## O Paradigma Funcional
 
 Na programação funcional, os programas são executados através da avaliação de
 expressões, em contraste, por exemplo, com o paradigma imperativo onde os
@@ -88,7 +102,7 @@ estrutura de dados.
 Este problema de alteração implícita de estado agrava-se ainda mais num
 contexto concorrente com _threads_ e partilha de memória.
 
-## `Haskell` como linguagem funcionalmente pura
+## `Haskell` Como Linguagem Funcionalmente Pura
 
 `Haskell` adopta o paradigma Funcionalmente Puro, o que quer dizer que um
 programa é uma função no sentido matemático, ou seja, dado o mesmo _input_ é
@@ -107,7 +121,8 @@ Em `Haskell`, a função equivalente é `putStrLn`, com tipo `String -> IO
 está descrito no próprio tipo da função: `IO ()`.
 
 Pode-se pensar neste `IO a` como sendo `World -> (a, World)`, ou seja, dado um
-mundo, é devolvido o resultado da computação e o novo mundo.[^awkward_squad]
+mundo, é devolvido o resultado da computação e o novo mundo.
+[@peytonjones2001tackling]
 
 Na realidade, o `Haskell` concilia o princípio de "computação por cálculo" com
 o _input_/_output_ através da utilização do mónade `IO`{.hs}.
@@ -167,14 +182,13 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    ```
 
  * Utilizar bibliotecas funcionais existentes, como a _"Functional
-   Plus"_[^fplus], que define muitas abstracções úteis de programação
-   funcional, fácil de usar e com boa documentação; a _"CPP
-   Prelude"_[^cpp_prelude], que define grande parte do _prelude_ do `Haskell`,
-   à custa de funções da STL; e a _"Ranges"_[^ranges], que tem muitas
-   abstracções úteis de programação funcional, tal como a _"Functional Plus"_,
-   mas com mais atenção a performance, e vai ser integrada numa revisão futura
-   da linguagem. Estas bibliotecas aparecerão todas mais à frente, ao longo
-   deste documento.
+   Plus"_ [@fplus], que define muitas abstracções úteis de programação
+   funcional, fácil de usar e com boa documentação; a _"CPP Prelude"_
+   [@cppprelude], que define grande parte do _prelude_ do `Haskell`, à custa de
+   funções da STL; e a _"Ranges"_ [@ranges], que tem muitas abstracções úteis
+   de programação funcional, tal como a _"Functional Plus"_, mas com mais
+   atenção a performance, e vai ser integrada numa revisão futura da linguagem.
+   Estas bibliotecas aparecerão todas mais à frente, ao longo deste documento.
 
 # Comparação e Análise de Programas Equivalentes em `Haskell` e `C++`
 
@@ -485,8 +499,6 @@ void output_to_string (output_t output);
 
 Isto porque seria mais difícil implementar de uma forma mais funcional e o
 resultado seria muito menos idiomático -- estranho, até.
-
-\pagebreak
 
 ### Notas Sobre Funções Relevantes Utilizadas
 
@@ -858,10 +870,10 @@ void output_to_string (output_t output) {
 ### Resultados
 
 A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
-demorou duas tardes a completar, um total de cerca de oito horas. Relativamente
-a performance, apresentamos de seguida a tabela com os tempos de processamento
-por cada ficheiro e se o _output_ do programa em `C++` foi igual ao do
-original.
+demorou duas tardes a completar, um total de cerca de oito horas. Apresentamos
+de seguida a tabela com os tempos de processamento de cada ficheiro, o total
+para processar todos os ficheiros e se o _output_ do programa em `C++` foi
+igual ao do original.
 
 | Ficheiro                       | `Haskell` | `C++`      | _Output_ igual? |
 | :----------------------------: | :-------: | :--------: | :------------:  |
@@ -949,14 +961,14 @@ int not_ref_trans2 (int x) {
 ```
 
 A ideia de imutabilidade é particularmente útil em ambientes em que se gera
-concorrência, pois existem variáveis partilhadas que podem gerar
-comportamentos inesperados nos programas se não for devidamente protegida a sua
-alteração. Em `C++` está disponível a keyword `const`{.cpp} que permite
-controlar a imutabilidade de uma variável. Ao declarar uma variável `const
-x`{.cpp} estamos a dizer ao compilador que esta variável é imutável e, qualquer
-tentativa de alteração à variável irá originar um erro de compilação.  De
-seguida analisamos a declaração de uma variável `const`{.cpp} e os possíveis
-erros que podem ser cometidos ao tentar manipular essa variável.
+concorrência, pois existem variáveis partilhadas que podem gerar comportamentos
+inesperados nos programas se não for devidamente protegida a sua alteração. Em
+`C++` está disponível a keyword `const`{.cpp} que permite controlar a
+imutabilidade de uma variável. Ao declarar uma variável `const x`{.cpp} estamos
+a dizer ao compilador que esta variável é imutável e, qualquer tentativa de
+alteração à variável irá originar um erro de compilação. De seguida analisamos
+a declaração de uma variável `const`{.cpp} e os possíveis erros que podem ser
+cometidos ao tentar manipular essa variável.
 
 ```cpp
 const std::string name{"John Smith"};
@@ -1074,7 +1086,7 @@ for (auto x : xs)
 ```
 
 Mas não é preciso escrever ciclos `for` manualmente grande parte das vezes --
-podemos em vez disso escrever o seguinte[^fplus_examples]:
+podemos em vez disso escrever o seguinte:
 
 ```cpp
 fplus::fwd::apply(xs
@@ -1083,11 +1095,11 @@ fplus::fwd::apply(xs
     , fplus::fwd::product())
 ```
 
-O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. A
-partir do livro _Functional Programming in C++_, de _Ivan Čukić_, pudemos obter
-uma amostra do que é possível neste tipo de biblioteca. Em particular, o livro
-explica sucintamente porque é que a biblioteca _"Ranges"_ tem melhor
-performance que a STL, e que a _"Functional Plus"_.
+O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. Ao ler
+@vcukic2019functional, pudemos obter uma amostra do que é possível neste tipo
+de biblioteca. Em particular, o livro explica sucintamente porque é que a
+biblioteca _"Ranges"_ tem melhor performance que a STL, e que a _"Functional
+Plus"_.
 
 Comecemos pelo aspecto da usabilidade: na STL, as funções têm como parâmetros
 dois _iterators_, -- o início e fim da colecção de _input_, ou de parte dela --
@@ -1325,13 +1337,12 @@ _Concorrência_, _Monads_, _Error Handling_, cuja investigação poderá ser
 realizada em projectos futuros, ou mesmo por outros alunos, dando continuidade
 ao material já existente.
 
-[^awkward_squad]: Ver _[Tackling the Awkward Squad]_.
-[^cpp_prelude]: Ver _[CPP Prelude]_.
-[^fplus]: Ver _[Functional Plus]_.
-[^fplus_examples]: Para mais exemplos de uso, ver o programa do [_Google Hash Code 2020_](#_google-hash-code-2020_).
-[^hash_code_2020]: O enunciado do problema e ficheiros de input podem ser descarregados daqui: [https://codingcompetitions.withgoogle.com/hashcode/archive](https://codingcompetitions.withgoogle.com/hashcode/archive)
-[^let_over_lambda]: Para mais informação sobre este assunto, ler [_Let Over Lambda_](https://letoverlambda.com).
-[^ranges]: Ver _[Ranges]_.
+\pagebreak
+
+# Referências {-}
+
+[^hash_code_2020]: Para o enunciado do problema e ficheiros de input, ver @hashcode2020.
+[^let_over_lambda]: Para mais informação sobre este assunto, ler @hoyte2008let.
 
 [CPP Prelude]: https://github.com/kdungs/cpp-prelude
 [Functional Plus]: https://github.com/Dobiasd/FunctionalPlus
