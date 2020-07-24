@@ -9,6 +9,12 @@ programadores em detrimento de outros, pois permite que em poucas linhas de
 código, quando comparado com outros estilos, se consigam criar soluções
 robustas e eficientes.
 
+A linguagem `Haskell` é uma linguagem de programação criada nos anos 80 por um comitê de académias baseada nas observações de `Haskell Curry`. Caracteriza-se por ser uma linguagem puramente funcional, sendo uma linguagem de alto nível e com uma estratégia de avaliação _lazy_, a programação _lazy_ é um estilo de programação em que os argumentos são avaliados apenas quando o valor é realmente necessário. A linguagem `Haskell` tem sofrido constantes desenvolvimentos e é cada vez mais usada na indústria, pois permite programar de forma clara e consisa e com alto nível de abstração e produtividade, tornando-se uma linguagem simples e muito poderosa.
+
+Do lado do `C++` temos uma linguagem que surgiu também na década dos 80, inicialmente desenvolvida por `Bjarne Stroustrup` dos `Bell Labs`, com o propósito de melhorar uma versão do núcleo `Unix`. Como o `Unix` era escrito em `C`, a linguagem `C++` tinha de ser compatível com `C` e ao mesmo tempo estender a linguagem com algumas funcionalidades como memória partilhada entre outras.
+É uma linguagem de baixo nível e de elevada complexidade, recebendo novas revisões regularmente. A última revisão feita a linguagem foi em 2017 conhecida como `C++17` que é a versão utilizada neste projeto.
+
+
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
 forma podemos aproveitar essas vantagens em `C++`. Iremos estudar e analisar as
 características funcionais em programas escritos em `C++`, através de algumas
@@ -966,7 +972,7 @@ Em 1 não há ocorrências de erros pois apenas se está a associar o valor de
 passar `name`{.cpp} por referência a uma variável não `const`{.cpp}, situação
 que é resolvida em 3. Em 4 voltamos a ter um erro de compilação pois estamos a
 criar um apontador não `const`{.cpp} para `name`{.cpp}. Este erro é resolvido
-em 5. O facto de em 2 e 5 ocorrer um erro de compilação deve-se ao facto de
+em 5. O facto de em 2 e 4 ocorrer um erro de compilação deve-se ao facto de
 `name_ref`{.cpp} e `name_ptr`{.cpp} não estarem qualificados com `const`{.cpp}
 e poderem ser alterados. No entanto, como apontam para uma variável
 `const`{.cpp}, gera-se uma contradição.
