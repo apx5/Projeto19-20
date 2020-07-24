@@ -25,11 +25,11 @@ modularização do processamento de dados.
 O uso de `template`s em `C++` traz algumas vantagens à programação em estilo
 funcional, nomeadamente a possibilidade de fazer programação genérica, isto é,
 criar programas polimórficos. Também é possível obter computação em tempo de
-compilação com `template`s, mas esta não é essencial à Programação Funcional, e
+compilação com `template`s, mas esta não é essencial à programação funcional, e
 portanto não vamos desenvolver sobre este assunto.[^let_over_lambda]
 
 Aproveitaremos também para aprofundar alguns aspectos/características
-importantes da Programação Funcional tais como imutabilidade, _lazy
+importantes da programação funcional tais como imutabilidade, _lazy
 evaluation_, composição e ADTs.
 
 Quando necessário, e para uma melhor elucidação sobre as questões que estão a
@@ -885,13 +885,13 @@ Neste capítulo detalharemos as características da programação funcional
 mencionadas na introdução.
 
 Composição é, provavelmente, o mais importante e talvez o único aspecto
-inerente a Programação Funcional. A ideia central de Programação Funcional é
-que construindo peças pequenas, fáceis de entender e de provar como correctas,
-é também "simples" construir um sistema complexo, correctamente.
+inerente a programação funcional. A ideia central é que construindo peças
+pequenas, fáceis de entender e de provar como correctas, é também "simples"
+construir um sistema complexo, correctamente.
 
 De seguida, falaremos do conceito de imutabilidade, em que objectos não são
 alterados mas sim copiados, para implementar mudanças. Esta propriedade ajuda a
-evitar erros comuns em Programação Imperativa, causados pela partilha de
+evitar erros comuns em programação Imperativa, causados pela partilha de
 memória e a não especificação da relação entre estados.
 
 _Lazy Evaluation_, não sendo adoptada como estratégia de avaliação, pode ser
@@ -1018,7 +1018,7 @@ public:
 
 ## Composição
 
-Uma parte importante de Programação Funcional é a composição de funções. Ao
+Uma parte importante de programação funcional é a composição de funções. Ao
 escrever funções pequenas e genéricas, e ao reutilizá-las com composição, é
 possível escrever programas completos rapidamente e com menos _bugs_. Em
 linguagens funcionais, composição é usada frequentemente; numa linguagem como
