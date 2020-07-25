@@ -19,8 +19,8 @@ timeSomething str something = do
   start <- liftIO getCPUTime
   let !result = deepforce $! something
   end <- liftIO getCPUTime
-  let diff = round . (/1000) . fromIntegral $ end - start
-  putStrLn $ str ++ ": " ++ show diff ++ " nanoseconds"
+  let diff = round . (/1000000000) . fromIntegral $ end - start
+  putStrLn $ str ++ ": " ++ show diff ++ " ms"
 
 main :: IO ()
 main = do

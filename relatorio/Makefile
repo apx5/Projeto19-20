@@ -1,6 +1,8 @@
 PANDOC_OPTS := \
+	--columns=80             \
 	--toc                    \
 	-N                       \
+	-V babel-lang=portuguese \
 	-V documentclass=article \
 	-V lang=pt-PT            \
 	-V papersize=a4          \

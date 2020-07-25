@@ -5,21 +5,24 @@
 
 #include "prelude.h"
 
-#define benchmark(str, func) \
-	do { \
-	    auto start = std::clock();                                            \
-	    (void) func;                                                          \
-	    auto stop = std::clock();                                             \
-	    auto duration = 1000000000 * (stop - start) / CLOCKS_PER_SEC;         \
-	    std::cout << str << ": " << duration << " nanoseconds" <<  std::endl; \
-	} while (0)
+#define benchmark(str, func)                   \
+  do {                                         \
+    auto start = std::clock();                 \
+    (void) func;                               \
+    auto stop = std::clock();                  \
+    auto duration = 1000                       \
+                  * (stop - start)             \
+                  / CLOCKS_PER_SEC;            \
+    std::cout << str << ": " << duration       \
+              << " ms" << std::endl;           \
+  } while (0)
 
 int main (void)
 {
     std::vector<int> input_vector;
     int n = 0;
     while (std::cin >> n)
-	    input_vector.push_back(n);
+        input_vector.push_back(n);
 
     auto dbl = [] (int x){ return x + x;};
     auto even = [](int x) { return x % 2 == 0; };

@@ -2,7 +2,7 @@
 % André Sá (A76361) ; João Rodrigues (A84505) ; Pedro Oliveira (A86328)
 % 2020/07/22 \linebreak\linebreak Licenciatura em Ciências da Computação
 
-# Introdução
+# Introdução {-}
 
 O paradigma funcional tem ganho notorieadade junto de grandes empresas e
 programadores em detrimento de outros, pois permite que em poucas linhas de
@@ -136,7 +136,7 @@ uma computação que retorna um valor do tipo `a`{.hs}. Ou seja, `t`{.hs} é um
 valor de tipo `a`{.hs} com um efeito adicional captado por `m`{.hs}. No caso do
 mónade `IO`{.hs}, esse efeito é uma acção de _input_/_output_.
 
-## `C++ "funcional"`
+## `C++` "funcional"
 
 Devido à sua herança, `C++` promove um estilo frágil de programação, devendo
 ser o programador a ter alguma atenção e a tomar algumas decisões quando
@@ -375,12 +375,12 @@ auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
 Neste caso, não existe nenhuma função parecida na STL, e portanto, é definida
 manualmente como um ciclo.
 
-### Resultados
+### Resultados \label{prelude_bench_results_sec}
 
 Para comparar performance entre as duas linguagens, executamos todas as funções
 num só processo e medimos o tempo de CPU de cada uma com os meios disponíveis
-em cada linguagem. Simultaneamente, medimos o tempo total real de execução e a
-memória máxima residente do processo com o programa `/usr/bin/time`{.sh}.
+em cada linguagem. Simultaneamente, medimos o tempo de execução do processo e a
+memória residente máxima com o programa `/usr/bin/time`{.sh}.
 
 Os programas foram executados uma única vez num sistema _Debian_ _testing_, a
 correr num CPU _Ryzen 3 2200G_, e com 8GB de RAM. Para os compilar usamos os
@@ -397,7 +397,7 @@ E para correr os programas usamos o seguinte:
 for P in bench_{cpp,hs}
 do
   echo "$P"
-  /usr/bin/time "./$P" < lista.txt
+  /usr/bin/time -f "%U / %S / %e / %M KB" "./$P" < lista.txt
   echo
 done
 ```
@@ -411,11 +411,11 @@ Para medir o tempo de CPU em `C++` usamos `std::clock()`{.cpp} do _header_
     auto start = std::clock();                 \
     (void) func;                               \
     auto stop = std::clock();                  \
-    auto duration = 1000000000                 \
+    auto duration = 1000                       \
                   * (stop - start)             \
                   / CLOCKS_PER_SEC;            \
     std::cout << str << ": " << duration       \
-              << " nanoseconds" <<  std::endl; \
+              << " ms" << std::endl;           \
   } while (0)
 ```
 
@@ -428,8 +428,8 @@ timeSomething str something = do
   start <- liftIO getCPUTime
   let !result = deepforce $! something
   end <- liftIO getCPUTime
-  let diff = round . (/1000) . fromIntegral $ end - start
-  putStrLn $ str ++ ": " ++ show diff ++ " nanoseconds"
+  let diff = round . (/1000000000) . fromIntegral $ end - start
+  putStrLn $ str ++ ": " ++ show diff ++ " ms"
 ```
 
 Como `Haskell` é _lazy-by-default_, para obter-mos uma comparação justa é
@@ -439,16 +439,20 @@ x`{.hs}, sendo `deepseq a b`{.hs} a função que força a avaliação de `a`{.hs
 devolve `b`{.hs}. A leitura e conversão do _input_ para uma lista de inteiros
 foi forçada antes do primeiro _benchmark_.
 
-Apresentamos na tabela abaixo os resultados:
+Apresentamos na tabela \ref{prelude_bench_tbl} os resultados.
 
-|                               | `C++`   | `Haskell` |
-| :---------------------------: | :-----: | :-------: |
-| `map (*2)`                    | 11 ms   | 138 ms    |
-| `filter even`                 | 48 ms   | 139 ms    |
-| `reverse`                     | 12 ms   | 816 ms    |
-| `uncurry zip . split id id`   | 36 ms   | 127 ms    |
-| Tempo real total              | 2.31 s  | 29.54 s   |
-| Memória residente máxima      | 121 MB  | 1263 MB   |
+Table: \label{prelude_bench_tbl} Tempo de CPU de cada função, tempo de execução
+do processo em _user mode_ e _kernel mode_ e memória residente máxima do
+processo.
+
+|                               | `C++`         | `Haskell`      |
+| :---------------------------- | :-----------: | :------------: |
+| `map (*2)`                    | 13ms          | 148ms          |
+| `filter even`                 | 50ms          | 162ms          |
+| `reverse`                     | 14ms          | 929ms          |
+| `uncurry zip . split id id`   | 38ms          | 164ms          |
+| _usr_ / _sys_                 | 2.26s / 0.04s | 29.38s / 0.47s |
+| Memória residente máxima      | 121.3 MB      | 1262.9 MB      |
 
 A diferença nos tempos é bastante drástica, especialmente do tempo total do
 processo. Como passa bastante tempo antes do programa em `Haskell` mostrar
@@ -870,20 +874,54 @@ void output_to_string (output_t output) {
 ### Resultados
 
 A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
-demorou duas tardes a completar, um total de cerca de oito horas. Apresentamos
-de seguida a tabela com os tempos de processamento de cada ficheiro, o total
-para processar todos os ficheiros e se o _output_ do programa em `C++` foi
-igual ao do original.
+demorou duas tardes a completar, um total de cerca de oito horas. Estes testes
+foram executados no mesmo sistema usado na secção
+\ref{prelude_bench_results_sec} e utilizamos novamente `/usr/bin/time`{.sh},
+com o seguinte ciclo, para medir o tempo de execução e memória residente
+máxima:
 
-| Ficheiro                       | `Haskell` | `C++`      | _Output_ igual? |
-| :----------------------------: | :-------: | :--------: | :------------:  |
-| `a_example.txt`                | 0s        | 0s         | Sim             |
-| `b_read_on.txt`                | 0.7s      | 9.95s      | Não             |
-| `c_incunabula.txt`             | 1.26s     | 4m 40.83s  | Sim             |
-| `d_tough_choices.txt`          | 1.57s     | 23m 59.30s | Não             |
-| `e_so_many_books.txt`          | 3.01s     | 3m 5.39s   | Não             |
-| `f_libraries_of_the_world.txt` | 2.9s      | 3m 13.55s  | Sim             |
-| Total                          | 9.44s     | 35m 9.02s  |
+```sh
+for P in Solve_hs solve_cpp
+do
+  for F in [abcdef]_*.txt
+  do
+   echo -n "$F: "
+   /usr/bin/time -f "%U / %S / %M KB" "./$P" < "$F" > /dev/null
+  done
+done
+```
+
+Apresentamos na tabela \ref{hash_code_2020_mem_tbl} a memória residente máxima
+por cada ficheiro e se o _output_ foi igual nos dois programas. Na tabela
+\ref{hash_code_2020_times_tbl} apresentamos os tempos de execução para o
+processamento de cada ficheiro e o tempo total para o processamento de todos os
+ficheiros. Os tempos apresentados são _usr_/_sys_, ou seja, o tempo do processo
+em _user mode_ e em _kernel mode_.
+
+Table: \label{hash_code_2020_mem_tbl} Memória residente máxima por ficheiro e
+se o _output_ foi igual nos dois programas.
+
+| Ficheiro                       | `Haskell` | `C++`   | _Output_ igual? |
+| :----------------------------- | :-------- | :-----: | :-------------: |
+| `a_example.txt`                | 3.8 MB    | 3.3 MB  | Sim             |
+| `b_read_on.txt`                | 66.2 MB   | 28.9 MB | Não             |
+| `c_incunabula.txt`             | 95.7 MB   | 43.8 MB | Sim             |
+| `d_tough_choices.txt`          | 117.4 MB  | 77.4 MB | Não             |
+| `e_so_many_books.txt`          | 212.6 MB  | 77.4 MB | Não             |
+| `f_libraries_of_the_world.txt` | 221.7 MB  | 79.6 MB | Sim             |
+
+Table: \label{hash_code_2020_times_tbl} Tempo de execução em _user mode_ e
+_kernel mode_ por ficheiro, e tempo total para todos os ficheiros.
+
+| Ficheiro                       | `Haskell`     | `C++`             |
+| :----------------------------- | :-----------: | :---------------: |
+| `a_example.txt`                | 0.00s / 0.00s | 0.00s / 0.00s     |
+| `b_read_on.txt`                | 0.53s / 0.03s | 8.41s / 0.02s     |
+| `c_incunabula.txt`             | 0.91s / 0.03s | 4m16.64s / 0.07s  |
+| `d_tough_choices.txt`          | 1.21s / 0.02s | 21m20.58s / 1.07s |
+| `e_so_many_books.txt`          | 2.27s / 0.09s | 2m34.70s / 0.03s  |
+| `f_libraries_of_the_world.txt` | 2.36s / 0.07s | 2m38.32s / 0.02s  |
+| Tempo total (_usr_/_sys_)      | 7.28s / 0.24s | 30m56.65s / 1.21s |
 
 Como é possível verificar na tabela, o tempo total de execução para todos os
 ficheiros de _input_ é muito superior em `C++`. Pensamos que esta diferença
@@ -970,13 +1008,13 @@ alteração à variável irá originar um erro de compilação. De seguida anali
 a declaração de uma variável `const`{.cpp} e os possíveis erros que podem ser
 cometidos ao tentar manipular essa variável.
 
-```cpp
+```{.cpp .numberLines startFrom="0"}
 const std::string name{"John Smith"};
-1 - std::string name_copy = name;
-2 - std::string& name_ref = name; // erro
-3 - const std::string& name_constref = name;
-4 - std::string* name_ptr = &name; // erro
-5 - const std::string* name_constptr = &name;
+std::string name_copy = name;
+std::string& name_ref = name; // erro
+const std::string& name_constref = name;
+std::string* name_ptr = &name; // erro
+const std::string* name_constptr = &name;
 ```
 
 Em 1 não há ocorrências de erros pois apenas se está a associar o valor de
@@ -991,9 +1029,9 @@ e poderem ser alterados. No entanto, como apontam para uma variável
 
 ## _Lazy Evaluation_
 
-_Lazy Evaluation_ é uma técnica de programação que adia a avaliação de uma
-expressão até que, e se, o seu valor for realmente necessário. Além disso, é
-possível evitar a reavaliação de uma expressão. No contexto da programação
+_Lazy Evaluation_ é uma técnica de programação usada para atrasar a avaliação
+de uma expressão até que, e se, o seu valor for realmente necessário, sendo
+também possível evitar a reavaliação desta. No contexto da programação
 funcional isto significa que quando uma função é aplicada a um argumento, o
 argumento não é previamente calculado.
 
@@ -1008,19 +1046,31 @@ mesma operação, o que contribui para o aumento da performance. Isto só faz
 sentido em conjunto com imutabilidade de objectos, ou _Copy-on-Write_.
 
 `C++` não é _lazy-by-default_, e como tal, deverá ser o programador a aplicar
-esta técnica.
+esta técnica. Apesar de esta técnica poder ser usada como técnica de
+optimização, é apenas em contextos muito específicos. Em geral, em linguagens
+_eager-by-default_, pode ser usada quando existem acções que podem vir a não
+ser precisas no futuro. Por exemplo, ao criar um objecto que tem campos
+custosos de calcular e que não serão necessariamente usados. Mais
+especialmente, se tivermos, por exemplo, um dicionário, pode ser útil em certas
+ocasiões convertê-lo para uma _alist_ (_association list_), ou seja, converter
+`Map k v` para `[(k, v)]`. Numa estrutura imutável, esta conversão basta ser
+realizada uma vez, e portanto, um dos campos do dicionário pode ser o atraso
+dessa conversão. Além disso, na programação funcional é particularmente útil na
+implementação de estruturas de dados puramente funcionais, como se pode ver no
+livro @okasaki1999purely.
+
+---
 
 Vejamos uma possível implementação de _lazy evaluation_ em `C++`, sendo
 necessário ter em atenção os seguintes pontos:
 
- * Função sobre a qual queremos adiar o cálculo
+ * Função sobre a qual queremos atrasar o cálculo
  * Uma _flag_ que indica se já calculamos o resultado da função
  * O resultado calculado
 
 ```cpp
 template <typename F>
-class lazy_funcall
-{
+class lazy_funcall {
     const F func;
     typedef decltype(func()) RetType;
     mutable std::optional<RetType> ret;
@@ -1032,6 +1082,44 @@ public:
         return ret.value();
     }
 };
+```
+
+O construtor da `lazy_funcall`{.cpp} espera receber um procedimento, mas para
+facilitar o seu uso podemos ainda definir alguns _macros_ para aceitar
+expressões.
+
+```cpp
+#define delay_(capt, block)      delay_funcall(capt block)
+#define delay(block)             delay_([&], block)
+#define delay_expr_(capt, expr)  delay_(capt, { return (expr); })
+#define delay_expr(expr)         delay_expr_([&], (expr))
+```
+
+Com estes _macros_ podemos fazer atrasar a avaliação de expressões ou blocos
+assim:
+
+```cpp
+delay_expr(2 * 21);
+delay({
+    int x = 2;
+    int y = 21;
+    int r = x * y;
+    return r;
+});
+```
+
+Como estes macros fazem uso de _lambdas_, `delay`{.cpp} e `delay_expr`{.cpp}
+usam `[&]`{.cpp} como captura por omissão. Caso se pretenda especificar as
+capturas, podem-se usar `delay_`{.cpp} e `delay_expr_`{.cpp}, assim:
+
+```cpp
+delay_expr_([], 2 * 21);
+delay_([], {
+    int x = 2;
+    int y = 21;
+    int r = x * y;
+    return r;
+});
 ```
 
 ## Composição
@@ -1315,7 +1403,7 @@ template <typename A>
 using BTree = std::variant<A, struct Node<A>>;
 ```
 
-# Conclusão
+# Conclusão {-}
 
 Ao longo deste documento é possível constatar visualmente as diferenças
 sintáticas entre as duas linguagens. Em `Haskell` o código é bastante mais
