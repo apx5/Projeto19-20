@@ -336,30 +336,20 @@ $endif$
 \usepackage{graphicx}
 
 \begin{document}
-$if(title)$
-$if(beamer)$
-\frame{\titlepage}
-$else$
-\maketitle
-$endif$
-$if(abstract)$
-\begin{abstract}
-$abstract$
-\end{abstract}
-$endif$
 
+$if(title)$
+\begin{figure}[t]
+    \includegraphics[scale=0.3]{minho.png}
+    %\includegraphics[scale=0.6]{ecum.png}
+    \centering
+\end{figure}
+\maketitle
 $endif$
 
 $for(include-before)$
 $include-before$
-
 $endfor$
 $if(toc)$
-
-\begin{figure}[h]
-    \includegraphics[scale=0.5]{minho.png}
-    \centering
-\end{figure}
 
 % NOTE: pagebreak entre o titulo e indice
 \pagebreak
@@ -381,7 +371,7 @@ $if(colorlinks)$
 $endif$
 \setcounter{tocdepth}{$toc-depth$}
 % NOTE: Indice em PT
-\renewcommand*\contentsname{Índice}
+%\renewcommand*\contentsname{Índice}
 \tableofcontents
 }
 $endif$

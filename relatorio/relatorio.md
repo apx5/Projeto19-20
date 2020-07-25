@@ -1,6 +1,6 @@
-% Paradigma Funcional em Haskell e C++
+% **Paradigma Funcional em Haskell e C++**
 % André Sá (A76361) ; João Rodrigues (A84505) ; Pedro Oliveira (A86328)
-% 2020/07/22 \linebreak\linebreak Licenciatura em Ciências da Computação
+% \today \linebreak\linebreak Licenciatura em Ciências da Computação
 
 # Introdução {-}
 
@@ -10,31 +10,30 @@ código, quando comparado com outros estilos, se consigam criar soluções
 robustas e eficientes.
 
 A linguagem `Haskell` é uma linguagem de programação criada nos anos 80 por um
-comitê de académias baseada nas observações de `Haskell Curry`. Caracteriza-se
-por ser uma linguagem puramente funcional, sendo uma linguagem de alto nível e
-com uma estratégia de avaliação _lazy_, a programação _lazy_ é um estilo de
-programação em que os argumentos são avaliados apenas quando o valor é
-realmente necessário. A linguagem `Haskell` tem sofrido constantes
+comité de académicos baseada nas observações de _Haskell Curry_. Caracteriza-se
+por ser uma linguagem puramente funcional, sendo de alto nível e com uma
+estratégia de avaliação _lazy_, em os argumentos são avaliados apenas quando o
+valor é realmente necessário. A linguagem `Haskell` tem sofrido constantes
 desenvolvimentos e é cada vez mais usada na indústria, pois permite programar
 de forma clara e consisa e com alto nível de abstração e produtividade,
 tornando-se uma linguagem simples e muito poderosa.
 
-Do lado do `C++` temos uma linguagem que surgiu também na década dos 80,
-inicialmente desenvolvida por `Bjarne Stroustrup` dos `Bell Labs`, com o
-propósito de melhorar uma versão do núcleo `Unix`. Como o `Unix` era escrito em
-`C`, a linguagem `C++` tinha de ser compatível com `C` e ao mesmo tempo
-estender a linguagem com algumas funcionalidades como memória partilhada entre
-outras. É uma linguagem de baixo nível e de elevada complexidade, recebendo
-novas revisões regularmente. A última revisão feita a linguagem foi em 2017
-conhecida como `C++17` que é a versão utilizada neste projeto.
-
+Do lado do `C++` temos uma linguagem que surgiu também na década 80,
+inicialmente desenvolvida por _Bjarne Stroustrup_ dos _Bell Labs_, com o
+propósito de melhorar uma versão do _kernel_ `Unix`. Como o `Unix` era escrito
+em `C`, a linguagem `C++` tinha de ser compatível com `C` e ao mesmo tempo
+estende-la com algumas funcionalidades como memória partilhada, entre outras. É
+uma linguagem de baixo nível e de elevada complexidade, recebendo novas
+revisões regularmente. A última revisão foi lançada em 2017, conhecida como
+`C++17`, e é a utilizada neste projeto.
 
 Neste documento será dada ênfase às vantagens do paradigma funcional e de que
-forma podemos aproveitar essas vantagens em `C++`. Iremos estudar e analisar as
-características funcionais em programas escritos em `C++`, através de algumas
-bibliotecas existentes para esse efeito e, aproveitaremos para efectuar uma
-análise comparativa de desempenho, sintaxe, etc, através de programas que
-resolvem o mesmo problema em `C++` e `Haskell`.
+forma podemos aproveitar essas vantagens em `C++`. Assumindo o conhecimento de
+alguns conceitos deste paradigma, iremos estudar e analisar as características
+funcionais em programas escritos em `C++`, através de algumas bibliotecas
+existentes para esse efeito e, aproveitaremos para efectuar uma análise
+comparativa de desempenho, sintaxe, e afins, através de programas que resolvem
+o mesmo problema em `C++` e `Haskell`.
 
 Nas linguagens funcionais as funções são entidades de primeira classe, isto é,
 podem ser usadas como qualquer outro objecto: passadas como argumento,
@@ -48,17 +47,511 @@ criar programas polimórficos. Também é possível obter computação em tempo 
 compilação com `template`s, mas esta não é essencial à programação funcional, e
 portanto não vamos desenvolver sobre este assunto.[^let_over_lambda]
 
-Aproveitaremos também para aprofundar alguns aspectos/características
-importantes da programação funcional tais como imutabilidade, _lazy
-evaluation_, composição e ADTs.
+Iremos começar por aprofundar alguns conceitos importantes da programação
+funcional tais como imutabilidade, _lazy evaluation_, composição e ADTs. Estes
+conceitos serão úteis ao longo do documento.
 
-Quando necessário, e para uma melhor elucidação sobre as questões que estão a
-ser analisadas, serão usados pequenos excertos de código em ambas as
-linguagens.
+Para uma melhor elucidação das questões que estão a ser analisadas, serão
+usados pequenos excertos de código em ambas as linguagens. Todo o código
+desenvolvido durante este projecto, incluindo este documento, pode ser
+encontrado no nosso [repositório (https://github.com/apx5/Projeto19-20)][repo],
+criado para esse propósito.
 
-Todo o código desenvolvido durante este projecto, incluindo este documento,
-pode ser encontrado no nosso [repositório
-(https://github.com/apx5/Projeto19-20)][repo], criado para esse propósito.
+# Aspectos Importantes de Programação Funcional
+
+Neste capítulo detalharemos as características da programação funcional
+mencionadas na introdução.
+
+Composição é, provavelmente, o mais importante e talvez o único aspecto
+inerente a programação funcional. A ideia central é que construindo pequenas
+funções, fáceis de entender e de provar como correctas, é também "simples"
+construir um sistema complexo, correctamente.
+
+De seguida, falaremos do conceito de imutabilidade, em que objectos não são
+alterados mas sim copiados, para implementar mudanças. Esta propriedade ajuda a
+evitar erros comuns em programação imperativa, causados pela partilha de
+memória e a não especificação da relação entre estados.
+
+_Lazy Evaluation_, não sendo adoptada como estratégia de avaliação, pode ser
+usada como estratégia de optimização, especialmente quando combinada com
+imutabilidade e partilha de memória.
+
+Finalmente, ADTs (_Algebraic Data Types_) são um forma de definir formalmente
+novos tipos de dados a partir de tipos já existentes. É desejavel criar
+abstracções no sistema de tipos que ajudem a descrever o problema com que nos
+deparamos, dando significado a valores e tentando limitar o conjunto de valores
+possíveis aos estritamente válidos.
+
+A seguir, para cada um destes pontos, mostraremos e analisaremos exemplos em
+`Haskell` e em `C++`.
+
+## Imutabilidade
+
+Uma das características mais importantes do paradigma funcional, é a noção de
+imutabilidade das expressões. Isto faz com que não seja possível alterar o
+valor de variáveis já existentes mas sim, criar novas variáveis com os novos
+valores.
+
+A linguagem `C++` lida com esta noção de imutabilidade. A noção de funções
+puras é dada pela definição de transparência referencial: uma função é
+referencialmente transparente se para os mesmos argumentos, é sempre devolvido
+o mesmo valor de retorno e não tem efeitos laterais observáveis -- ou seja,
+substituindo uma expressão pelo seu valor de retorno, o seu significado
+permanece inalterado. Por exemplo:
+
+```cpp
+int g = 0;
+/* Referencialmente transparente */
+int ref_trans (int x) {
+    return x + 1;
+}
+/* Não referencialmente transparente -- cada vez que a função é
+ * invocada, tem um valor de retorno diferente */
+int not_ref_trans1 (int x) {
+    g++;
+    return x + g;
+}
+/* Não referencialmente transparente -- embora o valor de retorno seja
+ * sempre o mesmo, dado o mesmo input, há um efeito lateral, o
+ * incremento de `g` */
+int not_ref_trans2 (int x) {
+    g++;
+    return x + 1;
+}
+```
+
+A ideia de imutabilidade é particularmente útil em ambientes concorrentes com
+partilha de memória, pois alterar objectos partilhados pode dar origem a
+comportamentos inesperados nos programas se esta alteração não for devidamente
+protegida. Em `C++` está disponível a _keyword_ `const`{.cpp} que permite
+controlar a imutabilidade de uma variável. Ao declarar uma variável `const
+x`{.cpp} estamos a dizer ao compilador que esta variável é imutável e, qualquer
+tentativa de alteração à variável irá originar um erro de compilação. De
+seguida analisamos a declaração de uma variável `const`{.cpp} e os possíveis
+erros que podem ser cometidos ao tentar manipulá-la.
+
+```{.cpp .numberLines startFrom="0"}
+const std::string name{"John Smith"};
+std::string name_copy = name;
+std::string& name_ref = name; // erro
+const std::string& name_constref = name;
+std::string* name_ptr = &name; // erro
+const std::string* name_constptr = &name;
+```
+
+Em 1 não há ocorrências de erros pois se está a criar uma cópia do valor de
+`name`. Em 2 teremos um erro de compilação pois estamos a criar uma referência
+para `name`{.cpp} que não é qualificada com `const`{.cpp}, situação que é
+resolvida em 3. Em 4 voltamos a ter um erro de compilação pois estamos a criar
+um apontador não `const`{.cpp} para `name`{.cpp}. Este erro é resolvido em 5.
+Ocorrer um erro em 2 e 4 deve-se ao facto de `name_ref`{.cpp} e
+`name_ptr`{.cpp} não serem qualificados com `const`{.cpp} e poderem ser
+alterados. No entanto, como apontam para uma variável `const`{.cpp}, gera-se
+uma contradição.
+
+## _Lazy Evaluation_
+
+_Lazy Evaluation_ é uma técnica de programação usada para atrasar a avaliação
+de uma expressão até que, e se, o seu valor for realmente necessário, sendo
+também possível evitar a reavaliação desta. No contexto da programação
+funcional isto significa que quando uma função é aplicada a um argumento, este
+argumento não é previamente calculado.
+
+Muitas vezes, o resultado da avaliação de uma expressão é comum a várias
+operações. Se todas essas operações avaliassem a expressão, o sistema seria
+sobrecarregado descenessariamente, resultando numa perda de desempenho. Por
+exemplo, no caso de um algoritmo que recorra ao cálculo do produto entre duas
+matrizes com alguma frequência, _lazy evaluation_ propõe calcular apenas uma
+única vez este produto e reutilizar o resultado sempre que seja requerido.
+Deste modo evita-se o custo computacional associado à repetição da mesma
+operação, o que contribui para o aumento do desempenho -- isto só faz sentido
+em conjunto com imutabilidade de objectos.
+
+`C++` não é _lazy-by-default_, e como tal, deverá ser o programador a aplicar
+esta técnica. Apesar de poder ser usada como técnica de optimização, é apenas
+em contextos muito específicos. Em geral, em linguagens _eager-by-default_,
+pode ser usada quando existem acções que podem vir a não ser precisas no
+futuro. Por exemplo, ao criar um objecto que tem campos custosos de calcular e
+que não serão necessariamente usados. Mais especialmente, se tivermos, por
+exemplo, um dicionário, pode ser útil em certas ocasiões convertê-lo numa
+_alist_ (_association list_), ou seja, converter `Map k v` em `[(k, v)]`. Numa
+estrutura imutável, esta conversão basta ser realizada uma vez, e portanto, um
+dos seus campos pode ser o atraso dessa conversão. Além disso, na programação
+funcional é particularmente útil na implementação de estruturas de dados
+puramente funcionais eficientes, como se pode ver no livro @okasaki1999purely.
+
+---
+
+Vejamos uma possível implementação de _lazy evaluation_ em `C++`, sendo
+necessário ter em atenção os seguintes pontos:
+
+ * Função sobre a qual queremos atrasar o cálculo
+ * Uma _flag_ que indica se já calculamos o resultado da função
+ * O resultado calculado
+
+```cpp
+template <typename F>
+class lazy_funcall {
+    const F func;
+    typedef decltype(func()) RetType;
+    mutable std::optional<RetType> ret;
+    mutable std::once_flag call_once_flag;
+public:
+    lazy_funcall (F f) : func(f) { }
+    const RetType & operator() () const {
+        std::call_once(call_once_flag, [this] { ret = func(); });
+        return ret.value();
+    }
+};
+```
+
+O construtor da `lazy_funcall`{.cpp} espera receber um procedimento, mas para
+facilitar o seu uso podemos ainda definir alguns _macros_ para aceitar
+expressões.
+
+```cpp
+#define delay_(capt, block)      delay_funcall(capt block)
+#define delay(block)             delay_([&], block)
+#define delay_expr_(capt, expr)  delay_(capt, { return (expr); })
+#define delay_expr(expr)         delay_expr_([&], (expr))
+```
+
+Com estes _macros_ podemos fazer atrasar a avaliação de expressões ou blocos
+assim:
+
+```cpp
+delay_expr(2 * 21);
+delay({
+    int x = 2;
+    int y = 21;
+    int r = x * y;
+    return r;
+});
+```
+
+Como estes macros fazem uso de _lambdas_ -- funções anónimas --, `delay`{.cpp}
+e `delay_expr`{.cpp} usam `[&]`{.cpp} como captura por omissão. Caso se
+pretenda especificar as capturas, podem-se usar `delay_`{.cpp} e
+`delay_expr_`{.cpp}, assim:
+
+```cpp
+delay_expr_([], 2 * 21);
+delay_([], {
+    int x = 2;
+    int y = 21;
+    int r = x * y;
+    return r;
+});
+```
+
+## Composição
+
+Uma parte importante de programação funcional é a composição de funções. Ao
+escrever funções pequenas e genéricas, e ao reutilizá-las com composição, é
+possível escrever programas completos rapidamente e com menos _bugs_. Em
+linguagens funcionais, composição é usada frequentemente; numa linguagem como
+`C++` é pouco conveniente usar composição, principalmente por causa da sintaxe
+e da semântica de passar variáveis por valor ou referência.Existe um caso, no
+entanto, onde composição não tem de ser _pointwise_: trabalhar com colecções.
+Quando há um conjunto de operações a aplicar a uma colecção, seja no seu todo
+ou parte dela, expressar estas operações com algum tipo de _pipeline_ é
+bastante intuitivo, legível e barato em número de caracteres escritos. Esta
+ideia não é nova -- em linguagens funcionais este conceito é normalmente
+implementado como listas em linguagens _lazy-by-default_, como `Haskell`, ou
+_lazy-lists_/_streams_ em linguagens _eager-by-default_, como `Scheme`.
+
+Existem muitas operações sobre colecções que podem ser mapeadas numa
+_pipeline_, sendo muitas delas bastante comuns. Programá-las de cada vez como
+um ciclo é tedioso e muito provavelmente menos legível do que simplesmente usar
+as abstracções. Algumas destas operações comuns incluem somar, multiplicar,
+filtrar, mapear, e o `fold`{.scm}, com o qual muitas das outras operações são
+implementadas -- também comummente conhecido como `reduce`{.scm}, mas com
+semântica ligeiramente diferente.
+
+A STL (_Standard Template Library_) de `C++` já tem algumas destas operações,
+que para os casos mais simples e comuns podem ser suficientes. Estas podem, no
+entanto, ser melhoradas. Existem várias bibliotecas que implementam conceitos
+funcionais em `C++`; neste documento vamos usar duas, e uma delas @fplus será
+demonstrada a seguir. No entanto, existe ainda uma outra parecida @ranges com
+melhor desempenho, mas a documentação é escassa, o que torna difícil perceber
+como a usar.
+
+Como exemplo, dada uma lista em `Haskell`, filtrar os elementos que satisfazem
+um predicado, aplicar uma função a cada um deles, e por fim calcular o
+produtório pode ser escrito assim em `Haskell`:
+
+```hs
+product . map mapper . filter pred $ xs
+```
+
+Enquanto que um ciclo `for` para o mesmo efeito em `C++`, poderia ser definido
+da seguinte forma:
+
+```cpp
+auto = 1;
+for (auto x : xs)
+    if (pred(x))
+        ret *= mapper(x);
+```
+
+E usando funções da STL, poderia ser escrito assim, que acaba por ser mais
+difícil de ler e escrever, mais verboso, e menos eficiente, devido à criação de
+resultados intermédios:
+
+```cpp
+auto res1;
+std::copy_if(std::begin(xs),
+             std::end(xs),
+             std::back_inserter(res1),
+             pred);
+auto res2;
+std::transform(std::begin(res1),
+               std::end(res1),
+               std::back_inserter(res2),
+               mapper);
+auto ret = std::accumulate(std::begin(res2),
+                           std::end(res2),
+                           1,
+/*
+ * A especialização de `std::multiplies` para `void`
+ * deduz os tipos dos argumentos
+ */
+                           std::multiplies<void>());
+```
+
+Alternativamente, usando a biblioteca _"Functional Plus"_, é possível escrever
+o seguinte[^hash_code_2020_sec]:
+
+```cpp
+fplus::fwd::apply(xs
+    , fplus::fwd::keep_if(pred)
+    , fplus::fwd::transform(mapper)
+    , fplus::fwd::product())
+```
+
+O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. Ao ler
+@vcukic2019functional, podemos obter uma amostra do que é possível neste tipo
+de biblioteca. Em particular, o livro explica sucintamente como é que a
+biblioteca _"Ranges"_ se torna mais simples de usar e porque é que tem melhor
+desempenho que a STL e que a _"Functional Plus"_.
+
+Comecemos pelo aspecto da usabilidade: na STL, as funções têm como parâmetros
+dois _iterators_, -- o início e fim da colecção de _input_, ou de parte dela --
+um iterador para o início da colecção de _output_, e um _inserter_, que dita
+como os elementos serão inseridos na colecção de _output_. De imediato, alguns
+pontos a melhorar saltam à vista:
+
+ 1. Porque é que é preciso passar os iteradores de início e fim da colecção de
+    _input_? Na verdade sabemos para que serve, mas não precisa de ser assim.
+    Dá mais trabalho passar dois argumentos em vez de um, mas mais importante:
+    é possível passar iteradores para o início e fim de duas colecções
+    diferentes por engano.
+
+ 2. Passar iterador para a colecção de _output_ e especificar como devem ser
+    inseridos elementos nesta também é tedioso; mas pior, significa que é
+    sempre criada uma colecção de _output_.
+
+A _"Functional Plus"_ melhora o primeiro destes pontos, -- basta passar a
+colecção em si, não iteradores para ela -- mas o segundo ponto continua um
+problema presente -- é sempre devolvida uma nova operação como resultado.
+
+A _"Ranges"_ melhora estes dois pontos ao simplesmente abstrair colecções como
+_ranges_, e devolver _ranges_ como resultado das operações. Pode-se pensar
+nesta abstracção de _range_ como um par de iteradores: o início e fim.
+
+Agora é possível passar a uma operação uma colecção, que é automaticamente
+transformada num _range_, ou o resultado de uma outra operação, que já é um
+_range_. Esta última parte é crucial -- significa que podemos compor operações
+_pointfree_.
+
+Vamos agora ao desempenho. O par de iteradores que forma um _range_ é só um par
+de apontadores. Para operações que não alteram a colecção original não há
+necessidade de copiar memória. Para implementar, por exemplo, o `filter`{.hs},
+basta implementar o operador `++`{.cpp} (_next_) para o _range_ de _output_,
+sobre o iterador de início, como sendo a procura pelo elemento seguinte no
+_range_ de _input_ que satisfaz o predicado. Se nenhum elemento satisfaz o
+predicado chegamos eventualmente ao fim da colecção, ou seja, temos um _range_
+vazio.
+
+Quando há a necessidade de alterar o _range_ de _input_ temos duas opções:
+copiar o _range_ de _input_, ou mutar a colecção original _in-place_.
+
+Todas as operações são _lazy_, ou seja, acontecem _on-demand_, como em
+`Haskell` -- se o resultado não for usado, nada é feito.
+
+## ADTs
+
+ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algébricos, são tipos de dados
+criados a partir de tipos já existentes, de duas maneiras diferentes. Vamos dar
+uma breve descrição, para completude, simplesmente porque nem todas as
+linguagens funcionais têm ADTs nativamente ou com este nome.
+
+A primeira, e mais comum, é o produto. Dados dois tipos $A$ e $B$, o produto
+deles, $A \times B$, é simplesmente o produto cartesiano entre $A$ e $B$.
+
+A segunda, presente em grande parte das linguagens, mesmo que indirectamente, é
+o coproduto. Dados dois tipos $A$ e $B$, o coproduto deles, $A + B$, é o
+conjunto cujos elementos ou são do tipo $A$ ou do tipo $B$, mas é possível
+distingui-los -- união disjunta. Este conjunto pode ser representado
+indirectamente como $Bool \times (A \cup B)$: um elemento de $A$ ou $B$, e uma
+_flag_ a indicar se é de $A$ ou de $B$. Note-se que esta _flag_ indica na
+verdade se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
+
+Com estas duas técnicas de composição, acompanhadas pelo tipo unitário e a
+capacidade de definir tipos indutivamente, é possível representar qualquer
+estrutura de dados. Será então útil saber como usar estas duas técnicas numa
+linguagem de programação. Em `Haskell`, com o seu sistema de tipos avançado,
+ambas estão disponíveis nativamente. Em `C++`, tal como em `C`, só o produto
+está disponível nativamente, sob a forma de `struct`{.cpp}s -- na STL do `C++`
+também existem `std::pair`{.cpp} e `std::tuple`{.cpp}, que podem considerar-se
+alternativas em alguns casos. Em `C` e `C++`, é também possível definir tipos
+indutivamente, recorrendo a apontadores.
+
+De seguida vamos apresentar as três formas de compor tipos em `C++`, com as
+_keywords_ `struct`{.cpp}/`class`{.cpp}, `enum`{.cpp}, e `union`{.cpp}, qual o
+equivalente em `Haskell` e como cada uma se relaciona com ADTs.
+
+### `struct`/`class`
+
+Juntamos estas duas _keywords_ visto que servem o mesmo propósito; a única
+diferença está em que, caso nada seja dito em contrário, numa `struct`{.cpp}
+todos os membros são públicos, enquanto que numa `class`{.cpp} são privados.
+
+Por exemplo, para representar um filme, com o seu título (`String`{.hs}), ano
+de lançamento (`Int`{.hs}), e uma pontuação (`Float`{.hs}), podemos definir o
+tipo `Filme`{.hs} como o produto dos seus três atributos, ou seja $Filme \cong
+String \times Int \times Float$.
+
+Em `Haskell` existem várias maneiras de definir o tipo `Filme`{.hs}.
+
+```hs
+type Filme = (String, Int, Float)
+
+data Filme = Filme String Int Float
+
+data Filme = Filme {
+    titulo :: String,
+    ano :: Int,
+    pontuacao :: Float
+}
+```
+
+A primeira é um produto. A segunda é um tipo algébrico gerado por um único
+construtor: `Filme :: String -> Int -> Flaot -> Filme`{.hs}. A terceira é
+também um tipo algébrico gerado pelo mesmo construtor com o acrescimo de
+associar a cada um dos seus parâmetros nomes que funcionam também como
+selectores: `titulo :: Filme -> String`{.hs}, `ano :: Filme -> Int`{.hs} e
+`pontuacao :: Filme -> Float`{.hs}.
+
+Em `C++`, existem duas alternativas:
+
+```cpp
+struct Filme {
+    std::string titulo;
+    unsigned ano;
+    float pontuacao;
+};
+
+typedef std::tuple<std::string, unsigned, float> Filme;
+```
+
+A primeira, que é mais idiomática, e a segunda, que é mais parecida com o tipo
+algébrico, como a primeira definição em `Haskell`.
+
+### `enum`
+
+Um exemplo simples e conhecido a todos do uso de _enums_ é na definição do tipo
+dos booleanos: `enum bool { false, true };`{.cpp} em `C++`, e `data Bool =
+False | True`{.hs} em `Haskell`, que não é mais do que o coproduto $Bool \cong
+1 + 1$.
+
+Poderíamos assim achar que `enum`{.cpp} em `C++` serve para representar
+coprodutos em geral, mas estaríamos errados. `enum`{.cpp} serve apenas para
+representar o coproduto de conjuntos singulares, ou um único conjunto
+enumerável de valores não inteiros e sem ordem. Veremos mais à frente como
+representar tipos de soma.
+
+### `union`
+
+Esta é a menos comum das três _keywords_, por ser de uso muito limitado, e não
+existe equivalente em `Haskell`. Esta "falha" do lado de `Haskell` na verdade
+não é grave -- possivelmente nem sequer é uma falha. Ao contrário do que o nome
+sugere, `union`{.cpp} não serve para representar a união de tipos, e não vamos
+aqui listar os seus usos além do necessário para este texto.
+
+`union`{.cpp} pode ser usada quando se pretende guardar qualquer um de vários
+valores, mas não vários em simultâneo, pois reserva espaço de memória
+suficiente para armazenar qualquer um dos seus componentes, mas apenas um. Por
+exemplo, se se pretender um tipo para guardar ou inteiros ou _floats_, pode-se
+usar a seguinte `union`{.cpp}:
+
+```cpp
+union {
+    int i;
+    float f;
+}
+```
+
+### ADTs em `C++`
+
+Vamos agora, descrever como implementar ADTs em `C++`. A maneira mais
+idiomática, possível também em `C`, é usar uma _tagged union_.
+
+Como exemplo, vamos definir um tipo de árvores binárias de nós, com valores nos
+nós e nas folhas: $BTree\ A \cong A + (A \times BTree\ A \times BTree\ A)$.
+
+Uma implementação possível em `Haskell`:
+
+```hs
+data BTree a = Leaf a
+             | Node a (BTree a) (Btree a)
+```
+
+Uma implementação possível em `C++`:
+
+```cpp
+template <typename A>
+struct BTree {
+    enum {
+        BTree_Leaf,
+        BTree_Node,
+    } variant;
+    union {
+        A leaf;
+        struct {
+            A x;
+            BTree<A> left;
+            BTree<A> right;
+        } node;
+    } tree;
+};
+```
+
+O código desta definição em `C++` é muito maior do que a definição em
+`Haskell`, não só devido à verbosidade de da linguagem, como à necessidade de
+usar um truque para transformar um coproduto num produto.
+
+$$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
+
+Ou, para aproximar melhor a implementação,
+
+$$BTree\ A \cong \{\ Leaf,\ Node \ \} \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
+
+Neste caso, a `union`{.cpp} está realmente a simular a união de conjuntos.
+
+Uma alternativa à _tagged union_, como a que se segue, é usar
+`std::variant`{.cpp}, poupando trabalho manual:
+
+```cpp
+template <typename A>
+struct Node {
+    A x;
+    Node<A> left;
+    Node<A> right;
+};
+template <typename A>
+using BTree = std::variant<A, struct Node<A>>;
+```
 
 # Abordagem ao Paradigma Funcional em `Haskell` e `C++`
 
@@ -74,7 +567,7 @@ cuidar e evitar que problemas aconteçam. O paradigma funcional evita este
 problema parcial ou completamente, ao desencorajar ou impedir esta prática e,
 ao mesmo tempo, encorajar e facilitar "boa prática".
 
-Um exemplo extremo e pouco realista seria:
+Um exemplo extremo e pouco realista no paradigma imperativo seria:
 
 ```cpp
 void accoes (void) {
@@ -96,12 +589,13 @@ Deste pequeno excerto, podemos concluir uma de duas hipóteses:
 
 Por outro lado, numa linguagem funcional escreveríamos (em notacao `Haskell`)
 `accoes = accao3 . accao2 . accao1`{.hs} para representar a mesma sequência de
-acções mas sem partilha de memória nem estruturas de dados a serem mutadas:
-cada uma das acções é uma função que devolve uma estrutura de dados, dada outra
-estrutura de dados.
+acções mas sem estado global ou partilhado nem estruturas de dados a serem
+mutadas: cada uma das acções é uma função que devolve uma estrutura de dados,
+dada outra estrutura de dados.
 
-Este problema de alteração implícita de estado agrava-se ainda mais num
-contexto concorrente com _threads_ e partilha de memória.
+No caso da segunda hipótese, este problema de alteração implícita de estado
+agrava-se ainda mais num contexto concorrente com _threads_ e partilha de
+memória.
 
 ## `Haskell` Como Linguagem Funcionalmente Pura
 
@@ -109,17 +603,17 @@ contexto concorrente com _threads_ e partilha de memória.
 programa é uma função no sentido matemático, ou seja, dado o mesmo _input_ é
 sempre devolvido o mesmo _output_.
 
-Para se implementarem efeitos secundários em `Haskell`, em vez de se aceder ao
+Para se implementarem efeitos laterais em `Haskell`, em vez de se aceder ao
 mundo e alterá-lo implicitamente, como na maioria das linguagens, este é
 recebido como um argumento e as mudanças são feitas sobre esse argumento.
 
-Para dar melhor a entender, vejamos um exemplo: `puts`{.c}. O seu protótipo em
-`C` é `int puts (const char *s)`{.c}. A string parâmetro `s` vai ser impressa
-no `stdout`, mas nada no tipo da função nos diz que assim é.
+Para dar melhor a entender, vejamos a função em `C`: `puts`{.c}. O seu
+protótipo é `int puts (const char *s)`{.c}. A string parâmetro `s`{.c} vai ser
+impressa no `stdout`, mas nada no tipo da função nos diz que assim é.
 
 Em `Haskell`, a função equivalente é `putStrLn`, com tipo `String -> IO
-()`{.hs}, e o efeito secundário de imprimir a string de _input_ no `stdout`
-está descrito no próprio tipo da função: `IO ()`.
+()`{.hs}, e o efeito lateral de imprimir a string de _input_ no `stdout` está
+descrito no próprio tipo da função: `IO ()`.
 
 Pode-se pensar neste `IO a` como sendo `World -> (a, World)`, ou seja, dado um
 mundo, é devolvido o resultado da computação e o novo mundo.
@@ -150,13 +644,13 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    traduz em menos movimentação de memória.
 
  * Para um estilo de programação mais genérico, mas ao mesmo tempo mais seguro,
-   preferir `template`{.cpp}s a `void *`{.cpp}, o que permite uma abstracção de
-   tipos, indo de encontro ao que acontece em `Haskell`. Vejamos o exemplo de
-   uma função que soma dois valores passados como argumento.
+   preferir `template`{.cpp}s a `void *`{.cpp}, porque o compilador não permite
+   funções de serem chamadas com parâmetros do tipo errado. Vejamos o exemplo
+   de uma função que soma dois valores passados como argumento.
 
    ```cpp
    template <typename T>
-   T add(T a, T b) {
+   T add (T a, T b) {
        return a + b;
    };
    int main () {
@@ -167,8 +661,8 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    ```
 
    Esta função pode ser invocada com diferentes tipos, tornando desnecessária a
-   implementação da mesma função para tipos diferentes, e ganhando de forma
-   gratuita a inferência de tipos por parte do compilador, através da keyword
+   implementação da mesma função para tipos diferentes, e aproveitando a
+   inferência de tipos por parte do compilador, através da keyword
    `auto`{.cpp}.
 
  * Recorrer ao uso de _lambdas_ para criar abstracções (desde `C++11`). Por
@@ -183,20 +677,20 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    ```
 
  * Utilizar bibliotecas funcionais existentes, como a _"Functional
-   Plus"_ [@fplus], que define muitas abstracções úteis de programação
-   funcional, fácil de usar e com boa documentação; a _"CPP Prelude"_
-   [@cppprelude], que define grande parte do _prelude_ do `Haskell`, à custa de
-   funções da STL; e a _"Ranges"_ [@ranges], que tem muitas abstracções úteis
-   de programação funcional, tal como a _"Functional Plus"_, mas com mais
-   atenção ao desempenho, e vai ser integrada numa revisão futura da linguagem.
-   Estas bibliotecas aparecerão todas mais à frente, ao longo deste documento.
+   Plus"_, que define muitas abstracções úteis de programação funcional, fácil
+   de usar e com boa documentação; a _"CPP Prelude"_ [@cppprelude], que define
+   grande parte do _prelude_ do `Haskell`, à custa de funções da STL; e a
+   _"Ranges"_, que tem muitas abstracções úteis de programação funcional, tal
+   como a _"Functional Plus"_, mas com mais atenção ao desempenho, e vai ser
+   integrada numa revisão futura da linguagem. Estas bibliotecas aparecerão
+   todas mais à frente, ao longo deste documento.
 
 # Comparação e Análise de Programas Equivalentes em `Haskell` e `C++`
 
-Neste capítulo, faremos uma comparação mais específica sobre programas escritos
+Neste capítulo, faremos uma comparação de desempenho entre programas escritos
 em ambas as linguagens e cujo propósito é o mesmo, ou seja, podem considerar-se
-equivalentes. Durante a pesquisa que efectuamos, encontramos duas bibliotecas
-que tentam transpor o paradigma funcional para `C++`, que vão de encontro aos
+equivalentes. Durante a pesquisa que efectuamos, encontramos bibliotecas que
+tentam transpor o paradigma funcional para `C++`, que vão de encontro aos
 objectivos do nosso projecto. Vamos começar por algumas funções sobre listas do
 _prelude_ do `Haskell`, usando a biblioteca _"CPP Prelude"_, para uma
 comparação mais directa, e terminaremos com um programa mais robusto que foi
@@ -212,7 +706,8 @@ que deixamos de fora da análise o processo de leitura do ficheiro. Focaremos a
 comparação na aplicação de funções específicas em `Haskell` e `C++`. Para cada
 função, vamos apresentar uma definição com recursividade explícita e uma
 definição recorrendo a funções de ordem superior em `Haskell`, seguidas de uma
-implementação em `C++` e no final apresentamos os tempos de execução.
+implementação em `C++`, retirada da biblioteca _"CPP Prelude"_, e no final
+apresentamos tempos de execução e memória utilizada.
 
 ### `map`
 
@@ -249,8 +744,8 @@ auto map(const FN& f, const CN<A, AllocA>& c) -> CN<B, AllocB> {
 
 Em `C++` já existe uma função parecida: `std::transform`{.cpp}. Esta função
 recebe os iteradores de início e fim da colecção de _input_, a forma como se
-deve inserir na colecção de resultado, e como transformar cada elemento da
-colecção de _input_; e devolve o iterador para o início da colecção de
+deve inserir na colecção de resultado, e uma função a aplicar a cada elemento
+da colecção de _input_; e devolve o iterador para o início da colecção de
 resultado.
 
 Como tal, podemos aproveitar o `std::transform`{.cpp} para definir o `map`{.hs}
@@ -295,8 +790,9 @@ auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
 Tal como no caso do `map`{.hs}, já existe uma função parecida:
 `std::copy_if`{.cpp}. Apesar de não sabermos à partida quantos elementos terá a
 colecção de resultado, por razões de desempenho, podemos na mesma reservar
-espaço. No fim, a colecção pode conter menos elementos que os reservados, e
-para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
+espaço, com o método `reserve`{.cpp}. No fim, a colecção pode conter menos
+elementos que os reservados, e para remover a memória inutilizada, usa-se
+`shrink_to_fit`{.cpp}.
 
 ### `reverse`
 
@@ -329,8 +825,8 @@ auto reverse(const CN<A, AllocA>& c) -> CN<A, AllocA> {
 }
 ```
 
-Mais uma vez, já existe uma função parecida: `std::reverse`. No entanto, o
-`std::reverse` altera a colecção, em vez de devolver uma nova.
+Mais uma vez, já existe uma função parecida: `std::reverse`. No entanto, esta
+altera a colecção _in-place_, em vez de devolver uma nova.
 
 ### `zip`
 
@@ -374,7 +870,7 @@ auto zip(const CA<A, AllocA>& left, const CB<B, AllocB>& right)
 ```
 
 Neste caso, não existe nenhuma função parecida na STL, e portanto, é definida
-manualmente como um ciclo.
+com um ciclo.
 
 ### Resultados \label{prelude_bench_results_sec}
 
@@ -549,11 +1045,9 @@ fplus::transform(func, fplus::keep_if(pred, col));
 #### `std::tie`
 
 
-Para destruturar tuplos em `C++` -- mas não pares -- podemos usar
-`std::tie`{.cpp}. Isto é equivalente a fazer _pattern match_ sobre um tuplo em
-`Haskell`. Vejamos um exemplo:
-
-Em `Haskell`:
+Para desmembrar tuplos em `C++` podemos usar `std::tie`{.cpp}. Isto é
+equivalente a fazer _pattern match_ sobre um tuplo em `Haskell`. Vejamos um
+exemplo em `Haskell`:
 
 ```hs
 t :: (Int, Float, Char, String, Double)
@@ -561,7 +1055,7 @@ t = (0, 1, 'a', "ola", 2)
 (x, _, _, _, d) = t
 ```
 
-Em `C++`:
+E o equivalente em `C++` com `std::tie`{.cpp}:
 
 ```cpp
 std::tuple<int, float, char, std::string, double> t
@@ -573,10 +1067,10 @@ std::tie(x, std::ignore, std::ignore, std::ignore, d) = t;
 
 ### Tipos e Estruturas de Dados
 
-Definimos apenas três tipos para uso no programa, -- um para representar o
-_input_, outro para representar o _output_, e um para representar uma
-biblioteca -- e as únicas estruturas de dados usadas foram listas e vectores --
-só vectores do lado de `C++`. Apresentamos as suas definições a seguir.
+Definimos apenas três tipos: um para representar o _input_, outro para
+representar o _output_, e um para representar uma biblioteca; e as únicas
+estruturas de dados usadas foram listas e vectores -- só vectores do lado de
+`C++`. Apresentamos as suas definições a seguir.
 
 Em `Haskell`:
 
@@ -619,7 +1113,7 @@ directa -- em geral, esta não é a melhor escolha para desempenho, mas para os
 ficheiros de _input_ não é expectável qualquer penalização, visto que o maior
 destes tem apenas 3.4MB.
 
-De seguida apresentamos o ficheiro de exemplo mais pequeno:
+De seguida apresentamos o ficheiro de exemplo mais pequeno, `a_example.txt`:
 
 ```
 6 2 7       ; 6 livros, 2 bibliotecas, 7 dias
@@ -630,7 +1124,7 @@ De seguida apresentamos o ficheiro de exemplo mais pequeno:
 0 2 3 5     ; Os livros da biblioteca 1
 ```
 
-Em `Haskell`:
+Em `Haskell` implementamos este passo da seguinte forma:
 
 ```hs
 onTSBD (_, (_, ts, bd, _)) = (ts, bd)
@@ -649,7 +1143,7 @@ readLibraries = proc . map (map read . words) . lines
     proc2 _ = []
 ```
 
-Em `C++`:
+A partir desta chegamos à seguinte conversão em `C++`:
 
 ```cpp
 struct libraries read_libraries (void) {
@@ -699,7 +1193,13 @@ proc2`{.hs} já foi fundido num só ciclo _for_.
 
 ### Resolver o Problema
 
-Em `Haskell`:
+O passo de resolução consistem, maioritarimente, em descartar livros repetidos
+entre bibliotecas, filtrar as bibliotecas que têm tempo para fazer _signup_,
+dado o tempo total do processo e o facto de se poder fazer _signup_ de uma
+biblioteca por dia, e por fim ordenar estas bibliotecas pelo tempo de _signup_
+e livros que são capazes de processar num dia.
+
+Em `Haskell` chegamos à seguinte implementação:
 
 ```hs
 ordBookScore :: Libraries -> Int -> Int
@@ -734,7 +1234,7 @@ solve l = cenas . sortOn onTSBD $ solve' (nDays l) (distinct $ libraries l)
       | otherwise = solve' nd t
 ```
 
-Em `C++`:
+E a conversão em `C++` conseguida foi a seguinte:
 
 ```cpp
 /* Esta função representa a função `distinct` acima */
@@ -836,7 +1336,7 @@ exemplo mostrado acima:
 5         ; Livro 5
 ```
 
-Em `Haskell`:
+O _output_ foi construido da seguinte forma em `Haskell`:
 
 ```hs
 outputToString :: Output -> String
@@ -849,7 +1349,8 @@ outputToString (Output libs) = unlines
     nLibs = length libs
 ```
 
-Em `C++`:
+Neste caso usamos um ciclo `for`{.cpp} em `C++` em vez de funções da
+_"Functional Plus"_, pelas razões já mencionadas:
 
 ```cpp
 void output_to_string (output_t output) {
@@ -873,12 +1374,11 @@ void output_to_string (output_t output) {
 
 ### Resultados
 
-A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_,
-demorou duas tardes a completar, um total de cerca de oito horas. Estes testes
-foram executados no mesmo sistema usado na secção
-\ref{prelude_bench_results_sec} e utilizamos novamente `/usr/bin/time`{.sh},
-com o seguinte ciclo, para medir o tempo de execução e memória residente
-máxima:
+A conversão "imediata" para `C++`, com a biblioteca _"Functional Plus"_, um
+total de cerca de oito horas. Estes testes foram executados no mesmo sistema
+usado na secção \ref{prelude_bench_results_sec} e utilizamos novamente
+`/usr/bin/time`{.sh}, com o seguinte ciclo, para medir o tempo de execução e
+memória residente máxima:
 
 ```sh
 for P in Solve_hs solve_cpp
@@ -891,12 +1391,17 @@ do
 done
 ```
 
+Para alguns dos ficheiros de _input_, o programa em `C++` dá um resultado
+ligeiramente diferente do original. Como os programas são deterministas,
+acreditamos que isto se deve a diferenças entre as implementações do algoritmo
+de ordenação nas duas linguagens.
+
 Apresentamos na tabela \ref{hash_code_2020_mem_tbl} a memória residente máxima
 por cada ficheiro e se o _output_ foi igual nos dois programas. Na tabela
 \ref{hash_code_2020_times_tbl} apresentamos os tempos de execução para o
 processamento de cada ficheiro e o tempo total para o processamento de todos os
 ficheiros. Os tempos apresentados são _usr_/_sys_, ou seja, o tempo do processo
-em _user mode_ e em _kernel mode_.
+em _user mode_ e em _kernel mode_, respectivamente.
 
 Table: \label{hash_code_2020_mem_tbl} Memória residente máxima por ficheiro e
 se o _output_ foi igual nos dois programas.
@@ -925,521 +1430,27 @@ _kernel mode_ por ficheiro, e tempo total para todos os ficheiros.
 
 Como é possível verificar na tabela, o tempo total de execução para todos os
 ficheiros de _input_ é muito superior em `C++`. Pensamos que esta diferença
-acentuada se deve ao facto de as estruturas usadas em `C++` não serem adequadas
-para o uso que lhes estamos a dar -- existe muita cópia de memória. Por outro
-lado, a biblioteca que estamos a utilizar poderá ter sido pensada para satisfazer
-os requisitos funcionais descurando desempenho.
-
-Para alguns dos ficheiros de _input_, o programa em `C++` dá um resultado
-ligeiramente diferente do original. Como os programas são deterministas,
-acreditamos que isto se deve a diferenças entre as implementações do algoritmo
-de ordenação nas duas linguagens.
-
-# Aspectos Importantes de Programação Funcional
-
-Neste capítulo detalharemos as características da programação funcional
-mencionadas na introdução.
-
-Composição é, provavelmente, o mais importante e talvez o único aspecto
-inerente a programação funcional. A ideia central é que construindo peças
-pequenas, fáceis de entender e de provar como correctas, é também "simples"
-construir um sistema complexo, correctamente.
-
-De seguida, falaremos do conceito de imutabilidade, em que objectos não são
-alterados mas sim copiados, para implementar mudanças. Esta propriedade ajuda a
-evitar erros comuns em programação Imperativa, causados pela partilha de
-memória e a não especificação da relação entre estados.
-
-_Lazy Evaluation_, não sendo adoptada como estratégia de avaliação, pode ser
-usada como estratégia de optimização, especialmente quando combinada com
-imutabilidade e partilha de memória.
-
-Finalmente, ADTs (_Algebraic Data Types_) são um forma de definir formalmente
-novos tipos de dados a partir de tipos já existentes. É desejavel criar
-abstracções no sistema de tipos que ajudem a descrever o problema com que nos
-deparamos, dando significado a valores e tentando limitar o conjunto de valores
-possíveis aos estritamente válidos.
-
-A seguir, para cada um destes pontos, mostraremos e analisaremos exemplos em
-`Haskell` e como se pode fazer em `C++`.
-
-## Imutabilidade
-
-Uma das características mais importantes do paradigma funcional, é a noção de
-imutabilidade das expressões. Isto faz com que não seja possível alterar o
-valor de variáveis já existentes mas sim, criar novas variáveis com os novos
-valores.
-
-A linguagem `C++` tenta também lidar com esta noção de imutabilidade. A noção
-de funções puras é dada pela avaliação de _referential transparency_. Uma
-função é referencialmente transparente se para o mesmo _input_, é sempre
-devolvido o mesmo valor de retorno -- ou seja, substituindo uma expressão pelo
-seu valor de retorno, o seu significado permanece inalterado -- e não tem
-efeitos colaterais observáveis. Por exemplo:
-
-```cpp
-int g = 0;
-/* Referencialmente transparente */
-int ref_trans (int x) {
-    return x + 1;
-}
-/* Não referencialmente transparente -- cada vez que a função é
- * invocada, tem um valor de retorno diferente */
-int not_ref_trans1 (int x) {
-    g++;
-    return x + g;
-}
-/* Não referencialmente transparente -- embora o valor de retorno seja
- * sempre o mesmo, dado o mesmo input, há um efeito colateral, o
- * incremento de `g` */
-int not_ref_trans2 (int x) {
-    g++;
-    return x + 1;
-}
-```
-
-A ideia de imutabilidade é particularmente útil em ambientes em que se gera
-concorrência, pois existem variáveis partilhadas que podem gerar comportamentos
-inesperados nos programas se não for devidamente protegida a sua alteração. Em
-`C++` está disponível a keyword `const`{.cpp} que permite controlar a
-imutabilidade de uma variável. Ao declarar uma variável `const x`{.cpp} estamos
-a dizer ao compilador que esta variável é imutável e, qualquer tentativa de
-alteração à variável irá originar um erro de compilação. De seguida analisamos
-a declaração de uma variável `const`{.cpp} e os possíveis erros que podem ser
-cometidos ao tentar manipular essa variável.
-
-```{.cpp .numberLines startFrom="0"}
-const std::string name{"John Smith"};
-std::string name_copy = name;
-std::string& name_ref = name; // erro
-const std::string& name_constref = name;
-std::string* name_ptr = &name; // erro
-const std::string* name_constptr = &name;
-```
-
-Em 1 não há ocorrências de erros pois apenas se está a associar o valor de
-`name` a uma nova variável. Em 2 teremos um erro de compilação pois estamos a
-passar `name`{.cpp} por referência a uma variável não `const`{.cpp}, situação
-que é resolvida em 3. Em 4 voltamos a ter um erro de compilação pois estamos a
-criar um apontador não `const`{.cpp} para `name`{.cpp}. Este erro é resolvido
-em 5. O facto de em 2 e 4 ocorrer um erro de compilação deve-se ao facto de
-`name_ref`{.cpp} e `name_ptr`{.cpp} não estarem qualificados com `const`{.cpp}
-e poderem ser alterados. No entanto, como apontam para uma variável
-`const`{.cpp}, gera-se uma contradição.
-
-## _Lazy Evaluation_
-
-_Lazy Evaluation_ é uma técnica de programação usada para atrasar a avaliação
-de uma expressão até que, e se, o seu valor for realmente necessário, sendo
-também possível evitar a reavaliação desta. No contexto da programação
-funcional isto significa que quando uma função é aplicada a um argumento, o
-argumento não é previamente calculado.
-
-Muitas vezes, o resultado da avaliação de uma expressão é comum a várias
-operações. Se todas essas operações avaliassem a expressão, o sistema seria
-sobrecarregado descenessariamente, resultando numa perda de desempenho. Por
-exemplo, no caso de um algoritmo que recorra ao cálculo do produto entre duas
-matrizes com alguma frequência, _lazy evaluation_ propõe calcular uma única vez
-o produto das matrizes e reutilizar o resultado sempre que o produto seja
-utilizado. Deste modo evita-se o custo computacional associado à repetição da
-mesma operação, o que contribui para o aumento do desempenho -- isto só faz
-sentido em conjunto com imutabilidade de objectos, ou _Copy-on-Write_.
-
-`C++` não é _lazy-by-default_, e como tal, deverá ser o programador a aplicar
-esta técnica. Apesar de esta técnica poder ser usada como técnica de
-optimização, é apenas em contextos muito específicos. Em geral, em linguagens
-_eager-by-default_, pode ser usada quando existem acções que podem vir a não
-ser precisas no futuro. Por exemplo, ao criar um objecto que tem campos
-custosos de calcular e que não serão necessariamente usados. Mais
-especialmente, se tivermos, por exemplo, um dicionário, pode ser útil em certas
-ocasiões convertê-lo para uma _alist_ (_association list_), ou seja, converter
-`Map k v` para `[(k, v)]`. Numa estrutura imutável, esta conversão basta ser
-realizada uma vez, e portanto, um dos campos do dicionário pode ser o atraso
-dessa conversão. Além disso, na programação funcional é particularmente útil na
-implementação de estruturas de dados puramente funcionais eficientes, como se
-pode ver no livro @okasaki1999purely.
-
----
-
-Vejamos uma possível implementação de _lazy evaluation_ em `C++`, sendo
-necessário ter em atenção os seguintes pontos:
-
- * Função sobre a qual queremos atrasar o cálculo
- * Uma _flag_ que indica se já calculamos o resultado da função
- * O resultado calculado
-
-```cpp
-template <typename F>
-class lazy_funcall {
-    const F func;
-    typedef decltype(func()) RetType;
-    mutable std::optional<RetType> ret;
-    mutable std::once_flag call_once_flag;
-public:
-    lazy_funcall (F f) : func(f) { }
-    const RetType & operator() () const {
-        std::call_once(call_once_flag, [this] { ret = func(); });
-        return ret.value();
-    }
-};
-```
-
-O construtor da `lazy_funcall`{.cpp} espera receber um procedimento, mas para
-facilitar o seu uso podemos ainda definir alguns _macros_ para aceitar
-expressões.
-
-```cpp
-#define delay_(capt, block)      delay_funcall(capt block)
-#define delay(block)             delay_([&], block)
-#define delay_expr_(capt, expr)  delay_(capt, { return (expr); })
-#define delay_expr(expr)         delay_expr_([&], (expr))
-```
-
-Com estes _macros_ podemos fazer atrasar a avaliação de expressões ou blocos
-assim:
-
-```cpp
-delay_expr(2 * 21);
-delay({
-    int x = 2;
-    int y = 21;
-    int r = x * y;
-    return r;
-});
-```
-
-Como estes macros fazem uso de _lambdas_, `delay`{.cpp} e `delay_expr`{.cpp}
-usam `[&]`{.cpp} como captura por omissão. Caso se pretenda especificar as
-capturas, podem-se usar `delay_`{.cpp} e `delay_expr_`{.cpp}, assim:
-
-```cpp
-delay_expr_([], 2 * 21);
-delay_([], {
-    int x = 2;
-    int y = 21;
-    int r = x * y;
-    return r;
-});
-```
-
-## Composição
-
-Uma parte importante de programação funcional é a composição de funções. Ao
-escrever funções pequenas e genéricas, e ao reutilizá-las com composição, é
-possível escrever programas completos rapidamente e com menos _bugs_. Em
-linguagens funcionais, composição é usada frequentemente; numa linguagem como
-`C++` não é muito conveniente usar composição em todo o lado, principalmente
-por causa da sintaxe e da semântica de passar variáveis por valor ou
-referência. Existe um caso, no entanto, onde composição não tem de ser
-_pointwise_: trabalhar com colecções. Quando há um conjunto de operações a
-aplicar a uma colecção, seja no seu todo ou parte dela, expressar estas
-operações com algum tipo de _pipeline_ é bastante intuitivo, legível e barato
-em número de caracteres escritos. Esta ideia não é nova -- em linguagens
-funcionais este conceito é normalmente implementado como listas em linguagens
-_lazy-by-default_, como `Haskell`, ou _lazy-lists_/_streams_ em linguagens
-_eager-by-default_, como `Scheme`.
-
-Existem muitas operações sobre colecções que podem ser mapeadas numa
-_pipeline_, sendo muitas delas bastante comuns. Programá-las de cada vez
-manualmente como um ciclo é tedioso e muito provavelmente menos legível do que
-simplesmente usar as abstracções. Algumas destas operações comuns incluem
-somar, multiplicar, filtrar, mapear, e o `fold`{.scm}, que é um canivete suíço,
-com o qual muitas das outras operações são implementadas -- também comummente
-conhecido como `reduce`{.scm}, mas com semântica ligeiramente diferente.
-
-A STL de `C++` já tem algumas destas operações. Para os casos mais simples e
-comuns estas podem ser suficientes. É definitivamente melhor do que escrever um
-ciclo manualmente. Estas podem, no entanto, ser melhoradas. Existem várias
-bibliotecas que implementam conceitos funcionais em `C++`; vamos usar apenas a
-_"Functional Plus"_ no documento. No entanto, existe uma outra biblioteca
-parecida, _"Ranges"_, com melhor desempenho, mas a documentação é escassa, o
-que torna difícil perceber como a usar.
-
-Como exemplo, dada uma lista em `Haskell`, filtrar os elementos que satisfazem
-um predicado, aplicar uma função a cada um deles, e por fim calcular o
-produtório pode ser escrito assim em `Haskell`:
-
-```hs
-product . map mapper . filter pred $ xs
-```
-
-Um ciclo `for` para o mesmo efeito em `C++`, escrito manualmente, poderia ser
-como o que se segue -- omitindo a declaração e inicialização da variável
-`ret`{.hs}:
-
-```cpp
-for (auto x : xs)
-    if (pred(x))
-        ret *= mapper(x);
-```
-
-E usando funções da STL, poderia ser escrito assim, que acaba por ser mais
-difícil de ler e escrever, mais verboso, e menos eficiente:
-
-```cpp
-auto res1;
-std::copy_if(std::begin(xs),
-             std::end(xs),
-             std::back_inserter(res1),
-             pred);
-auto res2;
-std::transform(std::begin(res1),
-               std::end(res1),
-               std::back_inserter(res2),
-               mapper);
-auto ret = std::accumulate(std::begin(res2),
-                           std::end(res2),
-                           1,
-/*
- * A especialização de `std::multiplies` para `void`
- * deduz os tipos dos argumentos
- */
-                           std::multiplies<void>());
-```
-
-Não é, no entanto, preciso escrever ciclos `for` manualmente grande parte das
-vezes -- podemos em vez disso escrever o seguinte[^hash_code_2020_sec]:
-
-```cpp
-fplus::fwd::apply(xs
-    , fplus::fwd::keep_if(pred)
-    , fplus::fwd::transform(mapper)
-    , fplus::fwd::product())
-```
-
-O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. Ao ler
-@vcukic2019functional, pudemos obter uma amostra do que é possível neste tipo
-de biblioteca. Em particular, o livro explica sucintamente porque é que a
-biblioteca _"Ranges"_ tem melhor desempenho que a STL, e que a _"Functional
-Plus"_.
-
-Comecemos pelo aspecto da usabilidade: na STL, as funções têm como parâmetros
-dois _iterators_, -- o início e fim da colecção de _input_, ou de parte dela --
-um iterador para o início da colecção de _output_, e um _inserter_, que dita
-como os elementos serão inseridos na colecção de _output_. De imediato, alguns
-pontos a melhorar saltam à vista:
-
- 1. Porque é que é preciso passar os iteradores de início e fim da colecção de
-    _input_? Na verdade sabemos para que serve, mas não precisa de ser assim.
-    Dá mais trabalho passar dois argumentos em vez de um, mas mais importante:
-    é possível passar iteradores para o início e fim de duas colecções
-    diferentes por engano.
-
- 2. Passar iterador e _inserter_ da colecção de _output_ também é tedioso; mas
-    pior, significa que é sempre criada uma colecção de _output_.
-
-A _"Functional Plus"_ melhora o primeiro destes pontos, -- basta passar a
-colecção em si, não iteradores para ela -- mas o segundo ponto continua um
-problema presente -- é sempre devolvida uma nova operação como resultado.
-
-A _"Ranges"_ melhora estes dois aspectos ao simplesmente abstrair colecções
-como _ranges_, e devolver _ranges_ como resultado das operações. Pode-se pensar
-nesta abstracção de _range_ como um par de iteradores: o início e fim.
-
-Agora é possível passar a uma operação uma colecção, que é automaticamente
-transformada num _range_, ou o resultado de uma outra operação, que já é um
-_range_. Esta última parte é crucial -- significa que podemos compor operações
-_pointfree_.
-
-Vamos agora ao desempenho. O par de iteradores que forma um _range_ é só um par
-de apontadores. Para operações que não alteram a colecção original não há
-necessidade de copiar memória. Para implementar, por exemplo, o `filter`{.hs},
-basta implementar o operador `++`{.cpp} (_next_) para o _range_ de _output_,
-sobre o iterador de início, procurando pelo elemento seguinte no _range_ de
-_input_ que satisfaz o predicado. Se nenhum elemento satisfaz o predicado
-chegamos eventualmente ao fim da colecção, ou seja, temos um _range_ vazio.
-
-Quando há a necessidade de alterar o _range_ de _input_ temos duas opções:
-copiar o _range_ de _input_, ou mutar a colecção original _in-place_.
-
-Todas as operações são _lazy_, ou seja, acontecem _on-demand_, como em
-`Haskell` -- se o resultado não for usado, nada é feito.
-
-## ADTs
-
-ADTs (_Algebraic Data-Types_), ou Tipos de Dados Algébricos, são tipos de dados
-criados a partir de tipos já existentes, de duas maneiras diferentes. Vamos dar
-uma breve descrição, para completude, simplesmente porque nem todas as
-linguagens funcionais têm ADTs nativamente ou com este nome.
-
-A primeira, e mais comum, é o produto. Dados dois tipos $A$ e $B$, o produto
-deles, $A \times B$, é simplesmente o produto cartesiano entre $A$ e $B$.
-
-A segunda, presente em grande parte das linguagens, mesmo que indirectamente, é
-o coproduto. Dados dois tipos $A$ e $B$, o coproduto deles, $A + B$, é o
-conjunto cujos elementos ou são do tipo $A$ ou do tipo $B$, mas é possível
-distingui-los -- união disjunta. Este conjunto pode ser representado
-indirectamente como $Bool \times (A \cup B)$: um elemento de $A$ ou $B$, e uma
-_flag_ a indicar se é de $A$ ou de $B$. Note-se que esta _flag_ indica na
-verdade se o elemento é da esquerda ou direita: $A + A$ é um tipo válido.
-
-Com estas duas técnicas de composição é possível representar qualquer estrutura
-de dados. Será então útil saber como usar estas duas técnicas numa linguagem de
-programação. Em `Haskell`, com o seu sistema de tipos avançado, ambas estão
-disponíveis nativamente. Em `C++`, tal como em `C`, só o produto está
-disponível, sob a forma de `struct`{.cpp}s. Na STL também existem
-`std::pair`{.cpp} e `std::tuple`{.cpp} que podem considerar-se alternativas em
-alguns casos.
-
-De seguida vamos apresentar as três formas de compor tipos em `C++`, com as
-_keywords_ `struct`{.cpp}/`class`{.cpp}, `enum`{.cpp}, e `union`{.cpp}, qual o
-equivalente em `Haskell` e como cada uma se relaciona com ADTs.
-
-### `struct`/`class`
-
-Juntamos estas duas _keywords_ visto que servem o mesmo propósito; a única
-diferença está em que, caso nada seja dito em contrário, numa `struct`{.cpp}
-todos os membros são públicos, enquanto que numa `class`{.cpp} são privados.
-
-Por exemplo, para representar um filme, com o seu título (`String`{.hs}), ano
-de lançamento (`Int`{.hs}), e uma pontuação (`Float`{.hs}), podemos definir o
-tipo `Filme`{.hs} como o produto dos seus três atributos, ou seja $Filme \cong
-String \times Int \times Float$.
-
-Em `Haskell` existem várias maneiras de definir o tipo `Filme`{.hs}.
-
-```hs
-type Filme = (String, Int, Float)
-
-data Filme = Filme String Int Float
-
-data Filme = Filme {
-    titulo :: String,
-    ano :: Int,
-    pontuacao :: Float
-}
-```
-
-A primeira é um produto. A segunda é um tipo algébrico gerado por um único
-construtor: `Filme :: String -> Int -> Flaot -> Filme`{.hs}. A terceira é
-também um tipo algébrico gerado pelo mesmo construtor com o acrescimo de
-associar a cada um dos seus parâmetros nomes que funcionam também como
-selectores: `titulo :: Filme -> String`{.hs}, `ano :: Filme -> Int`{.hs} e
-`pontuacao :: Filme -> Float`{.hs}.
-
-Em `C++`, existem duas alternativas:
-
-```cpp
-struct Filme {
-    std::string titulo;
-    unsigned ano;
-    float pontuacao;
-};
-
-typedef std::tuple<std::string, unsigned, float> Filme;
-```
-
-A primeira, que é mais idiomática, e a segunda, que é mais parecida com o tipo
-teórico, como a primeira definição em `Haskell`.
-
-### `enum`
-
-Um exemplo simples e conhecido a todos do uso de _enums_ é na definição do tipo
-dos booleanos: `enum bool { false, true };`{.cpp} em `C++`, e `data Bool =
-False | True`{.hs} em `Haskell`, que não é mais do que o coproduto $Bool \cong
-1 + 1$.
-
-Poderíamos assim achar que `enum`{.cpp} em `C++` serve para representar
-coprodutos em geral, mas estaríamos errados. `enum`{.cpp} serve apenas para
-representar o coproduto de vários conjuntos singulares, ou um único conjunto
-enumerável de valores não inteiros e sem ordem. Veremos mais à frente como
-representar tipos de soma.
-
-### `union`
-
-Esta é a menos comum das três _keywords_, por ser de uso muito limitado, e não
-existe equivalente em `Haskell`. Esta "falha" do lado de `Haskell` na verdade
-não é grave -- possivelmente nem sequer é uma falha. Ao contrário do que o nome
-sugere, `union`{.cpp} não serve para representar a união de tipos, e não vamos
-aqui listar os seus usos além do necessário para este texto.
-
-`union`{.cpp} pode ser usada quando se pretende guardar qualquer um de vários
-valores, mas não vários em simultâneo, pois reserva espaço de memória
-suficiente para armazenar qualquer um dos seus componentes, mas apenas um. Por
-exemplo, se se pretender um tipo para guardar ou inteiros ou _floats_, pode-se
-usar a seguinte `union`{.cpp}:
-
-```cpp
-union {
-    int i;
-    float f;
-}
-```
-
-### ADTs em `C++`
-
-Vamos agora, finalmente, descrever como implementar ADTs em `C++`. A maneira
-mais idiomática, possível também em `C`, é usar uma _tagged union_.
-
-Como exemplo, vamos definir um tipo de árvores binárias de nós, com valores nos
-nós e nas folhas: $BTree\ A \cong A + (A \times BTree\ A \times BTree\ A)$.
-
-Em `Haskell`:
-
-```hs
-data BTree a = Leaf a
-             | Node a (BTree a) (Btree a)
-```
-
-Em `C++`:
-
-```cpp
-template <typename A>
-struct BTree {
-    enum {
-        BTree_Leaf,
-        BTree_Node,
-    } variant;
-    union {
-        A leaf;
-        struct {
-            A x;
-            BTree<A> left;
-            BTree<A> right;
-        } node;
-    } tree;
-};
-```
-
-Esta definição em `C++` é muito maior do que a definição em `Haskell`, não só
-devido à verbosidade de da linguagem, como à necessidade de usar um truque para
-transformar um coproduto num produto.
-
-$$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
-
-Ou, para aproximar melhor a implementação,
-
-$$BTree\ A \cong \{\ Leaf,\ Node \ \} \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
-
-Neste caso, a `union`{.cpp} está realmente a simular a união de conjuntos.
-
-Uma alternativa à _tagged union_, é usar `std::variant`{.cpp}, como a que se
-segue:
-
-```cpp
-template <typename A>
-struct Node {
-    A x;
-    Node<A> left;
-    Node<A> right;
-};
-template <typename A>
-using BTree = std::variant<A, struct Node<A>>;
-```
+acentuada se deve ao facto de as estruturas usadas em `C++`, nomeadamente,
+vectores, não serem adequadas para o uso que lhes estamos a dar -- existe muita
+cópia de memória. Esta biblioteca poderá não ser a mais performativa, mas foi
+escolhida em detrimento da _"Ranges"_ devido à sua boa documentação.
 
 # Conclusão {-}
 
 Ao longo deste documento é possível constatar visualmente as diferenças
 sintáticas entre as duas linguagens. Em `Haskell` o código é bastante mais
 conciso do que em `C++`, pelo que a sua leitura e compreensão se torna mais
-simpática. Relativamente à eficiência e usabilidade das linguagens, em
+agradável. Relativamente à eficiência e usabilidade das linguagens, em
 `Haskell` torna-se mais simples escrever programas relativamente eficientes com
-"pouco cuidado", uma vez que não há necessidade de preocupação com certos
+pouco cuidado, uma vez que não há necessidade de preocupação com certos
 detalhes de implementação -- gestão de memória, ordem de execução, etc. Embora
 `C++` não tenha sido inicialmente pensado para o paradigma funcional, é de
 notar que têm sido incluídas nas suas revisões alguns conceitos directamente
-relacionados com este mesmo paradigma, sendo por isso natural que em próximas
-revisões, a afinidade com este paradigma seja reforçada.
+relacionados com este mesmo paradigma, como _lambdas_, `std::tuple`{.cpp} e
+`std::tie`{.cpp} (`C++11`), e `std::variant`{.cpp} e `std::optional`{.cpp}
+(`C++17`), sendo por isso natural que em próximas revisões, a afinidade com
+este paradigma seja reforçada, particularmente, ao ser incluída a biblioteca
+_"Ranges"_ na próxima revisão (`C++20`).
 
 Relativamente ao nosso projecto, este deu-nos uma amostra sobre uma linguagem
 que até então nos era desconhecida, `C++`, e proporcionou-nos uma diferente
