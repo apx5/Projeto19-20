@@ -33,7 +33,7 @@ Neste documento será dada ênfase às vantagens do paradigma funcional e de que
 forma podemos aproveitar essas vantagens em `C++`. Iremos estudar e analisar as
 características funcionais em programas escritos em `C++`, através de algumas
 bibliotecas existentes para esse efeito e, aproveitaremos para efectuar uma
-análise comparativa de performance, sintaxe, etc, através de programas que
+análise comparativa de desempenho, sintaxe, etc, através de programas que
 resolvem o mesmo problema em `C++` e `Haskell`.
 
 Nas linguagens funcionais as funções são entidades de primeira classe, isto é,
@@ -57,7 +57,8 @@ ser analisadas, serão usados pequenos excertos de código em ambas as
 linguagens.
 
 Todo o código desenvolvido durante este projecto, incluindo este documento,
-pode ser encontrado no nosso repositório, criado para esse propósito.
+pode ser encontrado no nosso [repositório
+(https://github.com/apx5/Projeto19-20)][repo], criado para esse propósito.
 
 # Abordagem ao Paradigma Funcional em `Haskell` e `C++`
 
@@ -136,7 +137,7 @@ uma computação que retorna um valor do tipo `a`{.hs}. Ou seja, `t`{.hs} é um
 valor de tipo `a`{.hs} com um efeito adicional captado por `m`{.hs}. No caso do
 mónade `IO`{.hs}, esse efeito é uma acção de _input_/_output_.
 
-## `C++` "funcional"
+## `C++` "Funcional"
 
 Devido à sua herança, `C++` promove um estilo frágil de programação, devendo
 ser o programador a ter alguma atenção e a tomar algumas decisões quando
@@ -144,7 +145,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
 
  * Evitar dados mutáveis. Numa função que altera uma estrutura, em vez de
    receber a estrutura por referência e a alterar, será melhor receber a
-   estrutura por valor e devolver uma nova. Por razões de performance, também
+   estrutura por valor e devolver uma nova. Por razões de desempenho, também
    pode ser boa ideia passar a estrutura por referência `const`{.c}, que se
    traduz em menos movimentação de memória.
 
@@ -187,7 +188,7 @@ pretende usar o paradigma funcional em `C++`. Por exemplo:
    [@cppprelude], que define grande parte do _prelude_ do `Haskell`, à custa de
    funções da STL; e a _"Ranges"_ [@ranges], que tem muitas abstracções úteis
    de programação funcional, tal como a _"Functional Plus"_, mas com mais
-   atenção a performance, e vai ser integrada numa revisão futura da linguagem.
+   atenção ao desempenho, e vai ser integrada numa revisão futura da linguagem.
    Estas bibliotecas aparecerão todas mais à frente, ao longo deste documento.
 
 # Comparação e Análise de Programas Equivalentes em `Haskell` e `C++`
@@ -205,7 +206,7 @@ _"Functional Plus"_, para uma comparação mais realista.
 
 ## _Prelude_
 
-De forma a comparar a performance de pequenos programas em ambas as linguagens,
+De forma a comparar o desempenho de pequenos programas em ambas as linguagens,
 geramos um ficheiro de _input_ com uma lista de 10000000 de inteiros. Note-se
 que deixamos de fora da análise o processo de leitura do ficheiro. Focaremos a
 comparação na aplicação de funções específicas em `Haskell` e `C++`. Para cada
@@ -293,7 +294,7 @@ auto filter(const PR& p, const CN<A, AllocA>& c) -> CN<A, AllocA> {
 
 Tal como no caso do `map`{.hs}, já existe uma função parecida:
 `std::copy_if`{.cpp}. Apesar de não sabermos à partida quantos elementos terá a
-colecção de resultado, por razões de performance, podemos na mesma reservar
+colecção de resultado, por razões de desempenho, podemos na mesma reservar
 espaço. No fim, a colecção pode conter menos elementos que os reservados, e
 para remover a memória inutilizada, usa-se `shrink_to_fit`{.cpp}.
 
@@ -377,7 +378,7 @@ manualmente como um ciclo.
 
 ### Resultados \label{prelude_bench_results_sec}
 
-Para comparar performance entre as duas linguagens, executamos todas as funções
+Para comparar desempenho entre as duas linguagens, executamos todas as funções
 num só processo e medimos o tempo de CPU de cada uma com os meios disponíveis
 em cada linguagem. Simultaneamente, medimos o tempo de execução do processo e a
 memória residente máxima com o programa `/usr/bin/time`{.sh}.
@@ -397,7 +398,7 @@ E para correr os programas usamos o seguinte:
 for P in bench_{cpp,hs}
 do
   echo "$P"
-  /usr/bin/time -f "%U / %S / %e / %M KB" "./$P" < lista.txt
+  /usr/bin/time -f "%U / %S / %M KB" "./$P" < lista.txt
   echo
 done
 ```
@@ -406,8 +407,7 @@ Para medir o tempo de CPU em `C++` usamos `std::clock()`{.cpp} do _header_
 `<ctime>`{.cpp}, com o seguite macro:
 
 ```cpp
-#define benchmark(str, func)                   \
-  do {                                         \
+#define benchmark(str, func) do {              \
     auto start = std::clock();                 \
     (void) func;                               \
     auto stop = std::clock();                  \
@@ -447,8 +447,8 @@ processo.
 
 |                               | `C++`         | `Haskell`      |
 | :---------------------------- | :-----------: | :------------: |
-| `map (*2)`                    | 13ms          | 148ms          |
 | `filter even`                 | 50ms          | 162ms          |
+| `map (*2)`                    | 13ms          | 148ms          |
 | `reverse`                     | 14ms          | 929ms          |
 | `uncurry zip . split id id`   | 38ms          | 164ms          |
 | _usr_ / _sys_                 | 2.26s / 0.04s | 29.38s / 0.47s |
@@ -456,10 +456,10 @@ processo.
 
 A diferença nos tempos é bastante drástica, especialmente do tempo total do
 processo. Como passa bastante tempo antes do programa em `Haskell` mostrar
-resultados podemos concluir que grande parte do tempo é gasto na leitura e
-processamento do _input_.
+resultados podemos concluir que grande parte do tempo é gasto no processamento
+do _input_.
 
-## _Google Hash Code 2020_
+## _Google Hash Code 2020_ \label{hash_code_2020_sec}
 
 Falemos agora sobre o problema do _Google Hash Code 2020_. O problema é de
 optimização, e consiste em planear que livros serão examinados e de que
@@ -615,7 +615,7 @@ typedef std::vector<std::tuple<int, int, std::vector<int>>>
 Para a leitura do _input_ tiramos proveito da _lazyness_ do `Haskell`, e
 tomando-o como uma `String`{.hs}. Do lado do `C++` usamos também
 `std::string`{.cpp}, simplesmente porque pretendíamos uma conversão mais
-directa -- em geral, esta não é a melhor escolha para performance, mas para os
+directa -- em geral, esta não é a melhor escolha para desempenho, mas para os
 ficheiros de _input_ não é expectável qualquer penalização, visto que o maior
 destes tem apenas 3.4MB.
 
@@ -928,7 +928,7 @@ ficheiros de _input_ é muito superior em `C++`. Pensamos que esta diferença
 acentuada se deve ao facto de as estruturas usadas em `C++` não serem adequadas
 para o uso que lhes estamos a dar -- existe muita cópia de memória. Por outro
 lado, a biblioteca que estamos a utilizar poderá ter sido pensada para satisfazer
-os requisitos funcionais descurando performance.
+os requisitos funcionais descurando desempenho.
 
 Para alguns dos ficheiros de _input_, o programa em `C++` dá um resultado
 ligeiramente diferente do original. Como os programas são deterministas,
@@ -1037,12 +1037,12 @@ argumento não é previamente calculado.
 
 Muitas vezes, o resultado da avaliação de uma expressão é comum a várias
 operações. Se todas essas operações avaliassem a expressão, o sistema seria
-sobrecarregado descenessariamente, resultando numa perda de performance. Por
+sobrecarregado descenessariamente, resultando numa perda de desempenho. Por
 exemplo, no caso de um algoritmo que recorra ao cálculo do produto entre duas
 matrizes com alguma frequência, _lazy evaluation_ propõe calcular uma única vez
 o produto das matrizes e reutilizar o resultado sempre que o produto seja
 utilizado. Deste modo evita-se o custo computacional associado à repetição da
-mesma operação, o que contribui para o aumento da performance. Isto só faz
+mesma operação, o que contribui para o aumento do desempenho -- isto só faz
 sentido em conjunto com imutabilidade de objectos, ou _Copy-on-Write_.
 
 `C++` não é _lazy-by-default_, e como tal, deverá ser o programador a aplicar
@@ -1056,8 +1056,8 @@ ocasiões convertê-lo para uma _alist_ (_association list_), ou seja, converter
 `Map k v` para `[(k, v)]`. Numa estrutura imutável, esta conversão basta ser
 realizada uma vez, e portanto, um dos campos do dicionário pode ser o atraso
 dessa conversão. Além disso, na programação funcional é particularmente útil na
-implementação de estruturas de dados puramente funcionais, como se pode ver no
-livro @okasaki1999purely.
+implementação de estruturas de dados puramente funcionais eficientes, como se
+pode ver no livro @okasaki1999purely.
 
 ---
 
@@ -1152,7 +1152,7 @@ comuns estas podem ser suficientes. É definitivamente melhor do que escrever um
 ciclo manualmente. Estas podem, no entanto, ser melhoradas. Existem várias
 bibliotecas que implementam conceitos funcionais em `C++`; vamos usar apenas a
 _"Functional Plus"_ no documento. No entanto, existe uma outra biblioteca
-parecida, _"Ranges"_, com melhor performance, mas a documentação é escassa, o
+parecida, _"Ranges"_, com melhor desempenho, mas a documentação é escassa, o
 que torna difícil perceber como a usar.
 
 Como exemplo, dada uma lista em `Haskell`, filtrar os elementos que satisfazem
@@ -1163,7 +1163,7 @@ produtório pode ser escrito assim em `Haskell`:
 product . map mapper . filter pred $ xs
 ```
 
-Um ciclo `for` para o mesmo efeito em `C++`, escrito manualmente, podia ser
+Um ciclo `for` para o mesmo efeito em `C++`, escrito manualmente, poderia ser
 como o que se segue -- omitindo a declaração e inicialização da variável
 `ret`{.hs}:
 
@@ -1173,8 +1173,32 @@ for (auto x : xs)
         ret *= mapper(x);
 ```
 
-Mas não é preciso escrever ciclos `for` manualmente grande parte das vezes --
-podemos em vez disso escrever o seguinte:
+E usando funções da STL, poderia ser escrito assim, que acaba por ser mais
+difícil de ler e escrever, mais verboso, e menos eficiente:
+
+```cpp
+auto res1;
+std::copy_if(std::begin(xs),
+             std::end(xs),
+             std::back_inserter(res1),
+             pred);
+auto res2;
+std::transform(std::begin(res1),
+               std::end(res1),
+               std::back_inserter(res2),
+               mapper);
+auto ret = std::accumulate(std::begin(res2),
+                           std::end(res2),
+                           1,
+/*
+ * A especialização de `std::multiplies` para `void`
+ * deduz os tipos dos argumentos
+ */
+                           std::multiplies<void>());
+```
+
+Não é, no entanto, preciso escrever ciclos `for` manualmente grande parte das
+vezes -- podemos em vez disso escrever o seguinte[^hash_code_2020_sec]:
 
 ```cpp
 fplus::fwd::apply(xs
@@ -1186,7 +1210,7 @@ fplus::fwd::apply(xs
 O nosso estudo não se centrou apenas na _"Functional Plus"_, no entanto. Ao ler
 @vcukic2019functional, pudemos obter uma amostra do que é possível neste tipo
 de biblioteca. Em particular, o livro explica sucintamente porque é que a
-biblioteca _"Ranges"_ tem melhor performance que a STL, e que a _"Functional
+biblioteca _"Ranges"_ tem melhor desempenho que a STL, e que a _"Functional
 Plus"_.
 
 Comecemos pelo aspecto da usabilidade: na STL, as funções têm como parâmetros
@@ -1217,7 +1241,7 @@ transformada num _range_, ou o resultado de uma outra operação, que já é um
 _range_. Esta última parte é crucial -- significa que podemos compor operações
 _pointfree_.
 
-Vamos agora a performance. O par de iteradores que forma um _range_ é só um par
+Vamos agora ao desempenho. O par de iteradores que forma um _range_ é só um par
 de apontadores. Para operações que não alteram a colecção original não há
 necessidade de copiar memória. Para implementar, por exemplo, o `filter`{.hs},
 basta implementar o operador `++`{.cpp} (_next_) para o _range_ de _output_,
@@ -1429,6 +1453,7 @@ ao material já existente.
 
 # Referências {-}
 
+[^hash_code_2020_sec]: Para mais exemplos de uso da biblioteca _"Functional Plus"_ ver a secção \ref{hash_code_2020_sec}.
 [^hash_code_2020]: Para o enunciado do problema e ficheiros de input, ver @hashcode2020.
 [^let_over_lambda]: Para mais informação sobre este assunto, ler @hoyte2008let.
 
@@ -1436,3 +1461,4 @@ ao material já existente.
 [Functional Plus]: https://github.com/Dobiasd/FunctionalPlus
 [Ranges]: https://github.com/ericniebler/range-v3
 [Tackling the Awkward Squad]: https://www.microsoft.com/en-us/research/publication/tackling-awkward-squad-monadic-inputoutput-concurrency-exceptions-foreign-language-calls-haskell
+[repo]: https://github.com/apx5/Projeto19-20

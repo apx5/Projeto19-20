@@ -5,8 +5,7 @@
 
 #include "prelude.h"
 
-#define benchmark(str, func)                   \
-  do {                                         \
+#define benchmark(str, func) do {              \
     auto start = std::clock();                 \
     (void) func;                               \
     auto stop = std::clock();                  \
