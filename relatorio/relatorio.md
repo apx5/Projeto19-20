@@ -527,30 +527,26 @@ struct BTree {
 };
 ```
 
-O código desta definição em `C++` é muito maior do que a definição em
-`Haskell`, não só devido à verbosidade de da linguagem, como à necessidade de
-usar um truque para transformar um coproduto num produto.
-
-$$BTree\ A \cong A + (A \times BTree\ A \times BTree\ A) \cong Bool \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
-
-Ou, para aproximar melhor a implementação,
-
-$$BTree\ A \cong \{\ Leaf,\ Node \ \} \times (A\ \cup\ (A \times BTree\ A \times BTree\ A))$$
-
-Neste caso, a `union`{.cpp} está realmente a simular a união de conjuntos.
+O código desta definição em `C++` é muito maior do que em `Haskell`, não só
+devido à verbosidade da linguagem, como à necessidade de usar um truque para
+transformar um coproduto num produto.
 
 Uma alternativa à _tagged union_, como a que se segue, é usar
-`std::variant`{.cpp}, poupando trabalho manual:
+`std::variant`{.cpp}, poupando algum trabalho manual:
 
 ```cpp
 template <typename A>
-struct Node {
-    A x;
-    Node<A> left;
-    Node<A> right;
-};
+struct Node;
+
 template <typename A>
 using BTree = std::variant<A, struct Node<A>>;
+
+template <typename A>
+struct Node {
+    A x;
+    BTree<A> left;
+    BTree<A> right;
+};
 ```
 
 # Abordagem ao Paradigma Funcional em `Haskell` e `C++`
@@ -943,17 +939,17 @@ processo.
 
 |                               | `C++`         | `Haskell`      |
 | :---------------------------- | :-----------: | :------------: |
-| `filter even`                 | 50ms          | 162ms          |
-| `map (*2)`                    | 13ms          | 148ms          |
-| `reverse`                     | 14ms          | 929ms          |
-| `uncurry zip . split id id`   | 38ms          | 164ms          |
+| `filter even l`               | 50ms          | 162ms          |
+| `map (*2) l`                  | 13ms          | 148ms          |
+| `reverse l`                   | 14ms          | 929ms          |
+| `zip l l`                     | 38ms          | 164ms          |
 | _usr_ / _sys_                 | 2.26s / 0.04s | 29.38s / 0.47s |
 | Memória residente máxima      | 121.3 MB      | 1262.9 MB      |
 
-A diferença nos tempos é bastante drástica, especialmente do tempo total do
+A diferença nos tempos é bastante drástica, especialmente no tempo total do
 processo. Como passa bastante tempo antes do programa em `Haskell` mostrar
-resultados podemos concluir que grande parte do tempo é gasto no processamento
-do _input_.
+qualquer resultado no terminal podemos concluir que é gasto maioritarimente no
+processamento do _input_.
 
 ## _Google Hash Code 2020_ \label{hash_code_2020_sec}
 
@@ -1149,14 +1145,13 @@ A partir desta chegamos à seguinte conversão em `C++`:
 struct libraries read_libraries (void) {
   std::string input(std::istreambuf_iterator<char>{std::cin}, {});
   std::vector<std::vector<int>> values = fplus::fwd::apply(
-      input,
-      fplus::fwd::split_lines(false),
-      fplus::fwd::transform([](std::string line) -> std::vector<int> {
-        return fplus::fwd::apply(
-            line,
-            fplus::fwd::split_words(false),
-            fplus::fwd::transform(fplus::read_value_unsafe<int>));
-        }));
+    input,
+    fplus::fwd::split_lines(false),
+    fplus::fwd::transform([](std::string line) -> std::vector<int> {
+      return fplus::fwd::apply(line,
+        fplus::fwd::split_words(false),
+        fplus::fwd::transform(fplus::read_value_unsafe<int>));
+      }));
 
   struct libraries ret;
   /* Primeira linha */
@@ -1240,10 +1235,10 @@ E a conversão em `C++` conseguida foi a seguinte:
 /* Esta função representa a função `distinct` acima */
 struct libraries distinct (struct libraries libs) {
   libs.libraries = fplus::fwd::apply(
-      libs.libraries,
-      fplus::fwd::fold_left(
-        [](std::pair<std::vector<library_desc_t>, std::set<int>> a,
-          library_desc_t b) {
+    libs.libraries,
+    fplus::fwd::fold_left(
+      [](std::pair<std::vector<library_desc_t>, std::set<int>> a,
+         library_desc_t b) {
         std::vector<library_desc_t> ret = a.first;
         std::set<int> s = a.second;
         int id = b.first;
@@ -1253,32 +1248,27 @@ struct libraries distinct (struct libraries libs) {
         std::set<int> bss(bs.begin(), bs.end());
         std::set<int> bs_ = fplus::set_difference(bss, s);
         std::set<int> ss = fplus::set_merge(s, bs_);
-        return std::make_pair(
-            fplus::prepend_elem(
-              std::make_pair(
-                id,
-                std::make_tuple(
-                  bs_.size(),
-                  ts,
-                  bd,
-                  std::vector<int>(bs_.begin(), bs_.end()))),
-              ret),
-            ss);
-        },
-          std::make_pair(std::vector<library_desc_t>(), std::set<int>())),
-          fplus::fwd::fst(),
-          fplus::fwd::keep_if([](library_desc_t pt)
-              { return !std::get<3>(pt.second).empty(); }),
-          fplus::fwd::transform(
-              fplus::fwd::transform_snd(
-                [libs](std::tuple<int, int, int, std::vector<int>> tup) {
-                int nb, ts, bd;
-                std::vector<int> bs;
-                std::tie(nb, ts, bd, bs) = tup;
-                bs = fplus::sort_on([libs](int bid)
-                { return libs.book_scores[bid]; }, bs);
-                return std::make_tuple(nb, ts, bd, bs);
-                }))
+        return std::make_pair(fplus::prepend_elem(
+          std::make_pair(id,
+            std::make_tuple(bs_.size(), ts, bd,
+              std::vector<int>(bs_.begin(), bs_.end()))),
+            ret),
+          ss);
+      },
+      std::make_pair(std::vector<library_desc_t>(), std::set<int>())),
+      fplus::fwd::fst(),
+      fplus::fwd::keep_if([](library_desc_t pt)
+        { return !std::get<3>(pt.second).empty(); }),
+      fplus::fwd::transform(
+        fplus::fwd::transform_snd(
+          [libs](std::tuple<int, int, int, std::vector<int>> tup) {
+            int nb, ts, bd;
+            std::vector<int> bs;
+            std::tie(nb, ts, bd, bs) = tup;
+            bs = fplus::sort_on([libs](int bid)
+              { return libs.book_scores[bid]; }, bs);
+            return std::make_tuple(nb, ts, bd, bs);
+          }))
   );
   return libs;
 }
@@ -1310,16 +1300,16 @@ solve_ (int n_days, std::vector<library_desc_t> libs) {
 output_t solve (struct libraries libs) {
   libs = distinct(libs);
   return fplus::fwd::apply(
-      solve_(libs.n_days, libs.libraries),
-      fplus::fwd::sort_on(&on_ts_bd),
-      fplus::fwd::transform(
-        [](library_desc_t pt) {
-          int id = pt.first;
-          int nb;
-          std::vector<int> bs;
-          std::tie(nb, std::ignore, std::ignore, bs) = pt.second;
-          return std::make_tuple(id, nb, bs);
-        }));
+    solve_(libs.n_days, libs.libraries),
+    fplus::fwd::sort_on(&on_ts_bd),
+    fplus::fwd::transform(
+      [](library_desc_t pt) {
+        int id = pt.first;
+        int nb;
+        std::vector<int> bs;
+        std::tie(nb, std::ignore, std::ignore, bs) = pt.second;
+        return std::make_tuple(id, nb, bs);
+      }));
 }
 ```
 
@@ -1428,12 +1418,24 @@ _kernel mode_ por ficheiro, e tempo total para todos os ficheiros.
 | `f_libraries_of_the_world.txt` | 2.36s / 0.07s | 2m38.32s / 0.02s  |
 | Tempo total (_usr_/_sys_)      | 7.28s / 0.24s | 30m56.65s / 1.21s |
 
-Como é possível verificar na tabela, o tempo total de execução para todos os
-ficheiros de _input_ é muito superior em `C++`. Pensamos que esta diferença
-acentuada se deve ao facto de as estruturas usadas em `C++`, nomeadamente,
-vectores, não serem adequadas para o uso que lhes estamos a dar -- existe muita
-cópia de memória. Esta biblioteca poderá não ser a mais performativa, mas foi
-escolhida em detrimento da _"Ranges"_ devido à sua boa documentação.
+Como é possível verificar na tabela \ref{hash_code_2020_times_tbl}, o tempo
+total de execução para todos os ficheiros de _input_ é muito superior em `C++`.
+Pensamos que esta diferença acentuada se deve ao facto de as estruturas usadas
+em `C++`, nomeadamente, vectores, não serem adequadas para o uso que lhes
+estamos a dar -- existe muita cópia de memória. Esta biblioteca poderá não ser
+a mais performativa, mas foi escolhida em detrimento da _"Ranges"_ devido à sua
+boa documentação.
+
+Em contraste, `Haskell` tem uma memória residente máxima superior. Isto poderá
+advir de muitos factores, mas iremos mencionar apenas os mais notórios: os
+objectos são _boxed_, isto é, são alocados dinâmicamente e implementados com
+apontadores, mesmo os tipos primitivos como inteiros e _floats_; a estrutura de
+dados mais usada é a lista ligada, que requer mais memória que um vector para
+representar a mesma sequência de elementos; o uso de um GC (_Garbage
+Collector_), que torna qualquer comparação de números brutos falaciosa, pois a
+memória que o sistema operativo indica não é necessariamente a memória usada
+pelo programa para _live objects_, isto é, objectos para os quais o programa
+ainda tem referências activas, e podem vir a ser usados.
 
 # Conclusão {-}
 
